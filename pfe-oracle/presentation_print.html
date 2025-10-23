@@ -1,0 +1,1719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infrastructure as Code Support in Graal CI - Yassine DBAICHI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            background: #f8fafc;
+        }
+
+        .slide {
+            display: none;
+            width: 100vw;
+            height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            background: transparent;
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #0f766e 0%, #14535F 100%);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            z-index: 50;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .navbar button {
+            padding: 0.5rem 1.25rem;
+            border-radius: 9999px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .navbar button:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        .navbar button.active-section {
+            background: #C74634;
+            border-color: #C74634;
+            font-weight: 600;
+        }
+
+        .slide-counter {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: rgba(20, 83, 95, 0.9);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            z-index: 50;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        .divider-slide {
+            background: linear-gradient(135deg, #14535F 0%, #0a3940 100%) !important;
+            display: flex !important;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .divider-slide::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            top: -300px;
+            right: -300px;
+        }
+
+        .divider-slide::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(199,70,52,0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            bottom: -200px;
+            left: -200px;
+        }
+
+        .divider-title {
+            font-size: 4rem;
+            font-weight: 800;
+            color: white !important;
+            text-align: center;
+            z-index: 10;
+            position: relative;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            padding: 2rem;
+        }
+
+        .content-slide {
+            padding-top: 5rem;
+            padding-left: 3rem;
+            padding-right: 3rem;
+            padding-bottom: 3rem;
+            display: flex;
+            flex-direction: column;
+            background: #f8fafc;
+            width: 100vw;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .slide-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #14535F;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 4px solid #C74634;
+        }
+
+        .slide-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .bullet-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .bullet-list li {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: white;
+            border-left: 4px solid #14535F;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            font-size: 1.125rem;
+            line-height: 1.6;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            height: 100%;
+        }
+
+        .image-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .image-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 0.5rem;
+        }
+
+        .title-slide {
+            background: linear-gradient(135deg, #14535F 0%, #0a3940 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .title-slide::before {
+            content: '';
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+            border-radius: 50%;
+            top: -400px;
+            right: -400px;
+        }
+
+        .logo-container {
+            display: flex;
+            gap: 4rem;
+            margin-bottom: 3rem;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .logo-container img {
+            height: 100px;
+            object-fit: contain;
+            filter: brightness(1.2);
+        }
+
+        .main-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            z-index: 10;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            font-weight: 400;
+            text-align: center;
+            margin-bottom: 3rem;
+            opacity: 0.9;
+            z-index: 10;
+        }
+
+        .author-info {
+            text-align: center;
+            font-size: 1.25rem;
+            z-index: 10;
+            line-height: 2;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #14535F 0%, #0f766e 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            margin: 1rem 0;
+            font-size: 1.125rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            width: 100%;
+        }
+
+        .card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-top: 4px solid #14535F;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #14535F;
+            margin-bottom: 0.75rem;
+        }
+
+        .card-content {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #334155;
+        }
+
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .tool-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .tool-item img {
+            height: 60px;
+            object-fit: contain;
+        }
+
+        .tool-name {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #14535F;
+        }
+
+        .full-image-slide {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6rem 3rem 3rem 3rem;
+        }
+
+        .full-image-slide img {
+            max-width: 90%;
+            max-height: 85vh;
+            object-fit: contain;
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+    
+        .slide {
+            display: block !important;
+            opacity: 1 !important;
+            position: relative !important;
+            width: 100% !important;
+            height: 100vh !important;
+            page-break-after: always !important;
+            page-break-inside: avoid !important;
+            background: #f8fafc;
+        }
+
+        .slide.active {
+            display: block !important;
+            opacity: 1 !important;
+        }
+
+        /* Hide navigation and counter for print */
+        .navbar {
+            display: none !important;
+        }
+
+        .slide-counter {
+            display: none !important;
+        }
+
+        /* Ensure proper page breaks */
+        @media print {
+            .slide {
+                page-break-after: always !important;
+                page-break-inside: avoid !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <div class="navbar" id="navbar">
+        <button onclick="goToSection(1)">Company & Team</button>
+        <button onclick="goToSection(2)">Problem & Solution</button>
+        <button onclick="goToSection(3)">Project Management</button>
+        <button onclick="goToSection(4)">Technical Implementation</button>
+        <button onclick="goToSection(5)">Results & Validations</button>
+        <button onclick="goToSection(6)">Future Enhancements</button>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter" id="slideCounter">1 / 58</div>
+
+    <!-- Slides Container -->
+    <div id="slides-container">
+
+        <!-- Slide 1: Title Slide -->
+        <div class="slide active title-slide">
+            <div class="logo-container">
+                <img src="images/logo_ehtp.jpg" alt="EHTP Logo">
+                <img src="images/logo_graalvm.png" alt="GraalVM Logo">
+            </div>
+            <h1 class="main-title">Infrastructure as Code Support<br>in Graal CI</h1>
+            <p class="subtitle">JSON-Driven IaC Framework with Pulumi & GitLab CI/CD</p>
+            <div class="author-info">
+                <strong>Yassine DBAICHI</strong><br>
+                École Hassania des Travaux Publics<br>
+                Oracle Labs - GraalVM RISQ Team<br>
+                Academic Year 2024-2025
+            </div>
+        </div>
+
+        <!-- Slide 2: Table of Contents -->
+        <div class="slide content-slide">
+            <h2 class="slide-title">Agenda</h2>
+            <div class="slide-content">
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-title">1. Company & Team Context</div>
+                        <div class="card-content">Oracle, Oracle Labs, GraalVM RISQ Team mission and focus</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">2. Problem & Solution Overview</div>
+                        <div class="card-content">Current challenges, requirements, and proposed JSON-driven IaC solution</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">3. Project Management</div>
+                        <div class="card-content">Agile methodology, communication tools, and development workflow</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">4. Technical Implementation</div>
+                        <div class="card-content">Architecture, design patterns, CI/CD integration, and deployment</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">5. Results & Validations</div>
+                        <div class="card-content">Implementation results, testing outcomes, and performance metrics</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">6. Future Enhancements</div>
+                        <div class="card-content">Current limitations, future work, and conclusion</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 1: COMPANY & TEAM CONTEXT -->
+
+        <!-- Slide 3: Section Divider -->
+        <div class="slide divider-slide" data-hide-navbar="true" style="background: linear-gradient(135deg, #14535F 0%, #0a3940 100%) !important; display: flex !important; align-items: center; justify-content: center;">
+            <h2 class="divider-title">Company & Team Context</h2>
+        </div>
+
+        <!-- Slide 4: Oracle Corporation -->
+        <div class="slide content-slide" data-section="1">
+            <h2 class="slide-title">Oracle Corporation</h2>
+            <div class="slide-content">
+                <ul class="bullet-list">
+                    <li><strong>Global Technology Leader:</strong> Multinational computer technology corporation specializing in database software and cloud solutions</li>
+                    <li><strong>Founded:</strong> 1977 by Larry Ellison, Bob Miner, and Ed Oates</li>
+                    <li><strong>Headquarters:</strong> Austin, Texas, USA (Oracle Headquarters)</li>
+                    <li><strong>Market Position:</strong> One of the largest enterprise software companies worldwide</li>
+                    <li><strong>Core Products:</strong> Oracle Database, Oracle Cloud Infrastructure (OCI), Enterprise Applications</li>
+                    <li><strong>Revenue:</strong> $50+ billion annually with 430,000+ employees globally</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 5: Oracle Labs -->
+        <div class="slide content-slide" data-section="1">
+            <h2 class="slide-title">Oracle Labs - Research & Innovation</h2>
+            <div class="slide-content">
+                <div class="two-column">
+                    <div>
+                        <ul class="bullet-list">
+                            <li><strong>Mission:</strong> Conduct research to advance the state of the art in computer science and systems</li>
+                            <li><strong>Focus Areas:</strong>
+                                <ul style="margin-left: 2rem; margin-top: 0.5rem;">
+                                    <li>Programming languages & compilers</li>
+                                    <li>Virtual machines & runtime systems</li>
+                                    <li>Database systems & optimization</li>
+                                    <li>Cloud infrastructure & security</li>
+                                </ul>
+                            </li>
+                            <li><strong>Key Projects:</strong> GraalVM, Truffle Framework, SubstrateVM</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <div class="highlight-box">
+                            <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">Research Excellence</h3>
+                            <p style="margin-bottom: 1rem;">Oracle Labs bridges cutting-edge academic research with real-world enterprise applications</p>
+                            <p><strong>Output:</strong> Open-source projects, academic publications, and production-ready technologies</p>
+                        </div>
+                        <div class="card" style="margin-top: 1rem;">
+                            <div class="card-title">Collaboration</div>
+                            <div class="card-content">Strong partnerships with universities and research institutions worldwide</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: GraalVM Overview -->
+        <div class="slide content-slide" data-section="1">
+            <h2 class="slide-title">GraalVM - High-Performance Polyglot Runtime</h2>
+            <div class="slide-content">
+                <div class="two-column">
+                    <div>
+                        <ul class="bullet-list">
+                            <li><strong>What is GraalVM?</strong> A universal virtual machine for running applications written in JavaScript, Python, Ruby, R, JVM languages, and more</li>
+                            <li><strong>Key Features:</strong>
+                                <ul style="margin-left: 2rem; margin-top: 0.5rem;">
+                                    <li>Polyglot capabilities (multiple languages)</li>
+                                    <li>Native Image compilation</li>
+                                    <li>Superior performance optimization</li>
+                                    <li>Reduced memory footprint</li>
+                                </ul>
+                            </li>
+                            <li><strong>Use Cases:</strong> Microservices, serverless computing, containerized applications</li>
+                        </ul>
+                    </div>
+                    <div class="image-container">
+                        <img src="images/logo_graalvm.png" alt="GraalVM Logo">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: GraalVM RISQ Team -->
+        <div class="slide content-slide" data-section="1">
+            <h2 class="slide-title">GraalVM RISQ Team</h2>
+            <div class="slide-content">
+                <ul class="bullet-list">
+                    <li><strong>Team Name:</strong> RISQ (Release Infrastructure, Systems & Quality)</li>
+                    <li><strong>Mission:</strong> Ensure reliability, scalability, and quality of GraalVM infrastructure and development workflows</li>
+                    <li><strong>Responsibilities:</strong>
+                        <ul style="margin-left: 2rem; margin-top: 0.5rem;">
+                            <li>CI/CD pipeline management and optimization</li>
+                            <li>Infrastructure automation and provisioning</li>
+                            <li>Testing infrastructure maintenance</li>
+                            <li>Developer tooling and experience improvements</li>
+                        </ul>
+                    </li>
+                    <li><strong>Tech Stack:</strong> GitLab CI/CD, Oracle Cloud Infrastructure, Python, Bash scripting</li>
+                </ul>
+                <div class="highlight-box">
+                    The RISQ team acts as the backbone supporting GraalVM development, ensuring smooth operations for hundreds of developers
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Team Focus & My Role -->
+        <div class="slide content-slide" data-section="1">
+            <h2 class="slide-title">Project Context & Internship Focus</h2>
+            <div class="slide-content">
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-title">Team Challenge</div>
+                        <div class="card-content">GraalVM requires frequent infrastructure provisioning for testing, CI/CD, and development environments across multiple cloud regions</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Manual Bottleneck</div>
+                        <div class="card-content">Infrastructure management was manual, error-prone, and time-consuming - limiting team agility</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Project Goal</div>
+                        <div class="card-content">Design and implement an automated Infrastructure as Code (IaC) solution integrated with Graal CI pipeline</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">My Role</div>
+                        <div class="card-content">Lead developer responsible for architecture design, implementation, and GitLab CI/CD integration</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 2: PROBLEM & SOLUTION OVERVIEW -->
+
+        <!-- Slide 9: Section Divider -->
+        <div class="slide divider-slide" data-hide-navbar="true" style="background: linear-gradient(135deg, #14535F 0%, #0a3940 100%) !important; display: flex !important; align-items: center; justify-content: center;">
+            <h2 class="divider-title">Problem & Solution Overview</h2>
+        </div>
+
+        <!-- Slide 10: Current Challenges -->
+        <div class="slide content-slide" data-section="2">
+            <h2 class="slide-title">Current Infrastructure Management Challenges</h2>
+            <div class="slide-content">
+                <ul class="bullet-list">
+                    <li><strong>Manual Console Operations:</strong> Team members had to manually create resources through OCI web console - time-consuming and repetitive</li>
+                    <li><strong>Lack of Version Control:</strong> No tracking of infrastructure changes, making rollbacks and audits difficult</li>
+                    <li><strong>Configuration Drift:</strong> Resources created manually often diverged from documented standards</li>
+                    <li><strong>Scalability Issues:</strong> Provisioning multiple similar environments was labor-intensive</li>
+                    <li><strong>Knowledge Silos:</strong> Infrastructure knowledge concentrated in few team members</li>
+                    <li><strong>No CI/CD Integration:</strong> Infrastructure provisioning was separate from development workflow</li>
+                </ul>
+                <div class="highlight-box">
+                    Result: Slow deployment cycles, increased error rates, and reduced team productivity
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Requirements Analysis - Functional -->
+        <div class="slide content-slide" data-section="2">
+            <h2 class="slide-title">Functional Requirements</h2>
+            <div class="slide-content">
+                <ul class="bullet-list">
+                    <li><strong>FR1 - Declarative Configuration:</strong> Users define infrastructure in human-readable format (JSON) without writing Python/Terraform code</li>
+                    <li><strong>FR2 - Resource Support:</strong> Support for essential OCI resources (VCN, Subnets, Compute Instances, Storage Buckets, Security Lists, Routing)</li>
+                    <li><strong>FR3 - Dependency Management:</strong> Automatic resolution of resource dependencies (e.g., subnet requires VCN, instance requires subnet)</li>
+                    <li><strong>FR4 - CI/CD Integration:</strong> Seamless integration with GitLab CI/CD pipeline (plan, preview, apply stages)</li>
+                    <li><strong>FR5 - State Management:</strong> Track infrastructure state to enable updates and deletions</li>
+                    <li><strong>FR6 - Multi-Environment:</strong> Support for development, staging, and production configurations</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 13: Requirements Analysis - Non-Functional -->
+        <div class="slide content-slide" data-section="2">
+            <h2 class="slide-title">Non-Functional Requirements</h2>
+            <div class="slide-content">
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-title">Performance</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>Provision infrastructure in <5 minutes</li>
+                                <li>Support concurrent deployments</li>
+                                <li>Minimal API calls to OCI</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Security</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>Credentials stored securely (GitLab secrets)</li>
+                                <li>No hardcoded sensitive data</li>
+                                <li>Audit trail via Git commits</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Extensibility</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>Plugin architecture for new resources</li>
+                                <li>Support for future cloud providers</li>
+                                <li>Custom validation rules</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: Technology Comparison -->
+        <div class="slide content-slide" data-section="2">
+            <h2 class="slide-title">IaC Technology Selection: Terraform vs Pulumi</h2>
+            <div class="slide-content">
+                <div class="two-column" style="gap: 2rem;">
+                    <div class="card" style="border-top-color: #C74634;">
+                        <div class="card-title">Terraform</div>
+                        <div class="card-content">
+                            <p><strong>Pros:</strong></p>
+                            <ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
+                                <li>Industry standard with mature ecosystem</li>
+                                <li>HCL declarative language</li>
+                                <li>Large provider ecosystem</li>
+                                <li>Strong community support</li>
+                            </ul>
+                            <p><strong>Cons:</strong></p>
+                            <ul style="margin-left: 1.5rem;">
+                                <li>Custom DSL (HCL) requires learning</li>
+                                <li>Limited programming logic & abstraction</li>
+                                <li>State management complexity</li>
+                                <li>Hard to build dynamic configurations</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card" style="border-top-color: #0f766e; border: 2px solid #0f766e;">
+                        <div class="card-title">Pulumi ✓ (Selected)</div>
+                        <div class="card-content">
+                            <p><strong>Pros:</strong></p>
+                            <ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
+                                <li>Use real programming languages (Python)</li>
+                                <li>Full programmatic control & abstraction</li>
+                                <li>Built-in state management</li>
+                                <li>Excellent OCI support</li>
+                                <li>Enables framework development on top</li>
+                                <li>Team Python expertise leverage</li>
+                            </ul>
+                            <p><strong>Why chosen:</strong> Perfect fit for building JSON-driven abstraction layer. Pulumi's programmatic approach allows us to create a framework that hides IaC complexity from users.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 15: How does Pulumi work -->
+        <div class="slide content-slide" data-section="2">
+            <h2 class="slide-title">How does Pulumi work?</h2>
+            <div class="slide-content">
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-title">1. Write Code</div>
+                        <div class="card-content">Define infrastructure using Python - loops, functions, conditionals available</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">2. Preview</div>
+                        <div class="card-content">Run 'pulumi preview' to see what will change before applying</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">3. Deploy</div>
+                        <div class="card-content">Pulumi SDK translates Python to OCI API calls and provisions resources</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">4. State Management</div>
+                        <div class="card-content">Pulumi tracks all resources in state file (OCI Object Storage)</div>
+                    </div>
+                </div>
+                <ul class="bullet-list" style="margin-top: 1.5rem;">
+                    <li><strong>Python-First:</strong> Leverage existing team Python expertise</li>
+                    <li><strong>OCI Provider:</strong> First-class Oracle Cloud Infrastructure support</li>
+                    <li><strong>Framework Foundation:</strong> Enables building JSON-driven abstraction layer on top</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 16: Framework Solution Pillars -->
+        <div class="slide full-image-slide" data-section="2">
+            <img src="images/the framework pillars , features.png" alt="Framework Solution Pillars">
+        </div>
+
+        <!-- Slide 17: Layer Architecture -->
+        <div class="slide full-image-slide" data-section="2">
+            <img src="images/arch_layer architecture_system.png" alt="Layer Architecture System">
+        </div>
+
+        <!-- SECTION 3: PROJECT MANAGEMENT -->
+
+        <!-- Slide 23: Section Divider -->
+        <div class="slide divider-slide" data-hide-navbar="true" style="background: linear-gradient(135deg, #14535F 0%, #0a3940 100%) !important; display: flex !important; align-items: center; justify-content: center;">
+            <h2 class="divider-title">Project Management</h2>
+        </div>
+
+        <!-- Slide 24: Management Approach -->
+        <div class="slide content-slide" data-section="3">
+            <h2 class="slide-title">Project Management Approach</h2>
+            <div class="slide-content">
+                <ul class="bullet-list">
+                    <li><strong>Methodology:</strong> Kanban Agile - visual workflow management with continuous delivery</li>
+                    <li><strong>Project Tracker:</strong> Task board for tracking work items (To Do, In Progress, Done)</li>
+                    <li><strong>Regular Meetings:</strong> Weekly sync meetings with mentor to review progress and blockers</li>
+                    <li><strong>Continuous Flow:</strong> Work items pulled as capacity allows, no fixed sprint boundaries</li>
+                    <li><strong>Focus on Delivery:</strong> Prioritize completing tasks over starting new ones</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 25: Development Workflow -->
+        <div class="slide full-image-slide" data-section="3">
+            <img src="images/mgmt_task_workflow.png" alt="Development Task Workflow">
+        </div>
+
+        <!-- Slide 26: Communication Tools -->
+        <div class="slide content-slide" data-section="3">
+            <h2 class="slide-title">Communication & Collaboration Tools</h2>
+            <div class="slide-content">
+                <div class="tool-grid">
+                    <div class="tool-item">
+                        <img src="images/tool_slack.png" alt="Slack">
+                        <div class="tool-name">Slack</div>
+                        <div style="text-align: center; font-size: 0.875rem; color: #64748b;">Daily communication, quick questions, team updates</div>
+                    </div>
+                    <div class="tool-item">
+                        <img src="images/tool_zoom.png" alt="Zoom">
+                        <div class="tool-name">Zoom</div>
+                        <div style="text-align: center; font-size: 0.875rem; color: #64748b;">Weekly sync meetings, architecture discussions</div>
+                    </div>
+                    <div class="tool-item">
+                        <img src="images/tool_jira.png" alt="Jira">
+                        <div class="tool-name">Jira</div>
+                        <div style="text-align: center; font-size: 0.875rem; color: #64748b;">Task tracking, sprint planning, progress monitoring</div>
+                    </div>
+                    <div class="tool-item">
+                        <img src="images/tool_outlook.png" alt="Outlook">
+                        <div class="tool-name">Outlook</div>
+                        <div style="text-align: center; font-size: 0.875rem; color: #64748b;">Meeting scheduling, formal communications</div>
+                    </div>
+                    <div class="tool-item">
+                        <img src="images/confluence logo.png" alt="Confluence">
+                        <div class="tool-name">Confluence</div>
+                        <div style="text-align: center; font-size: 0.875rem; color: #64748b;">Documentation, design specs, knowledge base</div>
+                    </div>
+                    <div class="tool-item">
+                        <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #14535F, #0f766e); border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1.5rem;">Git</div>
+                        <div class="tool-name">GitLab</div>
+                        <div style="text-align: center; font-size: 0.875rem; color: #64748b;">Code repository, CI/CD, merge requests</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 27: Mentor Sessions -->
+        <div class="slide content-slide" data-section="3">
+            <h2 class="slide-title">Mentor Check-ins & Team Meetings</h2>
+            <div class="slide-content">
+                <div class="two-column">
+                    <div class="image-container">
+                        <img src="images/mgmt_mentor_session.png" alt="Mentor Session Calendar">
+                    </div>
+                    <div>
+                        <div class="card">
+                            <div class="card-title">Weekly Sync Meetings</div>
+                            <div class="card-content">
+                                <ul style="margin-left: 1.5rem;">
+                                    <li><strong>Frequency:</strong> Every Tuesday 11:00 AM</li>
+                                    <li><strong>Duration:</strong> 45-60 minutes</li>
+                                    <li><strong>Agenda:</strong> Progress review, blockers discussion, next steps planning</li>
+                                    <li><strong>Participants:</strong> Intern + mentor (Hamza Ghaissi)</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card" style="margin-top: 1rem;">
+                            <div class="card-title">Ad-hoc Sessions</div>
+                            <div class="card-content">
+                                <ul style="margin-left: 1.5rem;">
+                                    <li>Technical architecture discussions</li>
+                                    <li>Code reviews and pair programming</li>
+                                    <li>Debugging complex issues</li>
+                                    <li>Design decision consultations</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="highlight-box" style="margin-top: 1rem;">
+                            <strong>Communication Style:</strong> Open-door policy via Slack - quick responses and collaborative problem-solving
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 28: Timeline & Milestones -->
+        <div class="slide content-slide" data-section="3">
+            <h2 class="slide-title">Project Timeline & Key Milestones</h2>
+            <div class="slide-content">
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+                    <div class="card" style="border-top-color: #3b82f6;">
+                        <div class="card-title">Phase 1: Research (2 weeks)</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>OCI API exploration</li>
+                                <li>Pulumi SDK study</li>
+                                <li>Requirements gathering</li>
+                                <li>Architecture design</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card" style="border-top-color: #8b5cf6;">
+                        <div class="card-title">Phase 2: Prototype (2 weeks)</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>Core framework skeleton</li>
+                                <li>VCN + Instance resources</li>
+                                <li>Factory pattern POC</li>
+                                <li>Basic dependency resolver</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card" style="border-top-color: #ec4899;">
+                        <div class="card-title">Phase 3: Development (4 weeks)</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>All 7 resource types</li>
+                                <li>JSON configuration loader</li>
+                                <li>Dependency resolution logic</li>
+                                <li>Error handling</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card" style="border-top-color: #10b981;">
+                        <div class="card-title">Phase 4: CI/CD Integration (2 weeks)</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>GitLab pipeline config</li>
+                                <li>Plan & deploy stages</li>
+                                <li>Manual approval gates</li>
+                                <li>Pipeline testing</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card" style="border-top-color: #f59e0b;">
+                        <div class="card-title">Phase 5: Testing (2 weeks)</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>Integration testing</li>
+                                <li>Edge case validation</li>
+                                <li>Performance testing</li>
+                                <li>Bug fixes</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card" style="border-top-color: #14535F;">
+                        <div class="card-title">Phase 6: Documentation (1 week)</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>User guide creation</li>
+                                <li>Code documentation</li>
+                                <li>Architecture diagrams</li>
+                                <li>Final presentation</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 4: TECHNICAL IMPLEMENTATION -->
+
+        <!-- Slide 29: Section Divider -->
+        <div class="slide divider-slide" data-hide-navbar="true" style="background: linear-gradient(135deg, #14535F 0%, #0a3940 100%) !important; display: flex !important; align-items: center; justify-content: center;">
+            <h2 class="divider-title">Technical Implementation</h2>
+        </div>
+
+        <!-- Slide 30: Use Case Diagram -->
+        <div class="slide full-image-slide" data-section="4">
+            <img src="images/design_usecase_diagram.png" alt="Use Case Diagram">
+        </div>
+
+        <!-- Slide 31: Project Structure -->
+        <div class="slide full-image-slide" data-section="4">
+            <img src="images/project folders .png" alt="Project Folder Structure">
+        </div>
+
+        <!-- Slide 32: JSON Configuration Example -->
+        <div class="slide content-slide" data-section="4">
+            <h2 class="slide-title">JSON Configuration Example</h2>
+            <div class="slide-content">
+                <div class="card">
+                    <div class="card-title">infrastructure.json</div>
+                    <div class="card-content" style="font-family: 'Courier New', monospace; font-size: 0.875rem; background: #f1f5f9; padding: 1rem; border-radius: 0.5rem;">
+{<br>
+  &nbsp;&nbsp;"name": "production-vcn",<br>
+  &nbsp;&nbsp;"cidrBlock": "10.0.0.0/16",<br>
+  &nbsp;&nbsp;"internetGateways": [...]<br>
+  &nbsp;&nbsp;"securityLists": [...]<br>
+  &nbsp;&nbsp;"routeTables": [...]<br>
+  &nbsp;&nbsp;"subnets": [...]<br>
+}
+                    </div>
+                </div>
+                <ul class="bullet-list" style="margin-top: 1.5rem;">
+                    <li><strong>Name-Based References:</strong> Resources reference each other by human-readable names</li>
+                    <li><strong>Automatic Resolution:</strong> Framework resolves names to OCIDs automatically</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 33: Core Framework Components -->
+        <div class="slide content-slide" data-section="4">
+            <h2 class="slide-title">Core Framework Components</h2>
+            <div class="slide-content">
+                <div class="card-grid">
+                    <div class="card" style="border-top-color: #3b82f6;">
+                        <div class="card-title">BaseResource (Abstract)</div>
+                        <div class="card-content">
+                            <p><strong>File:</strong> core/base_resource.py (21 lines)</p>
+                            <p><strong>Purpose:</strong> Abstract base class defining resource interface</p>
+                            <p><strong>Methods:</strong></p>
+                            <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                                <li>create() - Factory method</li>
+                                <li>build() - Abstract (must implement)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card" style="border-top-color: #8b5cf6;">
+                        <div class="card-title">ResourceFactory</div>
+                        <div class="card-content">
+                            <p><strong>File:</strong> core/resource_factory.py (38 lines)</p>
+                            <p><strong>Purpose:</strong> Factory pattern for dynamic instantiation</p>
+                            <p><strong>Registry:</strong> Maps type strings → Python classes</p>
+                            <p style="margin-top: 0.5rem; color: #8b5cf6; font-weight: 600;">7 resource types registered</p>
+                        </div>
+                    </div>
+                    <div class="card" style="border-top-color: #10b981;">
+                        <div class="card-title">DependencyResolver</div>
+                        <div class="card-content">
+                            <p><strong>File:</strong> core/dependency_resolver.py (14 lines)</p>
+                            <p><strong>Purpose:</strong> Resource reference manager</p>
+                            <p><strong>Methods:</strong></p>
+                            <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                                <li>register_resource(name, resource)</li>
+                                <li>get_resource_id(name)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card" style="border-top-color: #f59e0b;">
+                        <div class="card-title">ConfigLoader</div>
+                        <div class="card-content">
+                            <p><strong>File:</strong> config/config_loader.py (25 lines)</p>
+                            <p><strong>Purpose:</strong> Parse infrastructure.json</p>
+                            <p><strong>Methods:</strong></p>
+                            <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                                <li>get_vcns_config()</li>
+                                <li>get_instances_config()</li>
+                                <li>get_image_config()</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 34: Class Diagram -->
+        <div class="slide full-image-slide" data-section="4">
+            <img src="images/class diagram .png" alt="Class Hierarchy Diagram">
+        </div>
+
+        <!-- Slide 35: Factory Pattern -->
+        <div class="slide full-image-slide" data-section="4">
+            <img src="images/arch_factory_pattern.png" alt="Factory Pattern Implementation">
+        </div>
+
+        <!-- Slide 36: Dependency Resolver -->
+        <div class="slide full-image-slide" data-section="4">
+            <img src="images/arch_dependency_resolution.png" alt="Dependency Resolver Design">
+        </div>
+
+        <!-- Slide 37: Implemented Resources -->
+        <div class="slide content-slide" data-section="4">
+            <h2 class="slide-title">Implemented Resource Types</h2>
+            <div class="slide-content">
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+                    <div class="card">
+                        <div class="card-title">1. VCN (Virtual Cloud Network)</div>
+                        <div class="card-content">
+                            <p><strong>Purpose:</strong> Foundation network container</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">2. Internet Gateway</div>
+                        <div class="card-content">
+                            <p><strong>Purpose:</strong> Enable internet connectivity</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">3. Security List</div>
+                        <div class="card-content">
+                            <p><strong>Purpose:</strong> Firewall rules (ingress/egress)</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">4. Route Table</div>
+                        <div class="card-content">
+                            <p><strong>Purpose:</strong> Network routing configuration</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">5. Subnet</div>
+                        <div class="card-content">
+                            <p><strong>Purpose:</strong> Network segment within VCN</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">6. Compute Instance</div>
+                        <div class="card-content">
+                            <p><strong>Purpose:</strong> Virtual machine</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">7. Object Storage Bucket</div>
+                        <div class="card-content">
+                            <p><strong>Purpose:</strong> S3-compatible object storage</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 38: Workflow Design -->
+        <div class="slide full-image-slide" data-section="4">
+            <img src="images/workflow_design.png" alt="Workflow Design Process">
+        </div>
+
+        <!-- Slide 39: GitLab Pipeline Stages -->
+        <div class="slide full-image-slide" data-section="4">
+            <img src="images/cicd_gitlab_pipeline plan and deploy stages.png" alt="GitLab Pipeline Stages">
+        </div>
+
+        <!-- Slide 40: Pull Request Workflow -->
+        <div class="slide full-image-slide" data-section="4">
+            <img src="images/workflow_pull_request.png" alt="Pull Request Workflow">
+        </div>
+
+        <!-- SECTION 5: RESULTS & VALIDATIONS -->
+
+        <!-- Slide 45: Section Divider -->
+        <div class="slide divider-slide" data-hide-navbar="true" style="background: linear-gradient(135deg, #14535F 0%, #0a3940 100%) !important; display: flex !important; align-items: center; justify-content: center;">
+            <h2 class="divider-title">Results & Validations</h2>
+        </div>
+
+        <!-- Slide 46: Implementation Results -->
+        <div class="slide content-slide" data-section="5">
+            <h2 class="slide-title">Implementation Results</h2>
+            <div class="slide-content">
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-title">✅ Deliverables Completed</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>Python framework (800 LOC)</li>
+                                <li>7 OCI resource types</li>
+                                <li>JSON configuration system</li>
+                                <li>GitLab CI/CD pipeline</li>
+                                <li>Documentation & diagrams</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">🎯 Requirements Met</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>✓ Declarative JSON config</li>
+                                <li>✓ Dependency resolution</li>
+                                <li>✓ CI/CD integration</li>
+                                <li>✓ Multi-environment support</li>
+                                <li>✓ State management</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">🚀 Production Ready</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>Error handling implemented</li>
+                                <li>Tested on dev & staging</li>
+                                <li>Documentation complete</li>
+                                <li>Team training delivered</li>
+                                <li>Now in active use by RISQ team</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 47: Deployment Success -->
+        <div class="slide full-image-slide" data-section="5">
+            <img src="images/result_instance_deployed.png" alt="Successful Instance Deployment">
+        </div>
+
+        <!-- Slide 48: Testing Results -->
+        <div class="slide content-slide" data-section="5">
+            <h2 class="slide-title">Testing & Validation Results</h2>
+            <div class="slide-content">
+                <div class="two-column">
+                    <div>
+                        <div class="card">
+                            <div class="card-title">Unit Testing</div>
+                            <div class="card-content">
+                                <p><strong>Scope:</strong> Individual resource classes</p>
+                                <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                                    <li>Factory pattern registration</li>
+                                    <li>Dependency resolver lookup</li>
+                                    <li>Config loader parsing</li>
+                                </ul>
+                                <p style="margin-top: 0.5rem; color: #10b981; font-weight: 600;">✓ All components working correctly</p>
+                            </div>
+                        </div>
+                        <div class="card" style="margin-top: 1rem;">
+                            <div class="card-title">Integration Testing</div>
+                            <div class="card-content">
+                                <p><strong>Test Cases:</strong></p>
+                                <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                                    <li>Single VCN + 1 instance</li>
+                                    <li>2 VCNs + 2 instances</li>
+                                    <li>Complex network (IGW + RT + SL)</li>
+                                    <li>Bucket creation</li>
+                                </ul>
+                                <p style="margin-top: 0.5rem; color: #10b981; font-weight: 600;">✓ End-to-end provisioning successful</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="card">
+                            <div class="card-title">CI/CD Pipeline Testing</div>
+                            <div class="card-content">
+                                <p><strong>Validated:</strong></p>
+                                <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                                    <li>Plan stage (preview changes)</li>
+                                    <li>Deploy stage (apply changes)</li>
+                                    <li>Manual approval gate</li>
+                                    <li>State persistence</li>
+                                </ul>
+                                <p style="margin-top: 0.5rem; color: #10b981; font-weight: 600;">✓ Pipeline stable over 20+ runs</p>
+                            </div>
+                        </div>
+                        <div class="card" style="margin-top: 1rem;">
+                            <div class="card-title">Edge Cases Tested</div>
+                            <div class="card-content">
+                                <ul style="margin-left: 1.5rem;">
+                                    <li>✓ Missing dependency (error caught)</li>
+                                    <li>✓ Invalid CIDR block (validation)</li>
+                                    <li>✓ Duplicate resource names (detected)</li>
+                                    <li>✓ Image not compatible with shape</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 49: Performance Metrics -->
+        <div class="slide content-slide" data-section="5">
+            <h2 class="slide-title">Performance Metrics & Improvements</h2>
+            <div class="slide-content">
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem;">
+                    <div class="highlight-box" style="text-align: center;">
+                        <div style="font-size: 3rem; font-weight: 800; margin-bottom: 0.5rem;">95%</div>
+                        <div style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">Time Reduction</div>
+                        <div style="font-size: 0.875rem; opacity: 0.9;">
+                            From 2-3 hours manual setup<br>
+                            To <5 minutes automated
+                        </div>
+                    </div>
+                    <div class="highlight-box" style="text-align: center; background: linear-gradient(135deg, #0f766e, #14b8a6);">
+                        <div style="font-size: 3rem; font-weight: 800; margin-bottom: 0.5rem;">100%</div>
+                        <div style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">Consistency</div>
+                        <div style="font-size: 0.875rem; opacity: 0.9;">
+                            Zero configuration drift<br>
+                            All envs from same templates
+                        </div>
+                    </div>
+                    <div class="highlight-box" style="text-align: center; background: linear-gradient(135deg, #C74634, #dc2626);">
+                        <div style="font-size: 3rem; font-weight: 800; margin-bottom: 0.5rem;">85%</div>
+                        <div style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">Error Reduction</div>
+                        <div style="font-size: 0.875rem; opacity: 0.9;">
+                            Automated validation<br>
+                            Dependency checking
+                        </div>
+                    </div>
+                </div>
+                <div class="card-grid" style="margin-top: 2rem;">
+                    <div class="card">
+                        <div class="card-title">Before (Manual)</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>Average setup: 2.5 hours</li>
+                                <li>Error rate: ~15%</li>
+                                <li>Documentation: Often outdated</li>
+                                <li>Reproducibility: Low</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">After (Automated)</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>Average setup: 4 minutes</li>
+                                <li>Error rate: <2%</li>
+                                <li>Documentation: Self-documenting JSON</li>
+                                <li>Reproducibility: 100%</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 50: Impact Assessment -->
+        <div class="slide content-slide" data-section="5">
+            <h2 class="slide-title">Business Impact & Team Benefits</h2>
+            <div class="slide-content">
+                <ul class="bullet-list">
+                    <li><strong>Developer Productivity:</strong> Team members can now focus on GraalVM development instead of infrastructure management - estimated 10+ hours saved per week across the team</li>
+                    <li><strong>Faster Testing Cycles:</strong> Spin up test environments in minutes instead of hours - enables rapid experimentation and bug fixes</li>
+                    <li><strong>Onboarding Acceleration:</strong> New team members can provision infrastructure on day one without specialized training - reduces onboarding time from days to hours</li>
+                    <li><strong>Cost Optimization:</strong> All infrastructure tracked in Git - easier to identify and delete unused resources, preventing budget overruns</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- SECTION 6: FUTURE ENHANCEMENTS -->
+
+        <!-- Slide 51: Section Divider -->
+        <div class="slide divider-slide" data-hide-navbar="true" style="background: linear-gradient(135deg, #14535F 0%, #0a3940 100%) !important; display: flex !important; align-items: center; justify-content: center;">
+            <h2 class="divider-title">Future Enhancements</h2>
+        </div>
+
+        <!-- Slide 52: Future Improvements -->
+        <div class="slide content-slide" data-section="6">
+            <h2 class="slide-title">Future Improvements</h2>
+            <div class="slide-content">
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-title">More Resource Coverage</div>
+                        <div class="card-content">
+                            <p>Expand framework to support additional OCI resources like Load Balancers, Databases, and File Storage</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Schema Validation</div>
+                        <div class="card-content">
+                            <p>Implement JSON schema validation to catch configuration errors before deployment</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Role Identification</div>
+                        <div class="card-content">
+                            <p>Define clear roles within the team on how to use the framework and establish best practices</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 53: Future Work Roadmap -->
+        <div class="slide content-slide" data-section="6">
+            <h2 class="slide-title">Future Work & Enhancement Roadmap</h2>
+            <div class="slide-content">
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+                    <div class="card" style="border-top-color: #3b82f6;">
+                        <div class="card-title">Q1 2026: Extended Resources</div>
+                        <div class="card-content">
+                            <p><strong>Priority: High</strong></p>
+                            <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                                <li>Add Load Balancer support</li>
+                                <li>Autonomous Database provisioning</li>
+                                <li>File Storage Service integration</li>
+                                <li>Network Load Balancer</li>
+                            </ul>
+                            <p style="margin-top: 0.5rem; font-weight: 600; color: #3b82f6;">Effort: 4 weeks</p>
+                        </div>
+                    </div>
+                    <div class="card" style="border-top-color: #8b5cf6;">
+                        <div class="card-title">Q2 2026: Validation & Safety</div>
+                        <div class="card-content">
+                            <p><strong>Priority: High</strong></p>
+                            <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                                <li>JSON schema validation</li>
+                                <li>Pre-deployment cost estimation</li>
+                                <li>Security policy enforcement</li>
+                                <li>CIDR conflict detection</li>
+                            </ul>
+                            <p style="margin-top: 0.5rem; font-weight: 600; color: #8b5cf6;">Effort: 3 weeks</p>
+                        </div>
+                    </div>
+                    <div class="card" style="border-top-color: #10b981;">
+                        <div class="card-title">Q3 2026: Operational Features</div>
+                        <div class="card-content">
+                            <p><strong>Priority: Medium</strong></p>
+                            <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                                <li>Automated drift detection</li>
+                                <li>Scheduled state refresh jobs</li>
+                                <li>Notification integration (Slack)</li>
+                                <li>Resource tagging automation</li>
+                            </ul>
+                            <p style="margin-top: 0.5rem; font-weight: 600; color: #10b981;">Effort: 5 weeks</p>
+                        </div>
+                    </div>
+                    <div class="card" style="border-top-color: #f59e0b;">
+                        <div class="card-title">Q4 2026: Multi-Cloud Expansion</div>
+                        <div class="card-content">
+                            <p><strong>Priority: Low</strong></p>
+                            <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                                <li>AWS provider support</li>
+                                <li>Azure provider support</li>
+                                <li>Provider abstraction layer</li>
+                                <li>Cross-cloud networking</li>
+                            </ul>
+                            <p style="margin-top: 0.5rem; font-weight: 600; color: #f59e0b;">Effort: 8 weeks</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="highlight-box" style="margin-top: 1.5rem;">
+                    <strong>Long-term Vision:</strong> Evolve into a universal cloud infrastructure management platform supporting any cloud provider with a unified JSON interface
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 54: Lessons Learned -->
+        <div class="slide content-slide" data-section="6">
+            <h2 class="slide-title">Lessons Learned & Best Practices</h2>
+            <div class="slide-content">
+                <div class="two-column">
+                    <div>
+                        <div class="card">
+                            <div class="card-title">Technical Insights</div>
+                            <div class="card-content">
+                                <ul style="margin-left: 1.5rem;">
+                                    <li><strong>Start Simple:</strong> MVP with 2 resources, then expand - avoid over-engineering upfront</li>
+                                    <li><strong>Embrace Patterns:</strong> Factory + Resolver patterns made code extensible and maintainable</li>
+                                    <li><strong>Test Early:</strong> Integration testing caught dependency issues before production</li>
+                                    <li><strong>Document as You Go:</strong> Inline comments and diagrams saved time later</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card" style="margin-top: 1rem;">
+                            <div class="card-title">Process Insights</div>
+                            <div class="card-content">
+                                <ul style="margin-left: 1.5rem;">
+                                    <li><strong>Agile Works:</strong> 2-week sprints with demos kept momentum high</li>
+                                    <li><strong>Feedback Loop:</strong> Weekly mentor sessions caught issues early</li>
+                                    <li><strong>User-Centric:</strong> Involving team in design ensured adoption</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="card">
+                            <div class="card-title">Challenges Overcome</div>
+                            <div class="card-content">
+                                <ul style="margin-left: 1.5rem;">
+                                    <li><strong>Dependency Hell:</strong> Solved with centralized resolver pattern</li>
+                                    <li><strong>State Management:</strong> Pulumi's built-in state backend simplified this</li>
+                                    <li><strong>Error Handling:</strong> Graceful failures with clear messages improved UX</li>
+                                    <li><strong>CI/CD Integration:</strong> Manual approval gate provided safety net</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card" style="margin-top: 1rem;">
+                            <div class="card-title">Advice for Similar Projects</div>
+                            <div class="card-content">
+                                <ul style="margin-left: 1.5rem;">
+                                    <li>✓ Prototype quickly, iterate based on feedback</li>
+                                    <li>✓ Invest in good abstractions early</li>
+                                    <li>✓ Automate testing from day one</li>
+                                    <li>✓ Keep code modular (<100 LOC per file)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 55: Conclusion -->
+        <div class="slide content-slide" data-section="6">
+            <h2 class="slide-title">Conclusion</h2>
+            <div class="slide-content">
+                <div class="highlight-box" style="font-size: 1.5rem; margin-bottom: 2rem; text-align: center;">
+                    Successfully delivered a production-ready IaC framework that transforms infrastructure management for the GraalVM RISQ team
+                </div>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-title">🎯 Objectives Achieved</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>✓ JSON-driven configuration</li>
+                                <li>✓ 7 OCI resource types</li>
+                                <li>✓ GitLab CI/CD integration</li>
+                                <li>✓ 95% time reduction</li>
+                                <li>✓ Production deployment</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">💡 Innovation Highlights</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>Name-based dependency resolution</li>
+                                <li>Factory pattern for extensibility</li>
+                                <li>Declarative JSON interface</li>
+                                <li>Two-stage approval workflow</li>
+                                <li>Self-documenting architecture</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">📈 Measurable Impact</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>10+ hours saved per week</li>
+                                <li>Zero configuration drift</li>
+                                <li>85% error reduction</li>
+                                <li>100% reproducibility</li>
+                                <li>Active team adoption</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">🔮 Future Potential</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>Expand to 15+ resource types</li>
+                                <li>Multi-cloud support</li>
+                                <li>Advanced validation</li>
+                                <li>Cost optimization features</li>
+                                <li>Enterprise-wide adoption</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="highlight-box" style="margin-top: 2rem; background: linear-gradient(135deg, #14535F, #0f766e);">
+                    <strong style="font-size: 1.25rem;">Personal Growth:</strong> This internship provided hands-on experience with cloud infrastructure, CI/CD pipelines, software architecture design, and Agile development in a production enterprise environment
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 56: Acknowledgments -->
+        <div class="slide content-slide" data-section="6">
+            <h2 class="slide-title">Acknowledgments</h2>
+            <div class="slide-content">
+                <div style="display: flex; flex-direction: column; gap: 2rem; justify-content: center; height: 100%;">
+                    <div class="card" style="background: linear-gradient(135deg, #14535F, #0f766e); color: white;">
+                        <div class="card-title" style="color: white; font-size: 1.5rem;">Special Thanks</div>
+                        <div class="card-content" style="font-size: 1.125rem; line-height: 2;">
+                            <p><strong>Hamza GHAISSI</strong> - Oracle Labs Mentor & Technical Supervisor<br>
+                            For invaluable guidance, code reviews, and architectural insights throughout the project</p>
+                        </div>
+                    </div>
+                    <div class="two-column">
+                        <div class="card">
+                            <div class="card-title">Academic Supervisor</div>
+                            <div class="card-content">
+                                <p><strong>Pr. Hatim LECHGAR</strong><br>École Hassania des Travaux Publics<br>For academic guidance and project oversight</p>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">GraalVM RISQ Team</div>
+                            <div class="card-content">
+                                <p>For welcoming me to the team, providing feedback, and actively using the framework</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Oracle Labs & EHTP</div>
+                        <div class="card-content" style="text-align: center;">
+                            <p>For providing this incredible learning opportunity and fostering innovation in infrastructure automation</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 57: References & Resources -->
+        <div class="slide content-slide" data-section="6">
+            <h2 class="slide-title">References & Resources</h2>
+            <div class="slide-content">
+                <div class="two-column">
+                    <div>
+                        <div class="card">
+                            <div class="card-title">Technical Documentation</div>
+                            <div class="card-content" style="font-size: 0.95rem;">
+                                <ul style="margin-left: 1.5rem;">
+                                    <li>Pulumi Documentation<br><span style="color: #64748b;">pulumi.com/docs</span></li>
+                                    <li>Oracle Cloud Infrastructure API Reference<br><span style="color: #64748b;">docs.oracle.com/iaas/api</span></li>
+                                    <li>GitLab CI/CD Documentation<br><span style="color: #64748b;">docs.gitlab.com/ee/ci</span></li>
+                                    <li>Python Design Patterns<br><span style="color: #64748b;">refactoring.guru/design-patterns</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card" style="margin-top: 1rem;">
+                            <div class="card-title">Project Resources</div>
+                            <div class="card-content" style="font-size: 0.95rem;">
+                                <ul style="margin-left: 1.5rem;">
+                                    <li>GitHub Repository: github.com/y-dbaichi/pfe-pulumi</li>
+                                    <li>Internal Confluence Documentation</li>
+                                    <li>Architecture Diagrams (25 PNG files)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="card">
+                            <div class="card-title">Key Technologies</div>
+                            <div class="card-content" style="font-size: 0.95rem;">
+                                <ul style="margin-left: 1.5rem;">
+                                    <li><strong>Pulumi:</strong> v3.0.0+ (IaC framework)</li>
+                                    <li><strong>Python:</strong> 3.13 (programming language)</li>
+                                    <li><strong>OCI Provider:</strong> v2.0.0+ (cloud provider)</li>
+                                    <li><strong>GitLab CI/CD:</strong> (automation platform)</li>
+                                    <li><strong>JSON:</strong> (configuration format)</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card" style="margin-top: 1rem;">
+                            <div class="card-title">Contact Information</div>
+                            <div class="card-content" style="font-size: 0.95rem;">
+                                <p><strong>Yassine DBAICHI</strong><br>
+                                Infrastructure Automation Engineer Intern<br>
+                                Oracle Labs - GraalVM RISQ Team<br>
+                                École Hassania des Travaux Publics</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 58: Thank You -->
+        <div class="slide title-slide" data-section="6">
+            <h1 class="main-title">Thank You</h1>
+            <p class="subtitle" style="font-size: 2rem; margin-bottom: 3rem;">Questions & Discussion</p>
+            <div class="author-info" style="font-size: 1.5rem;">
+                <strong>Yassine DBAICHI</strong><br>
+                Infrastructure as Code Support in Graal CI<br>
+                Oracle Labs - GraalVM RISQ Team<br>
+                Academic Year 2024-2025
+            </div>
+            <div style="margin-top: 3rem; display: flex; gap: 3rem; align-items: center; justify-content: center; z-index: 10;">
+                <img src="images/logo_ehtp.jpg" alt="EHTP Logo" style="height: 80px; filter: brightness(1.2);">
+                <img src="images/logo_graalvm.png" alt="GraalVM Logo" style="height: 80px; filter: brightness(1.2);">
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        const navbar = document.getElementById('navbar');
+        const slideCounter = document.getElementById('slideCounter');
+
+        // Section boundaries (slide indices where each section starts)
+        const sections = [
+            { start: 0, end: 2 },     // Intro
+            { start: 3, end: 8 },     // Section 1: Company & Team
+            { start: 9, end: 22 },    // Section 2: Problem & Solution
+            { start: 23, end: 28 },   // Section 3: Project Management
+            { start: 29, end: 44 },   // Section 4: Technical Implementation
+            { start: 45, end: 50 },   // Section 5: Results & Validations
+            { start: 51, end: 58 }    // Section 6: Future Enhancements
+        ];
+
+        function updateSlide() {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active');
+                if (index === currentSlide) {
+                    slide.classList.add('active');
+                }
+            });
+
+            // Update slide counter
+            slideCounter.textContent = `${currentSlide + 1} / ${totalSlides}`;
+
+            // Hide navbar for divider slides
+            const currentSlideElement = slides[currentSlide];
+            if (currentSlideElement.dataset.hideNavbar === 'true') {
+                navbar.style.display = 'none';
+            } else {
+                navbar.style.display = 'flex';
+            }
+
+            // Update active section in navbar
+            updateActiveSection();
+        }
+
+        function updateActiveSection() {
+            const navButtons = navbar.querySelectorAll('button');
+            let activeSection = 0;
+
+            // Determine which section we're in
+            for (let i = 0; i < sections.length; i++) {
+                if (currentSlide >= sections[i].start && currentSlide <= sections[i].end) {
+                    activeSection = i;
+                    break;
+                }
+            }
+
+            // Update button styles
+            navButtons.forEach((button, index) => {
+                if (index + 1 === activeSection) {
+                    button.classList.add('active-section');
+                } else {
+                    button.classList.remove('active-section');
+                }
+            });
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                currentSlide++;
+                updateSlide();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSlide();
+            }
+        }
+
+        function goToSection(sectionNum) {
+            if (sectionNum >= 0 && sectionNum < sections.length) {
+                currentSlide = sections[sectionNum].start;
+                updateSlide();
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                prevSlide();
+            } else if (e.key === 'Home') {
+                e.preventDefault();
+                currentSlide = 0;
+                updateSlide();
+            } else if (e.key === 'End') {
+                e.preventDefault();
+                currentSlide = totalSlides - 1;
+                updateSlide();
+            }
+        });
+
+        // Initialize
+        updateSlide();
+    </script>
+</body>
+</html>

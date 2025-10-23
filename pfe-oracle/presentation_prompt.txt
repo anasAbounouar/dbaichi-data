@@ -22,7 +22,9 @@ Navigation Bar (fixed at top):
 - Future Enhancements
 
 Slide Types:
-- Divider slides: Full-screen dark blue, title only, NO navbar
+- Divider slides: Full-screen dark blue with gradient, large centered title, NO navbar
+  * These appear BEFORE entering each new section (transition slides)
+  * 6 divider slides total (one before each main section)
 - Content slides: White/light background, navbar visible, current section highlighted
 
 Content Organization (from PFE report):
@@ -77,6 +79,8 @@ NAVIGATION:
 - Arrow keys for next/previous slide
 - Click navbar items to jump to sections
 - Smooth transitions between slides
+- NO click-to-advance: Users must be able to select/copy text on slides
+- Only keyboard navigation (arrow keys, spacebar, Home/End)
 
 PLACEHOLDERS:
 -------------
