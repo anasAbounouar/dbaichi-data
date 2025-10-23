@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Marketplace Platform with Route Optimization - Yassine DBAICHI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            background: #f8fafc;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .slide {
+            display: none;
+            width: 100vw;
+            height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            background: transparent;
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        /* Presenter Mode */
+        .presenter-mode {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #1a1a1a;
+            z-index: 9999;
+            padding: 2rem;
+            gap: 2rem;
+        }
+
+        .presenter-mode.active {
+            display: flex;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .presenter-current {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .presenter-next {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .presenter-label {
+            color: #888;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .presenter-slide-container {
+            background: white;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            position: relative;
+            flex: 1;
+        }
+
+        .presenter-slide-content {
+            width: 100%;
+            height: 100%;
+            transform-origin: top left;
+            overflow: hidden;
+        }
+
+        .presenter-info {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .presenter-exit {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: #C74634;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            border: none;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            z-index: 10000;
+            box-shadow: 0 4px 10px rgba(244,67,54,0.4);
+        }
+
+        .presenter-exit:hover {
+            background: #d32f2f;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #0f766e 0%, #14535F 100%);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            z-index: 50;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .navbar button {
+            padding: 0.5rem 1.25rem;
+            border-radius: 9999px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .navbar button:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        .navbar button.active-section {
+            background: #C74634;
+            border-color: #C74634;
+            font-weight: 600;
+        }
+
+        .slide-counter {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: rgba(20, 83, 95, 0.9);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            z-index: 50;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        .slide.divider-slide {
+            background: linear-gradient(135deg, #14535F 0%, #0a3940 100%) !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            position: absolute !important;
+            overflow: hidden !important;
+        }
+
+        .divider-slide::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            top: -300px;
+            right: -300px;
+        }
+
+        .divider-slide::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(244,67,54,0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            bottom: -200px;
+            left: -200px;
+        }
+
+        .divider-title {
+            font-size: 4rem;
+            font-weight: 800;
+            color: white !important;
+            text-align: center;
+            z-index: 10;
+            position: relative;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            padding: 2rem;
+        }
+
+        .content-slide {
+            padding-top: 5rem;
+            padding-left: 3rem;
+            padding-right: 3rem;
+            padding-bottom: 3rem;
+            display: flex;
+            flex-direction: column;
+            background: #f8fafc;
+            width: 100vw;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .slide-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #14535F;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 4px solid #C74634;
+        }
+
+        .slide-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .bullet-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .bullet-list li {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: white;
+            border-left: 4px solid #14535F;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            font-size: 1.125rem;
+            line-height: 1.6;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .bullet-list li:hover {
+            transform: translateX(10px);
+            box-shadow: 0 8px 16px rgba(63,81,181,0.2);
+            border-left-width: 6px;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            height: 100%;
+        }
+
+        .title-slide {
+            background: linear-gradient(135deg, #14535F 0%, #0a3940 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .title-slide::before {
+            content: '';
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+            border-radius: 50%;
+            top: 0;
+            right: 0;
+        }
+
+        .logo-container {
+            display: flex;
+            gap: 4rem;
+            margin-bottom: 3rem;
+            align-items: center;
+            z-index: 10;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .main-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            z-index: 10;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            font-weight: 400;
+            text-align: center;
+            margin-bottom: 3rem;
+            opacity: 0.9;
+            z-index: 10;
+        }
+
+        .author-info {
+            text-align: center;
+            font-size: 1.25rem;
+            z-index: 10;
+            line-height: 2;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #14535F 0%, #15616e 50%, #14535F 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            margin: 1rem 0;
+            font-size: 1.125rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .highlight-box:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 16px rgba(63,81,181,0.3);
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            width: 100%;
+        }
+
+        .card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-top: 4px solid #14535F;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(63,81,181,0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .card:hover::before {
+            left: 100%;
+        }
+
+        .card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 12px 24px rgba(63,81,181,0.25);
+            border-top-width: 6px;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #14535F;
+            margin-bottom: 0.75rem;
+        }
+
+        .card-content {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #334155;
+        }
+
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            overflow-x: auto;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <div class="navbar" id="navbar">
+        <button onclick="goToSection(1)">Introduction</button>
+        <button onclick="goToSection(2)">System Conception</button>
+        <button onclick="goToSection(3)">Workflow</button>
+        <button onclick="goToSection(4)">Implementation</button>
+        <button onclick="goToSection(5)">Results</button>
+        <button onclick="goToSection(6)">Conclusion</button>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter" id="slideCounter">1 / 30</div>
+
+    <!-- Slides Container -->
+    <div id="slides-container">
+
+        <!-- Slide 1: Title Slide -->
+        <div class="slide active title-slide">
+            <div class="logo-container">
+                <div style="width: 100px; height: 100px; background: white; border-radius: 1rem; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.5rem; color: #14535F;">EHTP</div>
+                <div style="width: 100px; height: 100px; background: white; border-radius: 1rem; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.25rem; color: #C74634;">GIS</div>
+            </div>
+            <h1 class="main-title">Book Marketplace Platform<br>with Route Optimization</h1>
+            <p class="subtitle">Automatic Delivery Route Planning for Book Sellers</p>
+            <div class="author-info">
+                <strong>Yassine DBAICHI</strong><br>
+                École Hassania des Travaux Publics<br>
+                Department of MIG - GIS Specialization<br>
+                Supervisor: Prof. Hatim LECHGAR<br>
+                Academic Year 2024/2025
+            </div>
+        </div>
+
+        <!-- Slide 2: Table of Contents -->
+        <div class="slide content-slide">
+            <h2 class="slide-title">Agenda</h2>
+            <div class="slide-content">
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-title">1. Introduction</div>
+                        <div class="card-content">Context, problem statement, proposed solution, and objectives</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">2. System Conception</div>
+                        <div class="card-content">Functional requirements, use cases, and data model</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">3. Application Workflow</div>
+                        <div class="card-content">Buyer and seller journey through the platform</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">4. Implementation</div>
+                        <div class="card-content">Architecture, technologies, route optimization, deployment</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">5. Results</div>
+                        <div class="card-content">Screenshots of web and mobile applications</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">6. Conclusion</div>
+                        <div class="card-content">Achievements, benefits, limitations, and future work</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 1: INTRODUCTION -->
+
+        <!-- Slide 3: Section Divider -->
+        <div class="slide divider-slide" data-hide-navbar="true">
+            <h2 class="divider-title">Introduction</h2>
+        </div>
+
+        <!-- Slide 4: Context -->
+        <div class="slide content-slide" data-section="1">
+            <h2 class="slide-title">Context</h2>
+            <div class="slide-content">
+                <ul class="bullet-list">
+                    <li><strong>Second-Hand Book Market:</strong> Student and academic communities have numerous individual sellers operating small-scale book businesses</li>
+                    <li><strong>Delivery Challenge:</strong> Sellers must deliver books to multiple customers located at different addresses across the city</li>
+                    <li><strong>Manual Planning:</strong> Without proper tools, route planning is done manually, resulting in inefficient routes that waste time and fuel</li>
+                    <li><strong>Data Entry Burden:</strong> Sellers must manually copy each customer's delivery address from order records into navigation apps like Google Maps or Waze</li>
+                    <li><strong>Lack of Integration:</strong> Existing route optimization tools are separate from marketplace platforms, creating workflow friction</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 5: Problem Statement -->
+        <div class="slide content-slide" data-section="1">
+            <h2 class="slide-title">Problem Statement</h2>
+            <div class="slide-content">
+                <div class="card-grid">
+                    <div class="card" style="border-top-color: #C74634;">
+                        <div class="card-title">Manual Address Handling</div>
+                        <div class="card-content">Sellers must manually copy each customer's delivery address from order records into navigation applications - a time-consuming and error-prone process</div>
+                    </div>
+                    <div class="card" style="border-top-color: #FF9800;">
+                        <div class="card-title">Inefficient Routes</div>
+                        <div class="card-content">Without optimization tools, sellers visit customers in order received or based on rough geographic estimates - rarely producing efficient routes</div>
+                    </div>
+                    <div class="card" style="border-top-color: #9C27B0;">
+                        <div class="card-title">Lack of Integration</div>
+                        <div class="card-content">Route optimization tools are separate from marketplace platforms - sellers must use multiple disconnected applications, duplicating effort</div>
+                    </div>
+                    <div class="card" style="border-top-color: #0f766e;">
+                        <div class="card-title">Scalability Issues</div>
+                        <div class="card-content">Manual planning becomes impossible with 10+ daily deliveries - limiting business growth</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Proposed Solution -->
+        <div class="slide content-slide" data-section="1">
+            <h2 class="slide-title">Proposed Solution</h2>
+            <div class="slide-content">
+                <ul class="bullet-list">
+                    <li><strong>Integrated Platform:</strong> Combines e-commerce marketplace functionality with automatic delivery route optimization</li>
+                    <li><strong>One-Time Address Entry:</strong> Customers register and provide delivery address once - automatically attached to all future orders</li>
+                    <li><strong>Mobile Route Planner:</strong> Sellers use mobile app to view pending orders, select which to deliver, and get optimal route sequence</li>
+                    <li><strong>TSP Algorithm:</strong> Traveling Salesman Problem algorithm calculates the best visit order to minimize travel distance</li>
+                    <li><strong>Turn-by-Turn Navigation:</strong> Integration with OpenRouteService, Google Maps, and Waze for detailed driving directions</li>
+                    <li><strong>Seamless Data Flow:</strong> Address data flows automatically from registration → order → route planning without manual entry</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 7: Objectives -->
+        <div class="slide content-slide" data-section="1">
+            <h2 class="slide-title">Project Objectives</h2>
+            <div class="slide-content">
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+                    <div class="card">
+                        <div class="card-title">1. Web Marketplace</div>
+                        <div class="card-content">Build a web platform where users can buy and sell books</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">2. Address Capture</div>
+                        <div class="card-content">Automatically capture customer addresses during registration</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">3. Mobile App</div>
+                        <div class="card-content">Develop mobile application for sellers to view and manage orders</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">4. Route Optimization</div>
+                        <div class="card-content">Implement TSP algorithm to find best delivery sequence</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">5. Navigation Integration</div>
+                        <div class="card-content">Integrate with navigation services for turn-by-turn directions</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">6. Production Deployment</div>
+                        <div class="card-content">Deploy complete system for real-world use</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 2: SYSTEM CONCEPTION -->
+
+        <!-- Slide 8: Section Divider -->
+        <div class="slide divider-slide" data-hide-navbar="true">
+            <h2 class="divider-title">System Conception</h2>
+        </div>
+
+        <!-- Slide 9: Functional Requirements -->
+        <div class="slide content-slide" data-section="2">
+            <h2 class="slide-title">Functional Requirements</h2>
+            <div class="slide-content">
+                <div class="two-column">
+                    <div>
+                        <h3 style="font-size: 1.5rem; font-weight: 600; color: #14535F; margin-bottom: 1rem;">Web Application</h3>
+                        <div class="card">
+                            <div class="card-title">User Management</div>
+                            <div class="card-content">
+                                <ul style="margin-left: 1.5rem;">
+                                    <li>Registration with role selection (buyer/seller)</li>
+                                    <li>Address input during registration</li>
+                                    <li>Login and authentication</li>
+                                    <li>Profile management</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card" style="margin-top: 1rem;">
+                            <div class="card-title">Marketplace Features</div>
+                            <div class="card-content">
+                                <ul style="margin-left: 1.5rem;">
+                                    <li>Browse available books</li>
+                                    <li>Search by title/author</li>
+                                    <li>View book details</li>
+                                    <li>List books for sale</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 style="font-size: 1.5rem; font-weight: 600; color: #14535F; margin-bottom: 1rem;">Mobile Application</h3>
+                        <div class="card">
+                            <div class="card-title">Order Management</div>
+                            <div class="card-content">
+                                <ul style="margin-left: 1.5rem;">
+                                    <li>View pending orders</li>
+                                    <li>See order details with addresses</li>
+                                    <li>Filter by status</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card" style="margin-top: 1rem;">
+                            <div class="card-title">Route Optimization</div>
+                            <div class="card-content">
+                                <ul style="margin-left: 1.5rem;">
+                                    <li>Display customers on map</li>
+                                    <li>Select orders for delivery</li>
+                                    <li>Calculate optimal route</li>
+                                    <li>Turn-by-turn directions</li>
+                                    <li>Export to Google Maps/Waze</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Data Model -->
+        <div class="slide content-slide" data-section="2">
+            <h2 class="slide-title">Data Model</h2>
+            <div class="slide-content">
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+                    <div class="card">
+                        <div class="card-title">User Entity</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>email, password</li>
+                                <li>role (buyer/seller)</li>
+                                <li><strong>address</strong> (stored once)</li>
+                                <li>phone</li>
+                            </ul>
+                            <p style="margin-top: 0.5rem; color: #14535F; font-weight: 600;">Address captured during registration</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Book Entity</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>title, author</li>
+                                <li>price, quantity</li>
+                                <li>condition</li>
+                                <li>seller_id reference</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Order Entity</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>book_id, buyer_id, seller_id</li>
+                                <li>quantity, total_price</li>
+                                <li><strong>delivery_address</strong></li>
+                                <li>status</li>
+                            </ul>
+                            <p style="margin-top: 0.5rem; color: #4CAF50; font-weight: 600;">Address auto-copied from buyer profile</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="highlight-box" style="margin-top: 1.5rem;">
+                    <strong>Key Innovation:</strong> Address flows automatically from User → Order → Route Planning without manual entry
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 3: WORKFLOW -->
+
+        <!-- Slide 11: Section Divider -->
+        <div class="slide divider-slide" data-hide-navbar="true">
+            <h2 class="divider-title">Application Workflow</h2>
+        </div>
+
+        <!-- Slide 12: Buyer Workflow -->
+        <div class="slide content-slide" data-section="3">
+            <h2 class="slide-title">Buyer Workflow</h2>
+            <div class="slide-content">
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+                    <div class="card">
+                        <div class="card-title">1. Registration</div>
+                        <div class="card-content">User creates account and provides email, password, and <strong>delivery address</strong> (one time only)</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">2. Login</div>
+                        <div class="card-content">User authenticates to access the marketplace</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">3. Browse Books</div>
+                        <div class="card-content">User searches and views available books in catalog</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">4. Place Order</div>
+                        <div class="card-content">User places order - <strong>address automatically taken from profile</strong></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">5. Track Status</div>
+                        <div class="card-content">User monitors order status (pending, confirmed, in-progress, delivered)</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">6. Receive Delivery</div>
+                        <div class="card-content">Seller delivers book to registered address</div>
+                    </div>
+                </div>
+                <div class="highlight-box" style="margin-top: 1.5rem;">
+                    <strong>Key Point:</strong> Address provided only once during registration - automatically reused for all orders
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: Seller Workflow -->
+        <div class="slide content-slide" data-section="3">
+            <h2 class="slide-title">Seller Workflow</h2>
+            <div class="slide-content">
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+                    <div class="card">
+                        <div class="card-title">1. Open Mobile App</div>
+                        <div class="card-content">Seller logs into mobile application (Android)</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">2. View Orders</div>
+                        <div class="card-content">See list of pending orders with all details</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">3. See Orders on Map</div>
+                        <div class="card-content">All customer locations displayed as markers on interactive map - <strong>addresses already saved</strong></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">4. Select Orders to Deliver</div>
+                        <div class="card-content">Choose which orders to include in today's delivery route</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">5. Calculate Route</div>
+                        <div class="card-content">App finds best route using <strong>TSP algorithm</strong> - automatic optimization</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">6. View Route on Map</div>
+                        <div class="card-content">See optimized route with numbered waypoints, turn-by-turn directions, distance & time</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">7. Navigate</div>
+                        <div class="card-content">Follow in-app directions OR export to Google Maps/Waze</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">8. Deliver & Update</div>
+                        <div class="card-content">Mark orders as delivered as route is completed</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 4: IMPLEMENTATION -->
+
+        <!-- Slide 14: Section Divider -->
+        <div class="slide divider-slide" data-hide-navbar="true">
+            <h2 class="divider-title">Implementation</h2>
+        </div>
+
+        <!-- Slide 15: System Architecture -->
+        <div class="slide content-slide" data-section="4">
+            <h2 class="slide-title">System Architecture</h2>
+            <div class="slide-content" style="display: flex; align-items: center; justify-content: center; height: 100%;">
+                <img src="images/Global System Architecture.png" alt="Global System Architecture" style="max-width: 90%; max-height: 80%; object-fit: contain; border-radius: 1rem; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+            </div>
+        </div>
+
+        <!-- Slide 16: Technologies Used -->
+        <div class="slide content-slide" data-section="4">
+            <h2 class="slide-title">Technology Stack</h2>
+            <div class="slide-content">
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+                    <div class="card">
+                        <div class="card-title">Web Frontend</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>React 19.1.1</li>
+                                <li>React Bootstrap + Bootstrap 5</li>
+                                <li>React Leaflet (maps)</li>
+                                <li>Axios (HTTP)</li>
+                                <li>Vite (build tool)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Mobile App</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>Flutter 3.24.0</li>
+                                <li>flutter_map (OpenStreetMap)</li>
+                                <li>geolocator (GPS)</li>
+                                <li>dio (HTTP)</li>
+                                <li>flutter_secure_storage</li>
+                                <li>Android platform</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Backend</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>Node.js 18.x</li>
+                                <li>Express.js</li>
+                                <li>MongoDB (Atlas)</li>
+                                <li>JWT authentication</li>
+                                <li>Hosted on Vercel</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-grid" style="margin-top: 1.5rem;">
+                    <div class="card">
+                        <div class="card-title">External Services</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li><strong>OpenRouteService:</strong> Route calculation & turn-by-turn directions</li>
+                                <li><strong>OpenStreetMap:</strong> Map tiles for visualization</li>
+                                <li><strong>Google Maps:</strong> External navigation option</li>
+                                <li><strong>Waze:</strong> External navigation option</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Deployment</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li><strong>Backend:</strong> Vercel serverless platform</li>
+                                <li><strong>Database:</strong> MongoDB Atlas (cloud)</li>
+                                <li><strong>Web:</strong> Vercel with CDN caching</li>
+                                <li><strong>Mobile:</strong> Android APK distribution</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 17: Address Data Flow -->
+        <div class="slide content-slide" data-section="4">
+            <h2 class="slide-title">How Address Data Flows</h2>
+            <div class="slide-content">
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+                    <div class="card" style="border-top-color: #4CAF50;">
+                        <div class="card-title">Step 1: Registration</div>
+                        <div class="card-content">User registers on web platform and provides delivery address → stored in User entity in MongoDB</div>
+                    </div>
+                    <div class="card" style="border-top-color: #0f766e;">
+                        <div class="card-title">Step 2: Order Creation</div>
+                        <div class="card-content">When user places order, system automatically copies their address from User profile to Order entity</div>
+                    </div>
+                    <div class="card" style="border-top-color: #9C27B0;">
+                        <div class="card-title">Step 3: API Retrieval</div>
+                        <div class="card-content">Seller opens mobile app → retrieves orders via API → each order already contains delivery address</div>
+                    </div>
+                    <div class="card" style="border-top-color: #FF9800;">
+                        <div class="card-title">Step 4: Route Planning</div>
+                        <div class="card-content">Seller selects orders → app extracts addresses → feeds into TSP algorithm for optimization</div>
+                    </div>
+                </div>
+                <div class="highlight-box" style="margin-top: 1.5rem; text-align: center; font-size: 1.25rem;">
+                    <strong>No manual address entry required at any step!</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 18: Route Optimization Algorithm -->
+        <div class="slide content-slide" data-section="4">
+            <h2 class="slide-title">Route Optimization Algorithm</h2>
+            <div class="slide-content">
+                <div class="two-column">
+                    <div>
+                        <h3 style="font-size: 1.5rem; font-weight: 600; color: #14535F; margin-bottom: 1rem;">TSP Nearest-Neighbor</h3>
+                        <div class="card">
+                            <div class="card-title">Problem Type</div>
+                            <div class="card-content">Traveling Salesman Problem (TSP) - finding optimal delivery sequence</div>
+                        </div>
+                        <div class="card" style="margin-top: 1rem;">
+                            <div class="card-title">Algorithm</div>
+                            <div class="card-content">Greedy Nearest-Neighbor Heuristic</div>
+                        </div>
+                        <div class="card" style="margin-top: 1rem;">
+                            <div class="card-title">Complexity</div>
+                            <div class="card-content">O(n²) time where n = number of delivery points</div>
+                        </div>
+                        <div class="card" style="margin-top: 1rem;">
+                            <div class="card-title">Solution Quality</div>
+                            <div class="card-content">Provides good (not perfect) solutions - acceptable for 5-20 delivery points</div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 style="font-size: 1.5rem; font-weight: 600; color: #14535F; margin-bottom: 1rem;">Algorithm Steps</h3>
+                        <div class="code-block">
+1. START at seller's current GPS location
+
+2. WHILE unvisited deliveries remain:
+
+   a. Find nearest unvisited customer
+      (using distance calculation)
+
+   b. Add customer to route
+
+   c. Mark as visited
+
+   d. Move to that location
+
+3. RETURN optimized route sequence
+
+4. Send waypoints to OpenRouteService
+   for turn-by-turn directions
+                        </div>
+                        <div class="highlight-box" style="margin-top: 1rem;">
+                            <strong>Performance:</strong> Fast execution on mobile devices - optimizes 10 points in < 2 seconds
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 19: Navigation Integration -->
+        <div class="slide content-slide" data-section="4">
+            <h2 class="slide-title">Navigation Options</h2>
+            <div class="slide-content">
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+                    <div class="card" style="border-top-color: #14535F;">
+                        <div class="card-title">Option 1: In-App Navigation</div>
+                        <div class="card-content">
+                            <p style="margin-bottom: 0.5rem;"><strong>Method:</strong> OpenRouteService Directions API</p>
+                            <p style="margin-bottom: 0.5rem;"><strong>Features:</strong></p>
+                            <ul style="margin-left: 1.5rem;">
+                                <li>Turn-by-turn instructions</li>
+                                <li>Route drawn on map</li>
+                                <li>Distance & time estimates</li>
+                                <li>Numbered waypoints</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card" style="border-top-color: #4CAF50;">
+                        <div class="card-title">Option 2: Google Maps</div>
+                        <div class="card-content">
+                            <p style="margin-bottom: 0.5rem;"><strong>Method:</strong> Construct Google Maps URL</p>
+                            <p style="margin-bottom: 0.5rem;"><strong>Action:</strong> Opens Google Maps app with optimized waypoints</p>
+                            <p style="margin-top: 0.5rem;"><strong>Benefit:</strong> Sellers can use their preferred navigation app</p>
+                        </div>
+                    </div>
+                    <div class="card" style="border-top-color: #C74634;">
+                        <div class="card-title">Option 3: Waze</div>
+                        <div class="card-content">
+                            <p style="margin-bottom: 0.5rem;"><strong>Method:</strong> Construct Waze URL</p>
+                            <p style="margin-bottom: 0.5rem;"><strong>Action:</strong> Opens Waze app with optimized waypoints</p>
+                            <p style="margin-top: 0.5rem;"><strong>Benefit:</strong> Real-time traffic and community alerts</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="highlight-box" style="margin-top: 1.5rem;">
+                    <strong>Flexibility:</strong> Sellers use preferred navigation tool while benefiting from optimized route sequence
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 5: RESULTS -->
+
+        <!-- Slide 20: Section Divider -->
+        <div class="slide divider-slide" data-hide-navbar="true">
+            <h2 class="divider-title">Results</h2>
+        </div>
+
+        <!-- SECTION 6: CONCLUSION -->
+
+        <!-- Slide 23: Section Divider -->
+        <div class="slide divider-slide" data-hide-navbar="true">
+            <h2 class="divider-title">Conclusion</h2>
+        </div>
+
+        <!-- Slide 24: Achievements -->
+        <div class="slide content-slide" data-section="6">
+            <h2 class="slide-title">Achievements</h2>
+            <div class="slide-content">
+                <div class="card-grid">
+                    <div class="card" style="border-top-color: #4CAF50;">
+                        <div class="card-title">Automated Address Management</div>
+                        <div class="card-content">Customer addresses captured once during registration and automatically flow to orders and route planning - eliminating repetitive manual data entry</div>
+                    </div>
+                    <div class="card" style="border-top-color: #0f766e;">
+                        <div class="card-title">Route Optimization</div>
+                        <div class="card-content">Implementation of TSP algorithm provides sellers with optimized delivery sequences, reducing travel distance and time</div>
+                    </div>
+                    <div class="card" style="border-top-color: #9C27B0;">
+                        <div class="card-title">Flexible Navigation</div>
+                        <div class="card-content">Integration with OpenRouteService, Google Maps, and Waze gives sellers multiple options for following optimized routes</div>
+                    </div>
+                    <div class="card" style="border-top-color: #FF9800;">
+                        <div class="card-title">Production Deployment</div>
+                        <div class="card-content">Complete system deployed and operational on cloud infrastructure (Vercel + MongoDB Atlas)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 25: Benefits -->
+        <div class="slide content-slide" data-section="6">
+            <h2 class="slide-title">Benefits</h2>
+            <div class="slide-content">
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+                    <div class="card">
+                        <div class="card-title">For Sellers</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>Save time - no manual address entry</li>
+                                <li>Reduce fuel costs with optimized routes</li>
+                                <li>Faster deliveries = more capacity</li>
+                                <li>Integrated workflow in one platform</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">For Customers</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>Faster delivery times</li>
+                                <li>Better service reliability</li>
+                                <li>One-time address setup</li>
+                                <li>Easy order tracking</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Technical Excellence</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>Production-ready architecture</li>
+                                <li>Cloud-hosted scalability</li>
+                                <li>Modern tech stack (React, Flutter, Node.js)</li>
+                                <li>Real-world deployment</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 27: Future Work -->
+        <div class="slide content-slide" data-section="6">
+            <h2 class="slide-title">Future Work</h2>
+            <div class="slide-content">
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+                    <div class="card" style="border-top-color: #0f766e;">
+                        <div class="card-title">iOS Support</div>
+                        <div class="card-content">Extend mobile application to iOS devices using Flutter's cross-platform capabilities</div>
+                    </div>
+                    <div class="card" style="border-top-color: #4CAF50;">
+                        <div class="card-title">Manual Route Adjustment</div>
+                        <div class="card-content">Allow sellers to manually reorder waypoints based on local knowledge or real-time constraints</div>
+                    </div>
+                    <div class="card" style="border-top-color: #9C27B0;">
+                        <div class="card-title">Offline Capability</div>
+                        <div class="card-content">Add offline map caching and route calculation for areas with poor connectivity</div>
+                    </div>
+                    <div class="card" style="border-top-color: #FF9800;">
+                        <div class="card-title">Advanced Optimization</div>
+                        <div class="card-content">Implement more sophisticated algorithms (2-opt, genetic algorithms) for better route quality</div>
+                    </div>
+                    <div class="card" style="border-top-color: #C74634;">
+                        <div class="card-title">Real-Time Traffic</div>
+                        <div class="card-content">Integrate live traffic data to adjust routes dynamically</div>
+                    </div>
+                    <div class="card" style="border-top-color: #00BCD4;">
+                        <div class="card-title">Delivery Time Windows</div>
+                        <div class="card-content">Allow customers to specify preferred delivery time slots</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 29: Thank You -->
+        <div class="slide title-slide" data-section="6">
+            <h1 class="main-title">Thank You</h1>
+            <p class="subtitle" style="font-size: 2rem; margin-bottom: 3rem;">Questions & Discussion</p>
+            <div class="author-info" style="font-size: 1.5rem;">
+                <strong>Yassine DBAICHI</strong><br>
+                Book Marketplace Platform with Route Optimization<br>
+                Department of MIG - GIS Specialization<br>
+                Supervisor: Prof. Hatim LECHGAR<br>
+                École Hassania des Travaux Publics<br>
+                Academic Year 2024/2025
+            </div>
+            <div style="margin-top: 3rem; display: flex; gap: 3rem; align-items: center; justify-content: center; z-index: 10;">
+                <div style="width: 80px; height: 80px; background: white; border-radius: 1rem; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.5rem; color: #14535F;">EHTP</div>
+                <div style="width: 80px; height: 80px; background: white; border-radius: 1rem; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.25rem; color: #C74634;">GIS</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Presenter Mode -->
+    <div id="presenterMode" class="presenter-mode">
+        <button class="presenter-exit" onclick="togglePresenterMode()">Exit Presenter Mode (press P)</button>
+
+        <div class="presenter-current">
+            <div class="presenter-label">Current Slide</div>
+            <div class="presenter-slide-container">
+                <div id="presenterCurrentSlide" class="presenter-slide-content"></div>
+            </div>
+        </div>
+
+        <div class="presenter-next">
+            <div class="presenter-label">Next Slide</div>
+            <div class="presenter-slide-container">
+                <div id="presenterNextSlide" class="presenter-slide-content"></div>
+                <div class="presenter-info" id="presenterInfo"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        let presenterModeActive = false;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        const navbar = document.getElementById('navbar');
+        const slideCounter = document.getElementById('slideCounter');
+        const presenterMode = document.getElementById('presenterMode');
+        const presenterCurrentSlide = document.getElementById('presenterCurrentSlide');
+        const presenterNextSlide = document.getElementById('presenterNextSlide');
+        const presenterInfo = document.getElementById('presenterInfo');
+
+        const sections = [
+            { start: 0, end: 2 },     // Intro
+            { start: 3, end: 7 },     // Section 1: Introduction
+            { start: 8, end: 10 },    // Section 2: System Conception
+            { start: 11, end: 13 },   // Section 3: Workflow
+            { start: 14, end: 19 },   // Section 4: Implementation
+            { start: 20, end: 20 },   // Section 5: Results
+            { start: 21, end: 24 }    // Section 6: Conclusion
+        ];
+
+        function updateSlide() {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active');
+                if (index === currentSlide) {
+                    slide.classList.add('active');
+                }
+            });
+
+            slideCounter.textContent = `${currentSlide + 1} / ${totalSlides}`;
+
+            const currentSlideElement = slides[currentSlide];
+            if (currentSlideElement.dataset.hideNavbar === 'true') {
+                navbar.style.display = 'none';
+            } else {
+                navbar.style.display = 'flex';
+            }
+
+            updateActiveSection();
+        }
+
+        function updateActiveSection() {
+            const navButtons = navbar.querySelectorAll('button');
+            let activeSection = 0;
+
+            for (let i = 0; i < sections.length; i++) {
+                if (currentSlide >= sections[i].start && currentSlide <= sections[i].end) {
+                    activeSection = i;
+                    break;
+                }
+            }
+
+            navButtons.forEach((button, index) => {
+                if (index + 1 === activeSection) {
+                    button.classList.add('active-section');
+                } else {
+                    button.classList.remove('active-section');
+                }
+            });
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                currentSlide++;
+                updateSlide();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSlide();
+            }
+        }
+
+        function goToSection(sectionNum) {
+            if (sectionNum >= 0 && sectionNum < sections.length) {
+                currentSlide = sections[sectionNum].start;
+                updateSlide();
+            }
+        }
+
+        function togglePresenterMode() {
+            presenterModeActive = !presenterModeActive;
+            if (presenterModeActive) {
+                presenterMode.classList.add('active');
+                updatePresenterMode();
+            } else {
+                presenterMode.classList.remove('active');
+            }
+        }
+
+        function updatePresenterMode() {
+            if (!presenterModeActive) return;
+
+            // Clone current slide
+            const currentSlideElement = slides[currentSlide];
+            presenterCurrentSlide.innerHTML = currentSlideElement.innerHTML;
+            presenterCurrentSlide.style.transform = 'scale(0.95)';
+
+            // Clone next slide if it exists
+            if (currentSlide < totalSlides - 1) {
+                const nextSlideElement = slides[currentSlide + 1];
+                presenterNextSlide.innerHTML = nextSlideElement.innerHTML;
+                presenterNextSlide.style.transform = 'scale(0.9)';
+                presenterInfo.textContent = `Slide ${currentSlide + 2} / ${totalSlides}`;
+            } else {
+                presenterNextSlide.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #888; font-size: 1.5rem; font-weight: 600;">Last Slide</div>';
+                presenterInfo.textContent = 'End';
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'p' || e.key === 'P') {
+                e.preventDefault();
+                togglePresenterMode();
+            } else if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+                if (presenterModeActive) updatePresenterMode();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                prevSlide();
+                if (presenterModeActive) updatePresenterMode();
+            } else if (e.key === 'Home') {
+                e.preventDefault();
+                currentSlide = 0;
+                updateSlide();
+                if (presenterModeActive) updatePresenterMode();
+            } else if (e.key === 'End') {
+                e.preventDefault();
+                currentSlide = totalSlides - 1;
+                updateSlide();
+                if (presenterModeActive) updatePresenterMode();
+            }
+        });
+
+        updateSlide();
+    </script>
+</body>
+</html>

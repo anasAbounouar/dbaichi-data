@@ -17,6 +17,18 @@
             font-family: 'Inter', sans-serif;
             overflow: hidden;
             background: #f8fafc;
+            user-select: text;
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+        }
+
+        /* Allow text selection on all slide content */
+        .slide * {
+            user-select: text;
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
         }
 
         @keyframes fadeIn {
@@ -412,6 +424,126 @@
             border-radius: 1rem;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
+
+        /* Notes Panel Styles */
+        .notes-toggle-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: #14535F;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            z-index: 10000;
+            box-shadow: 0 4px 12px rgba(20, 83, 95, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .notes-toggle-btn:hover {
+            background: #C74634;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(199, 70, 52, 0.4);
+        }
+
+        .notes-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 250px;
+            background: white;
+            border-top: 3px solid #14535F;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+            z-index: 9999;
+            display: none;
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+
+        .notes-panel.visible {
+            display: flex;
+        }
+
+        .notes-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .notes-panel-header h3 {
+            margin: 0;
+            font-size: 16px;
+            color: #14535F;
+            font-weight: 600;
+        }
+
+        .notes-panel-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .save-note-btn {
+            background: #14535F;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .save-note-btn:hover {
+            background: #C74634;
+        }
+
+        .save-status {
+            font-size: 12px;
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .save-status.success {
+            color: #10b981;
+        }
+
+        .save-status.error {
+            color: #ef4444;
+        }
+
+        .notes-textarea {
+            flex: 1;
+            padding: 20px;
+            border: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+            resize: none;
+            outline: none;
+            background: white;
+        }
+
+        .notes-textarea:focus {
+            background: #fefefe;
+        }
+
+        /* Adjust slides container when notes panel is visible */
+        body.notes-visible #slides-container {
+            height: calc(100vh - 250px);
+        }
+
+        body.notes-visible .content-slide {
+            height: calc(100vh - 250px);
+        }
     </style>
 </head>
 <body>
@@ -427,6 +559,23 @@
 
     <!-- Slide Counter -->
     <div class="slide-counter" id="slideCounter">1 / 58</div>
+
+    <!-- Notes Toggle Button -->
+    <button class="notes-toggle-btn" id="notesToggle" onclick="toggleNotesPanel()" title="Toggle Notes Panel (N key)">
+        📝 Notes
+    </button>
+
+    <!-- Notes Panel -->
+    <div class="notes-panel" id="notesPanel">
+        <div class="notes-panel-header">
+            <h3>Speaker Notes - Slide <span id="notesSlideNumber">1</span></h3>
+            <div class="notes-panel-actions">
+                <button onclick="saveCurrentNote()" class="save-note-btn" title="Save (Ctrl+S)">💾 Save</button>
+                <span id="saveStatus" class="save-status"></span>
+            </div>
+        </div>
+        <textarea id="notesTextarea" class="notes-textarea" placeholder="Add your speaker notes here...&#10;&#10;Tips:&#10;• Press Ctrl+S to save&#10;• Notes are automatically synced to MongoDB&#10;• Press 'N' to toggle this panel&#10;• Press 'P' for presenter view"></textarea>
+    </div>
 
     <!-- Slides Container -->
     <div id="slides-container">
@@ -488,7 +637,7 @@
         </div>
 
         <!-- Slide 4: Oracle Corporation -->
-        <div class="slide content-slide" data-section="1">
+        <div class="slide content-slide" data-section="1" data-notes="Welcome the jury. Introduce Oracle as a global technology leader founded in 1977. Mention their expertise in database and cloud solutions. Emphasize their market position as one of the largest enterprise software companies.">
             <h2 class="slide-title">Oracle Corporation</h2>
             <div class="slide-content">
                 <ul class="bullet-list">
@@ -618,7 +767,7 @@
         </div>
 
         <!-- Slide 10: Current Challenges -->
-        <div class="slide content-slide" data-section="2">
+        <div class="slide content-slide" data-section="2" data-notes="Explain the pain points the team was facing before this project. Emphasize manual console operations taking hours each week. Mention the risks of no version control and configuration drift. This sets up the problem that the solution will address.">
             <h2 class="slide-title">Current Infrastructure Management Challenges</h2>
             <div class="slide-content">
                 <ul class="bullet-list">
@@ -787,7 +936,7 @@
                     <li><strong>Methodology:</strong> Kanban Agile - visual workflow management with continuous delivery</li>
                     <li><strong>Project Tracker:</strong> Task board for tracking work items (To Do, In Progress, Done)</li>
                     <li><strong>Regular Meetings:</strong> Weekly sync meetings with mentor to review progress and blockers</li>
-                    <li><strong>Continuous Flow:</strong> Work items pulled as capacity allows, no fixed sprint boundaries</li>
+                    <li><strong>Continuous Flow:</strong> Work items pulled as capacity allows, no fixed time boundaries</li>
                     <li><strong>Focus on Delivery:</strong> Prioritize completing tasks over starting new ones</li>
                 </ul>
             </div>
@@ -816,7 +965,7 @@
                     <div class="tool-item">
                         <img src="images/tool_jira.png" alt="Jira">
                         <div class="tool-name">Jira</div>
-                        <div style="text-align: center; font-size: 0.875rem; color: #64748b;">Task tracking, sprint planning, progress monitoring</div>
+                        <div style="text-align: center; font-size: 0.875rem; color: #64748b;">Task tracking, work planning, progress monitoring</div>
                     </div>
                     <div class="tool-item">
                         <img src="images/tool_outlook.png" alt="Outlook">
@@ -974,20 +1123,25 @@
             <div class="slide-content">
                 <div class="card">
                     <div class="card-title">infrastructure.json</div>
-                    <div class="card-content" style="font-family: 'Courier New', monospace; font-size: 0.875rem; background: #f1f5f9; padding: 1rem; border-radius: 0.5rem;">
+                    <div class="card-content" style="font-family: 'Courier New', monospace; font-size: 0.85rem; background: #f1f5f9; padding: 1rem; border-radius: 0.5rem;">
 {<br>
-  &nbsp;&nbsp;"name": "production-vcn",<br>
-  &nbsp;&nbsp;"cidrBlock": "10.0.0.0/16",<br>
-  &nbsp;&nbsp;"internetGateways": [...]<br>
-  &nbsp;&nbsp;"securityLists": [...]<br>
-  &nbsp;&nbsp;"routeTables": [...]<br>
-  &nbsp;&nbsp;"subnets": [...]<br>
+  &nbsp;&nbsp;"vcns": {<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;"production-vcn": {<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"cidr_block": "10.0.0.0/16",<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"display_name": "Production VCN"<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+  &nbsp;&nbsp;},<br>
+  &nbsp;&nbsp;"subnets": {<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;"prod-subnet": {<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"cidr_block": "10.0.1.0/24",<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"vcn_id": "production-vcn"<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+  &nbsp;&nbsp;}<br>
 }
                     </div>
                 </div>
                 <ul class="bullet-list" style="margin-top: 1.5rem;">
-                    <li><strong>Name-Based References:</strong> Resources reference each other by human-readable names</li>
-                    <li><strong>Automatic Resolution:</strong> Framework resolves names to OCIDs automatically</li>
+                    <li><strong>Name-Based References:</strong> Resources reference each other by name (e.g., "vcn_id": "production-vcn")</li>
                 </ul>
             </div>
         </div>
@@ -1000,47 +1154,25 @@
                     <div class="card" style="border-top-color: #3b82f6;">
                         <div class="card-title">BaseResource (Abstract)</div>
                         <div class="card-content">
-                            <p><strong>File:</strong> core/base_resource.py (21 lines)</p>
                             <p><strong>Purpose:</strong> Abstract base class defining resource interface</p>
-                            <p><strong>Methods:</strong></p>
-                            <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
-                                <li>create() - Factory method</li>
-                                <li>build() - Abstract (must implement)</li>
-                            </ul>
                         </div>
                     </div>
                     <div class="card" style="border-top-color: #8b5cf6;">
                         <div class="card-title">ResourceFactory</div>
                         <div class="card-content">
-                            <p><strong>File:</strong> core/resource_factory.py (38 lines)</p>
-                            <p><strong>Purpose:</strong> Factory pattern for dynamic instantiation</p>
-                            <p><strong>Registry:</strong> Maps type strings → Python classes</p>
-                            <p style="margin-top: 0.5rem; color: #8b5cf6; font-weight: 600;">7 resource types registered</p>
+                            <p><strong>Purpose:</strong> Factory pattern for dynamic resource instantiation</p>
                         </div>
                     </div>
                     <div class="card" style="border-top-color: #10b981;">
                         <div class="card-title">DependencyResolver</div>
                         <div class="card-content">
-                            <p><strong>File:</strong> core/dependency_resolver.py (14 lines)</p>
-                            <p><strong>Purpose:</strong> Resource reference manager</p>
-                            <p><strong>Methods:</strong></p>
-                            <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
-                                <li>register_resource(name, resource)</li>
-                                <li>get_resource_id(name)</li>
-                            </ul>
+                            <p><strong>Purpose:</strong> Manages resource references and resolves dependencies between resources</p>
                         </div>
                     </div>
                     <div class="card" style="border-top-color: #f59e0b;">
                         <div class="card-title">ConfigLoader</div>
                         <div class="card-content">
-                            <p><strong>File:</strong> config/config_loader.py (25 lines)</p>
-                            <p><strong>Purpose:</strong> Parse infrastructure.json</p>
-                            <p><strong>Methods:</strong></p>
-                            <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
-                                <li>get_vcns_config()</li>
-                                <li>get_instances_config()</li>
-                                <li>get_image_config()</li>
-                            </ul>
+                            <p><strong>Purpose:</strong> Parses and validates infrastructure.json configuration</p>
                         </div>
                     </div>
                 </div>
@@ -1136,7 +1268,7 @@
         </div>
 
         <!-- Slide 46: Implementation Results -->
-        <div class="slide content-slide" data-section="5">
+        <div class="slide content-slide" data-section="5" data-notes="Highlight the successful completion of all deliverables. Mention the 12 resource types implemented and comprehensive testing. Emphasize production deployment success. This shows the project was not just theoretical but actually used by the team.">
             <h2 class="slide-title">Implementation Results</h2>
             <div class="slide-content">
                 <div class="card-grid">
@@ -1228,7 +1360,7 @@
                                     <li>Manual approval gate</li>
                                     <li>State persistence</li>
                                 </ul>
-                                <p style="margin-top: 0.5rem; color: #10b981; font-weight: 600;">✓ Pipeline stable over 20+ runs</p>
+                                <p style="margin-top: 0.5rem; color: #10b981; font-weight: 600;">✓ Pipeline working smoothly</p>
                             </div>
                         </div>
                         <div class="card" style="margin-top: 1rem;">
@@ -1253,10 +1385,10 @@
             <div class="slide-content">
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem;">
                     <div class="highlight-box" style="text-align: center;">
-                        <div style="font-size: 3rem; font-weight: 800; margin-bottom: 0.5rem;">95%</div>
+                        <div style="font-size: 3rem; font-weight: 800; margin-bottom: 0.5rem;">90%</div>
                         <div style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">Time Reduction</div>
                         <div style="font-size: 0.875rem; opacity: 0.9;">
-                            From 2-3 hours manual setup<br>
+                            From ~1 hour manual setup<br>
                             To <5 minutes automated
                         </div>
                     </div>
@@ -1269,11 +1401,11 @@
                         </div>
                     </div>
                     <div class="highlight-box" style="text-align: center; background: linear-gradient(135deg, #C74634, #dc2626);">
-                        <div style="font-size: 3rem; font-weight: 800; margin-bottom: 0.5rem;">85%</div>
-                        <div style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">Error Reduction</div>
+                        <div style="font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem;">Enhanced</div>
+                        <div style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">Team Collaboration</div>
                         <div style="font-size: 0.875rem; opacity: 0.9;">
-                            Automated validation<br>
-                            Dependency checking
+                            Better knowledge sharing<br>
+                            Standardized processes
                         </div>
                     </div>
                 </div>
@@ -1380,11 +1512,39 @@
     </div>
 
     <script>
-        let currentSlide = 0;
+        // Check if loaded in presenter view (iframe)
+        const urlParams = new URLSearchParams(window.location.search);
+        const isPresenterView = urlParams.get('view') === 'presenter';
+        const initialSlide = parseInt(urlParams.get('slide')) || 0;
+
+        let currentSlide = initialSlide;
         const slides = document.querySelectorAll('.slide');
         const totalSlides = slides.length;
         const navbar = document.getElementById('navbar');
         const slideCounter = document.getElementById('slideCounter');
+
+        // Hide UI elements in presenter iframe view
+        if (isPresenterView) {
+            console.log('Presenter view mode detected - hiding navbar and controls');
+
+            // Force hide navbar with !important
+            if (navbar) {
+                navbar.style.setProperty('display', 'none', 'important');
+                navbar.style.setProperty('visibility', 'hidden', 'important');
+                navbar.style.setProperty('opacity', '0', 'important');
+                navbar.style.setProperty('height', '0', 'important');
+                navbar.style.setProperty('overflow', 'hidden', 'important');
+            }
+
+            if (slideCounter) slideCounter.style.display = 'none';
+            const notesBtn = document.getElementById('notesToggle');
+            if (notesBtn) notesBtn.style.display = 'none';
+            const notesPanel = document.getElementById('notesPanel');
+            if (notesPanel) notesPanel.style.display = 'none';
+
+            // Also hide any other UI elements that might appear
+            document.body.style.paddingTop = '0';
+        }
 
         // Section boundaries (slide indices where each section starts)
         const sections = [
@@ -1396,6 +1556,105 @@
             { start: 35, end: 40 },   // Section 5: Results & Validations
             { start: 41, end: 45 }    // Section 6: Future Enhancements
         ];
+
+        // Notes Management
+        const API_BASE_URL = 'http://localhost:3000/api';
+        const PRESENTATION_ID = 'pfe-oracle-2025';
+        const notesPanel = document.getElementById('notesPanel');
+        const notesTextarea = document.getElementById('notesTextarea');
+        const notesSlideNumber = document.getElementById('notesSlideNumber');
+        const saveStatus = document.getElementById('saveStatus');
+        let notesData = {}; // Cache of all notes
+        let autoSaveTimer = null;
+
+        // Load all notes from MongoDB on startup
+        async function loadAllNotes() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/notes/${PRESENTATION_ID}`);
+                const notes = await response.json();
+
+                // Store in cache
+                notes.forEach(note => {
+                    notesData[note.slideIndex] = note.notes;
+                    // Also set data-notes attribute for presenter view compatibility
+                    if (slides[note.slideIndex]) {
+                        slides[note.slideIndex].dataset.notes = note.notes;
+                    }
+                });
+
+                console.log(`Loaded ${notes.length} notes from MongoDB`);
+                loadCurrentSlideNotes();
+            } catch (error) {
+                console.warn('Could not load notes from MongoDB. Using offline mode:', error);
+                showSaveStatus('Offline mode - notes saved locally only', 'error');
+            }
+        }
+
+        // Toggle notes panel
+        function toggleNotesPanel() {
+            notesPanel.classList.toggle('visible');
+            document.body.classList.toggle('notes-visible');
+            if (notesPanel.classList.contains('visible')) {
+                notesTextarea.focus();
+            }
+        }
+
+        // Load notes for current slide
+        function loadCurrentSlideNotes() {
+            const notes = notesData[currentSlide] || slides[currentSlide]?.dataset.notes || '';
+            notesTextarea.value = notes;
+            notesSlideNumber.textContent = currentSlide + 1;
+        }
+
+        // Save current note
+        async function saveCurrentNote() {
+            const notes = notesTextarea.value.trim();
+
+            // Save to cache
+            notesData[currentSlide] = notes;
+            slides[currentSlide].dataset.notes = notes;
+
+            // Save to MongoDB
+            try {
+                showSaveStatus('Saving...', '');
+
+                const response = await fetch(`${API_BASE_URL}/notes/${PRESENTATION_ID}/${currentSlide}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ notes })
+                });
+
+                if (response.ok) {
+                    showSaveStatus('✓ Saved to MongoDB', 'success');
+                } else {
+                    throw new Error('Save failed');
+                }
+            } catch (error) {
+                console.error('Failed to save to MongoDB:', error);
+                showSaveStatus('✓ Saved locally (offline)', 'error');
+            }
+        }
+
+        // Show save status message
+        function showSaveStatus(message, type) {
+            saveStatus.textContent = message;
+            saveStatus.className = 'save-status ' + type;
+
+            setTimeout(() => {
+                saveStatus.textContent = '';
+                saveStatus.className = 'save-status';
+            }, 3000);
+        }
+
+        // Auto-save on typing (debounced)
+        notesTextarea.addEventListener('input', () => {
+            clearTimeout(autoSaveTimer);
+            autoSaveTimer = setTimeout(() => {
+                saveCurrentNote();
+            }, 2000); // Auto-save after 2 seconds of inactivity
+        });
 
         function updateSlide() {
             slides.forEach((slide, index) => {
@@ -1418,6 +1677,17 @@
 
             // Update active section in navbar
             updateActiveSection();
+
+            // Load notes for current slide
+            loadCurrentSlideNotes();
+
+            // Notify presenter window of slide change
+            if (presenterWindow && !presenterWindow.closed) {
+                presenterWindow.postMessage({
+                    type: 'slide-change',
+                    slide: currentSlide
+                }, '*');
+            }
         }
 
         function updateActiveSection() {
@@ -1463,27 +1733,155 @@
             }
         }
 
+        // Presenter view variables
+        let presenterWindow = null;
+        let startTime = null;
+
         // Keyboard navigation
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight' || e.key === ' ') {
+            if (e.key === 'ArrowRight') {
                 e.preventDefault();
                 nextSlide();
+                if (presenterWindow && !presenterWindow.closed) {
+                    presenterWindow.postMessage({type: 'slide-change', slide: currentSlide}, '*');
+                }
             } else if (e.key === 'ArrowLeft') {
                 e.preventDefault();
                 prevSlide();
+                if (presenterWindow && !presenterWindow.closed) {
+                    presenterWindow.postMessage({type: 'slide-change', slide: currentSlide}, '*');
+                }
             } else if (e.key === 'Home') {
                 e.preventDefault();
                 currentSlide = 0;
                 updateSlide();
+                if (presenterWindow && !presenterWindow.closed) {
+                    presenterWindow.postMessage({type: 'slide-change', slide: currentSlide}, '*');
+                }
             } else if (e.key === 'End') {
                 e.preventDefault();
                 currentSlide = totalSlides - 1;
                 updateSlide();
+                if (presenterWindow && !presenterWindow.closed) {
+                    presenterWindow.postMessage({type: 'slide-change', slide: currentSlide}, '*');
+                }
+            } else if (e.key === 'p' || e.key === 'P') {
+                e.preventDefault();
+                openPresenterView();
+            } else if (e.key === 'n' || e.key === 'N') {
+                // Don't toggle if user is typing in textarea
+                if (document.activeElement !== notesTextarea) {
+                    e.preventDefault();
+                    toggleNotesPanel();
+                }
+            } else if (e.key === 's' && (e.ctrlKey || e.metaKey)) {
+                // Ctrl+S or Cmd+S to save notes
+                e.preventDefault();
+                saveCurrentNote();
             }
         });
 
+        // Open presenter view
+        async function openPresenterView() {
+            if (presenterWindow && !presenterWindow.closed) {
+                presenterWindow.focus();
+                return;
+            }
+
+            // Make sure notes are loaded first
+            if (Object.keys(notesData).length === 0) {
+                console.log('Loading notes before opening presenter view...');
+                await loadAllNotes();
+            }
+
+            startTime = Date.now();
+            presenterWindow = window.open('presenter.html', 'Presenter View', 'width=1200,height=800');
+
+            // Wait for presenter window to be ready, then send initial state
+            window.presenterMessageHandler = (event) => {
+                if (event.data.type === 'presenter-ready') {
+                    sendPresenterData();
+                } else if (event.data.type === 'navigate') {
+                    if (event.data.direction === 'next') {
+                        nextSlide();
+                    } else if (event.data.direction === 'prev') {
+                        prevSlide();
+                    }
+                } else if (event.data.type === 'reset-timer') {
+                    startTime = Date.now();
+                } else if (event.data.type === 'note-updated') {
+                    // Update note in local cache when edited from presenter view
+                    const slideIndex = event.data.slide;
+                    const notes = event.data.notes;
+                    console.log(`Note updated from presenter for slide ${slideIndex}:`, notes);
+
+                    notesData[slideIndex] = notes;
+                    if (slides[slideIndex]) {
+                        slides[slideIndex].dataset.notes = notes;
+                    }
+
+                    // Update notes textarea if we're on that slide
+                    if (slideIndex === currentSlide && notesTextarea) {
+                        notesTextarea.value = notes;
+                    }
+                }
+            };
+            window.addEventListener('message', window.presenterMessageHandler);
+
+            // Also send after a delay as backup
+            setTimeout(() => {
+                sendPresenterData();
+            }, 500);
+
+            // Update timer every second
+            if (!window.presenterTimerInterval) {
+                window.presenterTimerInterval = setInterval(() => {
+                    if (presenterWindow && !presenterWindow.closed && startTime) {
+                        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                        presenterWindow.postMessage({type: 'timer', elapsed: elapsed}, '*');
+                    }
+                }, 1000);
+            }
+        }
+
+        function sendPresenterData() {
+            if (presenterWindow && !presenterWindow.closed) {
+                console.log('=== SENDING PRESENTER DATA ===');
+                console.log('notesData object:', notesData);
+                console.log('notesData entries:', Object.keys(notesData).length);
+
+                const slidesWithNotes = Array.from(slides).map((slide, index) => {
+                    const fromCache = notesData[index];
+                    const fromDataset = slide.dataset.notes;
+                    const finalNotes = fromCache || fromDataset || '';
+
+                    if (index < 5) {  // Debug first 5 slides
+                        console.log(`Slide ${index}:`);
+                        console.log('  - fromCache:', fromCache);
+                        console.log('  - fromDataset:', fromDataset);
+                        console.log('  - final:', finalNotes);
+                    }
+
+                    return {
+                        title: slide.querySelector('.slide-title, .main-title, .divider-title')?.textContent || `Slide ${index + 1}`,
+                        notes: finalNotes
+                    };
+                });
+
+                console.log('Sending', slidesWithNotes.length, 'slides to presenter');
+                presenterWindow.postMessage({
+                    type: 'init',
+                    slide: currentSlide,
+                    totalSlides: totalSlides,
+                    slides: slidesWithNotes
+                }, '*');
+            }
+        }
+
+
         // Initialize
         updateSlide();
+        loadAllNotes(); // Load notes from MongoDB on startup
     </script>
 </body>
 </html>

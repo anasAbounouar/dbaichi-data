@@ -1,0 +1,16 @@
+{
+  "watch": [
+    "server.js",
+    "presentation.html",
+    "presenter.html"
+  ],
+  "ignore": [
+    "node_modules/**",
+    ".git/**",
+    "*.log",
+    "/Users/anasabounouar/Library/**"
+  ],
+  "ext": "js,json,html",
+  "delay": "1000",
+  "legacyWatch": true
+}
