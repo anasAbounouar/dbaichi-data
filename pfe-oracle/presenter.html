@@ -307,6 +307,23 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
         }
+
+        .switch-view-btn {
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .switch-view-btn:hover {
+            background: #7c3aed;
+            transform: scale(1.05);
+        }
     </style>
 </head>
 <body>
@@ -326,6 +343,7 @@
                     <button class="nav-btn" id="prevBtn" onclick="goToPrevSlide()">◀</button>
                     <button class="nav-btn" id="nextBtn" onclick="goToNextSlide()">▶</button>
                 </div>
+                <button class="switch-view-btn" onclick="switchToProjectorMode()" title="Switch this window to Projector Mode (slides only)">📽️ Projector Mode</button>
                 <button class="control-btn" onclick="resetTimer()">Reset Timer</button>
                 <button class="control-btn danger" onclick="endPresentation()">End Show</button>
             </div>
@@ -363,13 +381,44 @@
 
     <script>
         let mainWindow = window.opener;
-        let currentSlide = 0;
+
+        // Get initial slide from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const initialSlideFromUrl = parseInt(urlParams.get('slide')) || 0;
+
+        let currentSlide = initialSlideFromUrl;
         let totalSlides = 0;
         let slidesData = [];
         let startTime = null;
         let autoSaveTimer = null;
         const API_BASE_URL = 'http://localhost:3000/api';
         const PRESENTATION_ID = 'pfe-oracle-2025';
+
+        // Sync channel for communication with projector window
+        let syncChannel = null;
+
+        try {
+            syncChannel = new BroadcastChannel('presentation-sync');
+            console.log('✅ PRESENTER: BroadcastChannel created successfully');
+
+            // Listen for slide changes from projector window
+            syncChannel.onmessage = (event) => {
+                console.log('📡 PRESENTER: Received message:', event.data);
+                if (event.data.type === 'slide-change' && event.data.slide !== currentSlide) {
+                    console.log('🔄 PRESENTER: Syncing to slide:', event.data.slide);
+                    currentSlide = event.data.slide;
+                    updatePresenterView();
+                }
+            };
+        } catch (error) {
+            console.error('❌ PRESENTER: BroadcastChannel not supported:', error);
+        }
+
+        // Load notes and initialize if we're in standalone mode (not opened from main window)
+        if (!mainWindow || mainWindow.closed) {
+            console.log('Standalone presenter mode - loading data...');
+            loadPresenterDataStandalone();
+        }
 
         // Listen for messages from main window
         window.addEventListener('message', (event) => {
@@ -535,25 +584,65 @@
         function goToPrevSlide() {
             if (mainWindow && !mainWindow.closed) {
                 mainWindow.postMessage({type: 'navigate', direction: 'prev'}, '*');
+            } else {
+                // Standalone mode - navigate directly
+                if (currentSlide > 0) {
+                    currentSlide--;
+                    updatePresenterView();
+                    // Broadcast to projector window
+                    if (syncChannel) {
+                        console.log('📤 PRESENTER: Broadcasting prev slide:', currentSlide);
+                        syncChannel.postMessage({ type: 'slide-change', slide: currentSlide });
+                    }
+                }
             }
         }
 
         function goToNextSlide() {
             if (mainWindow && !mainWindow.closed) {
                 mainWindow.postMessage({type: 'navigate', direction: 'next'}, '*');
+            } else {
+                // Standalone mode - navigate directly
+                if (currentSlide < totalSlides - 1) {
+                    currentSlide++;
+                    updatePresenterView();
+                    // Broadcast to projector window
+                    if (syncChannel) {
+                        console.log('📤 PRESENTER: Broadcasting next slide:', currentSlide);
+                        syncChannel.postMessage({ type: 'slide-change', slide: currentSlide });
+                    }
+                }
             }
         }
 
         function resetTimer() {
             if (mainWindow && !mainWindow.closed) {
                 mainWindow.postMessage({type: 'reset-timer'}, '*');
+            } else {
+                // Standalone mode - reset timer directly
+                startTime = Date.now();
             }
+        }
+
+        // Start timer update interval for standalone mode
+        if (!mainWindow || mainWindow.closed) {
+            setInterval(() => {
+                if (startTime) {
+                    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                    updateTimer(elapsed);
+                }
+            }, 1000);
         }
 
         function endPresentation() {
             if (confirm('End presentation and close presenter view?')) {
                 window.close();
             }
+        }
+
+        function switchToProjectorMode() {
+            // Switch this window to projector mode (clean slides only)
+            window.location.href = `presentation.html?slide=${currentSlide}`;
         }
 
         // Keyboard shortcuts
@@ -572,21 +661,63 @@
             }
         });
 
+        // Load presenter data in standalone mode (when opened directly, not via P key)
+        async function loadPresenterDataStandalone() {
+            try {
+                // Fetch total slide count and notes from MongoDB
+                const response = await fetch(`${API_BASE_URL}/notes/${PRESENTATION_ID}`);
+                const notes = await response.json();
+
+                // Build slidesData array - we need to know total slides
+                // For now, assume 54 slides (or fetch from a config endpoint)
+                totalSlides = 54;
+                slidesData = Array.from({ length: totalSlides }, (_, i) => ({
+                    title: `Slide ${i + 1}`,
+                    notes: ''
+                }));
+
+                // Apply notes from MongoDB
+                notes.forEach(note => {
+                    if (slidesData[note.slideIndex]) {
+                        slidesData[note.slideIndex].notes = note.notes;
+                    }
+                });
+
+                console.log(`Loaded ${notes.length} notes in standalone mode`);
+                startTime = Date.now();
+                updatePresenterView();
+            } catch (error) {
+                console.error('Failed to load presenter data:', error);
+                // Fallback to basic initialization
+                totalSlides = 54;
+                slidesData = Array.from({ length: totalSlides }, (_, i) => ({
+                    title: `Slide ${i + 1}`,
+                    notes: 'No notes for this slide'
+                }));
+                startTime = Date.now();
+                updatePresenterView();
+            }
+        }
+
         // Request initial data
         if (mainWindow && !mainWindow.closed) {
             console.log('Requesting data from main window');
             mainWindow.postMessage({type: 'presenter-ready'}, '*');
         }
 
-        // Keep checking if main window is still open
-        setInterval(() => {
-            if (!mainWindow || mainWindow.closed) {
-                console.log('Main window closed');
-                if (confirm('Main presentation window closed. Close presenter view?')) {
-                    window.close();
+        // Keep checking if main window is still open (only if opened from main window)
+        if (mainWindow && !mainWindow.closed) {
+            let hasShownWarning = false;
+            setInterval(() => {
+                if (mainWindow && mainWindow.closed && !hasShownWarning) {
+                    console.log('Main window closed');
+                    hasShownWarning = true;
+                    if (confirm('Main presentation window closed. Close presenter view?')) {
+                        window.close();
+                    }
                 }
-            }
-        }, 2000);
+            }, 2000);
+        }
     </script>
 </body>
 </html>
