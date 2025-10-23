@@ -13,21 +13,18 @@
             box-sizing: border-box;
         }
 
+        html {
+            font-size: clamp(8px, 0.5vw, 16px);
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             overflow: hidden;
-            background: #0f172a;
+            background: #f8fafc;
             user-select: text;
             -webkit-user-select: text;
             -moz-user-select: text;
             -ms-user-select: text;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100vw;
-            height: 100vh;
         }
 
         /* Allow text selection on all slide content */
@@ -36,15 +33,6 @@
             -webkit-user-select: text;
             -moz-user-select: text;
             -ms-user-select: text;
-        }
-
-        /* Presentation container with fixed aspect ratio */
-        #presentation-container {
-            position: relative;
-            width: 1920px;
-            height: 1080px;
-            transform-origin: center center;
-            background: #f8fafc;
         }
 
         @keyframes fadeIn {
@@ -67,8 +55,8 @@
 
         .slide {
             display: none;
-            width: 1920px;
-            height: 1080px;
+            width: 100vw;
+            height: 100vh;
             position: absolute;
             top: 0;
             left: 0;
@@ -563,7 +551,6 @@
     </style>
 </head>
 <body>
-    <div id="presentation-container">
     <!-- Navigation Bar -->
     <div class="navbar" id="navbar">
         <button onclick="goToSection(1)">Company & Team</button>
@@ -1899,34 +1886,6 @@
         // Initialize
         updateSlide();
         loadAllNotes(); // Load notes from MongoDB on startup
-
-        // Responsive scaling system
-        function scalePresentation() {
-            const container = document.getElementById('presentation-container');
-            if (!container) return;
-
-            const baseWidth = 1920;
-            const baseHeight = 1080;
-
-            const windowWidth = window.innerWidth;
-            const windowHeight = window.innerHeight;
-
-            // Calculate scale to fit viewport while maintaining aspect ratio
-            const scaleX = windowWidth / baseWidth;
-            const scaleY = windowHeight / baseHeight;
-            const scale = Math.min(scaleX, scaleY);
-
-            // Apply scale transformation
-            container.style.transform = `scale(${scale})`;
-
-            console.log(`Viewport: ${windowWidth}x${windowHeight}, Scale: ${scale.toFixed(3)}`);
-        }
-
-        // Scale on load and resize
-        scalePresentation();
-        window.addEventListener('resize', scalePresentation);
-        window.addEventListener('orientationchange', scalePresentation);
     </script>
-    </div>
 </body>
 </html>
