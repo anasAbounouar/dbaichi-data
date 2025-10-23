@@ -1,0 +1,94 @@
+PRESENTATION GENERATION PROMPT
+================================
+
+PROJECT: Infrastructure as Code Support in Graal CI - Yassine DBAICHI PFE
+
+REQUIREMENTS:
+-------------
+1. HTML presentation (single file)
+2. Use Tailwind CSS via CDN
+3. Navigation structure with 6 main axes (from template PDF)
+4. Follow PFE report sommaire/structure
+5. Include placeholder images where diagrams/screenshots appear in report
+
+STRUCTURE:
+----------
+Navigation Bar (fixed at top):
+- Company & Team Context
+- Problem & Solution Overview
+- Project Management
+- Technical Implementation
+- Results & Validations
+- Future Enhancements
+
+Slide Types:
+- Divider slides: Full-screen dark blue, title only, NO navbar
+- Content slides: White/light background, navbar visible, current section highlighted
+
+Content Organization (from PFE report):
+---------------------------------------
+1. Company & Team Context
+   - Oracle Corporation
+   - Oracle Labs
+   - GraalVM RISQ Team
+   - Team Focus
+
+2. Problem & Solution Overview
+   - Manual Infrastructure Management (Chapter 3.1)
+   - Identified Issues (Chapter 3.2)
+   - Requirements (Chapter 3.3)
+   - Solution: JSON-Driven IaC Framework
+
+3. Project Management
+   - Management Approach (Chapter 2.1)
+   - Communication Tools
+   - Development Workflow
+   - Timeline
+
+4. Technical Implementation
+   - System Architecture (Chapter 4.2)
+   - Factory Pattern (Chapter 4.3.1)
+   - Dependency Resolution (Chapter 4.3.3)
+   - GitLab CI/CD Integration (Chapter 4.4.2)
+   - JSON Configuration Structure
+
+5. Results & Validations
+   - Implementation Results (Chapter 5.1)
+   - Testing Results (Chapter 5.2)
+   - Performance Improvements (Chapter 5.3)
+   - Impact Assessment
+
+6. Future Enhancements
+   - Current Limitations
+   - Future Work
+   - Conclusion
+
+DESIGN STYLE:
+-------------
+- Colors: Oracle teal/blue (#14535F for dark, lighter blues for navbar)
+- Red accent (#C74634)
+- Rounded navbar buttons
+- Organic blob shapes in background (optional)
+- Modern, clean layout
+- Professional enterprise look
+
+NAVIGATION:
+-----------
+- Arrow keys for next/previous slide
+- Click navbar items to jump to sections
+- Smooth transitions between slides
+
+PLACEHOLDERS:
+-------------
+Use placeholder divs for:
+- Architecture diagrams (Figures 3.4, 3.5, 4.2, 4.3, etc.)
+- Screenshots (Figure 5.1, 5.2)
+- Charts/graphs from Chapter 5
+- Timeline/Gantt chart from Chapter 2
+- Logo images
+
+Date: 2025
+Project: PFE Oracle - Infrastructure as Code
+Student: Yassine DBAICHI
+School: EHTP
+Team: GraalVM RISQ

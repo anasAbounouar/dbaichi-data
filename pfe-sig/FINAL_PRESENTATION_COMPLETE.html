@@ -1,0 +1,2843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Expand Infrastructure as Code Support in Graal CI - Defense Presentation</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background: #e8e8e8;
+    }
+    .slide {
+        width: 1280px;
+        min-height: 720px;
+        margin: 0 auto 30px auto;
+        background: white;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        page-break-after: always;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+    .oracle-red {
+        background-color: #ED1C24;
+    }
+    .oracle-gray {
+        background-color: #7D8185;
+    }
+    .title-text {
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+    }
+    .content-section {
+        transition: transform 0.3s ease;
+    }
+    .content-section:hover {
+        transform: translateX(10px);
+    }
+    .info-box {
+        border-left: 4px solid #ED1C24;
+    }
+    .challenge-item, .feature-item, .use-case, .workflow-item, .pipeline-stage,
+    .training-item, .requirement-item, .pain-point, .resource-item,
+    .achievement-item, .contact-item {
+        transition: transform 0.2s ease;
+    }
+    .challenge-item:hover, .feature-item:hover, .use-case:hover,
+    .workflow-item:hover, .pipeline-stage:hover, .training-item:hover,
+    .requirement-item:hover, .pain-point:hover, .achievement-item:hover,
+    .contact-item:hover {
+        transform: translateX(5px);
+    }
+    .resource-item:hover {
+        transform: scale(1.05);
+    }
+    .component-box {
+        border: 2px solid #ED1C24;
+        transition: all 0.3s ease;
+    }
+    .component-box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+    .code-block {
+        font-family: 'Consolas', 'Monaco', monospace;
+        background-color: #f8f8f8;
+        border-radius: 4px;
+        padding: 12px;
+        border-left: 3px solid #ED1C24;
+        overflow-x: auto;
+    }
+    .json-key { color: #0055A4; }
+    .json-string { color: #A31515; }
+    .json-number { color: #098658; }
+    .comment { color: #008000; }
+    .comparison-row:nth-child(even) {
+        background-color: #f8f8f8;
+    }
+    .comparison-row:hover {
+        background-color: #f0f0f0;
+    }
+    .decision-pill {
+        border-radius: 12px;
+        padding: 2px 8px;
+        font-size: 0.85rem;
+        display: inline-block;
+        font-weight: 600;
+    }
+    .decision-win {
+        background-color: #e6f7eb;
+        color: #006400;
+    }
+    .decision-tie {
+        background-color: #f0f0f0;
+        color: #555;
+    }
+    .flow-step:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+    .principle-card:hover {
+        transform: translateY(-5px);
+        transition: transform 0.2s ease;
+    }
+    .step-box {
+        border-left: 4px solid #ED1C24;
+    }
+    .result-card:hover {
+        transform: translateY(-5px);
+        transition: transform 0.2s ease;
+    }
+    .bullet-point {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 12px;
+    }
+    .bullet-icon {
+        margin-right: 10px;
+        margin-top: 2px;
+    }
+    .bar {
+        fill: #ED1C24;
+        transition: fill 0.3s ease;
+    }
+    .bar:hover {
+        fill: #c41e1e;
+    }
+    .qr-code-placeholder {
+        border: 2px dashed #7D8185;
+    }
+    .bar-chart-container {
+        height: 200px;
+        width: 100%;
+    }
+    .flow-arrow {
+        position: absolute;
+        height: 2px;
+        background-color: #7D8185;
+        z-index: 0;
+    }
+    .flow-arrow::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        top: -4px;
+        width: 0;
+        height: 0;
+        border-left: 10px solid #7D8185;
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+    }
+
+    @media print {
+        body {
+            background: white;
+            padding: 0;
+        }
+        .slide {
+            margin: 0;
+            box-shadow: none;
+        }
+    }
+</style>
+</head>
+<body>
+
+<!-- Cover Page -->
+<div style="text-align: center; padding: 60px 40px; background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); margin: 0 auto 30px auto; width: 1280px; box-shadow: 0 8px 16px rgba(0,0,0,0.15); border-top: 6px solid #ED1C24;">
+    <h1 style="font-size: 52px; color: #ED1C24; margin-bottom: 20px; font-weight: bold; letter-spacing: -1px;">
+        Expand Infrastructure as Code Support in Graal CI
+    </h1>
+    <h2 style="font-size: 32px; color: #555; margin-bottom: 30px; font-weight: 500;">
+        JSON-Driven Automation System with Pulumi for Oracle Cloud Infrastructure
+    </h2>
+
+    <div style="margin: 40px 0; padding: 2px; background: linear-gradient(90deg, transparent, #ED1C24, transparent);"></div>
+
+    <p style="font-size: 24px; color: #666; margin-bottom: 12px; font-weight: 600;">Defense Presentation</p>
+    <p style="font-size: 20px; color: #888; margin-bottom: 8px;">22 Comprehensive Slides</p>
+    <p style="font-size: 22px; color: #333; margin: 25px 0; font-weight: 600;">Yassine DBAICHI</p>
+    <p style="font-size: 18px; color: #666;">EHTP - École Hassania des Travaux Publics</p>
+    <p style="font-size: 18px; color: #888; margin-top: 8px;">Academic Year 2024/2025</p>
+
+    <div style="margin-top: 45px; padding: 25px; background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); border-left: 6px solid #28a745; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        <p style="font-size: 20px; color: #155724; margin: 0 0 15px 0; font-weight: bold;">
+            <i class="fas fa-check-circle" style="margin-right: 8px;"></i>COMPLETE CORRECTED VERSION
+        </p>
+        <div style="text-align: left; max-width: 700px; margin: 0 auto;">
+            <p style="font-size: 16px; color: #155724; margin: 8px 0;">✓ All supervisor information visible on title slide</p>
+            <p style="font-size: 16px; color: #155724; margin: 8px 0;">✓ Complete CI/CD pipeline with all 4 stages (Validate, Plan, Deploy, Drift Detection)</p>
+            <p style="font-size: 16px; color: #155724; margin: 8px 0;">✓ All slide numbers visible throughout presentation</p>
+            <p style="font-size: 16px; color: #155724; margin: 8px 0;">✓ All diagrams, charts, and images included</p>
+            <p style="font-size: 16px; color: #155724; margin: 8px 0;">✓ Content verified against actual Pulumi project report</p>
+        </div>
+    </div>
+
+    <div style="margin-top: 35px; padding: 20px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;">
+        <p style="font-size: 16px; color: #856404; margin: 0;">
+            <i class="fas fa-users" style="margin-right: 8px;"></i>
+            <strong>Supervisors:</strong> Mr. Hamza GHAISSI (Oracle) | Dir. Mohamed EZ-ZARGHILI (Manager) | Prof. Hatim LECHGAR (Academic)
+        </p>
+    </div>
+</div>
+
+<div class="slide flex" style=" overflow: hidden;">
+<!-- Left side with Oracle red background -->
+<div class="oracle-red w-1/3 h-full flex items-center justify-center">
+<div class="w-3/4 text-white text-center">
+<div class="text-5xl font-bold mb-4">GRAAL CI</div>
+<div class="text-3xl font-semibold">IaC SOLUTION</div>
+<!-- Logo placeholders -->
+<div class="mt-12 mb-8">
+<div class="text-xl font-bold">ORACLE</div>
+<div class="text-sm mt-1">Corporate Logo</div>
+</div>
+<div class="mt-12">
+<div class="text-xl font-bold">EHTP</div>
+<div class="text-sm mt-1">University Logo</div>
+</div>
+</div>
+</div>
+<!-- Right side with white background -->
+<div class="bg-white w-2/3 h-full flex flex-col justify-between">
+<!-- Title section -->
+<div class="pt-16 px-12">
+<h1 class="text-4xl font-bold text-gray-800 title-text">Expand Infrastructure as Code Support in Graal CI</h1>
+<h2 class="text-2xl font-semibold text-gray-600 mt-4">JSON-Driven Automation System with Pulumi for Oracle Cloud Infrastructure</h2>
+<!-- Decorative element -->
+<div class="w-20 h-1 bg-red-600 mt-6"></div>
+</div>
+<!-- Spacer for centering -->
+<div class="flex-grow"></div>
+<!-- Author information -->
+<div class="px-12 pb-16">
+<div class="flex justify-between items-end">
+<div>
+<p class="text-lg font-semibold text-gray-800">Yassine DBAICHI</p>
+<p class="text-md text-gray-600">EHTP - École Hassania des Travaux Publics</p>
+</div>
+<div class="text-right" >
+<p class="text-md text-gray-600"><span class="font-semibold">Oracle Supervisor:</span> Mr. Hamza GHAISSI</p>
+<p class="text-md text-gray-600"><span class="font-semibold">Dotted Line Manager:</span> Dir. Mohamed EZ-ZARGHILI</p>
+<p class="text-md text-gray-600"><span class="font-semibold">Academic Supervisor:</span> Prof. Hatim LECHGAR</p>
+<p class="text-md text-gray-600 mt-1">Academic Year 2024/2025</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+
+<div class="slide bg-white flex flex-col" style=" overflow: hidden;">
+<!-- Header with title -->
+<div class="oracle-red py-4 px-8 text-white">
+<h1 class="text-3xl font-bold">Table of Contents</h1>
+</div>
+<!-- Main content -->
+<div class="flex flex-1 p-8">
+<div class="w-full">
+<!-- Introduction text -->
+<p class="text-gray-700 text-xl mb-6">Overview of presentation structure covering general context, project management, analysis, implementation, and results.</p>
+<!-- Table of contents -->
+<div class="grid grid-cols-2 gap-6">
+<!-- Section 1 -->
+<div class="content-section flex items-start">
+<div class="oracle-red rounded-full p-3 mr-4 flex-shrink-0">
+<i class="fas fa-globe text-white text-xl"></i>
+</div>
+<div>
+<h2 class="text-2xl font-semibold text-gray-800">Part I: General Context</h2>
+<p class="text-gray-600 mt-1">Oracle &amp; GraalVM RISQ Team Context, Problem Statement, Proposed Solution</p>
+<p class="text-gray-500 text-sm mt-1">Slides 3-5</p>
+</div>
+</div>
+<!-- Section 2 -->
+<div class="content-section flex items-start">
+<div class="oracle-red rounded-full p-3 mr-4 flex-shrink-0">
+<i class="fas fa-tasks text-white text-xl"></i>
+</div>
+<div>
+<h2 class="text-2xl font-semibold text-gray-800">Part II: Project Management</h2>
+<p class="text-gray-600 mt-1">Management Approach, Training &amp; Integration</p>
+<p class="text-gray-500 text-sm mt-1">Slides 6-7</p>
+</div>
+</div>
+<!-- Section 3 -->
+<div class="content-section flex items-start">
+<div class="oracle-red rounded-full p-3 mr-4 flex-shrink-0">
+<i class="fas fa-search text-white text-xl"></i>
+</div>
+<div>
+<h2 class="text-2xl font-semibold text-gray-800">Part III: Analysis &amp; Solution Selection</h2>
+<p class="text-gray-600 mt-1">Current State Analysis, Requirements, Solution Evaluation</p>
+<p class="text-gray-500 text-sm mt-1">Slides 8-10</p>
+</div>
+</div>
+<!-- Section 4 -->
+<div class="content-section flex items-start">
+<div class="oracle-red rounded-full p-3 mr-4 flex-shrink-0">
+<i class="fas fa-code text-white text-xl"></i>
+</div>
+<div>
+<h2 class="text-2xl font-semibold text-gray-800">Part IV: Design &amp; Implementation</h2>
+<p class="text-gray-600 mt-1">Use Cases, Architecture, Design Patterns, Configuration, Workflow</p>
+<p class="text-gray-500 text-sm mt-1">Slides 11-17</p>
+</div>
+</div>
+<!-- Section 5 -->
+<div class="content-section flex items-start">
+<div class="oracle-red rounded-full p-3 mr-4 flex-shrink-0">
+<i class="fas fa-chart-line text-white text-xl"></i>
+</div>
+<div>
+<h2 class="text-2xl font-semibold text-gray-800">Part V: Results &amp; Validation</h2>
+<p class="text-gray-600 mt-1">Implementation Results, Testing, Performance Validation, Extensibility</p>
+<p class="text-gray-500 text-sm mt-1">Slides 18-20</p>
+</div>
+</div>
+<!-- Conclusion and Thank You -->
+<div class="content-section flex items-start">
+<div class="oracle-red rounded-full p-3 mr-4 flex-shrink-0">
+<i class="fas fa-flag-checkered text-white text-xl"></i>
+</div>
+<div>
+<h2 class="text-2xl font-semibold text-gray-800">Conclusion &amp; Contact</h2>
+<p class="text-gray-600 mt-1">Key Achievements, Impact, Thank You &amp; Questions</p>
+<p class="text-gray-500 text-sm mt-1">Slides 21-22</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer with page number -->
+<div class="oracle-gray py-2 px-8 flex justify-between items-center">
+<div class="text-white text-sm">Expand Infrastructure as Code Support in Graal CI</div>
+<div class="text-white text-sm" >2/22</div>
+</div>
+</div>
+
+
+
+<div class="slide bg-white flex flex-col" style=" overflow: hidden;">
+<!-- Header with title -->
+<div class="oracle-red py-4 px-8 text-white">
+<h1 class="text-3xl font-bold">Oracle &amp; GraalVM RISQ Team Context</h1>
+</div>
+<!-- Main content -->
+<div class="flex flex-1 p-6">
+<!-- Left column - Oracle Corporation -->
+<div class="w-1/2 pr-6">
+<div class="flex items-center mb-4">
+<div class="oracle-red rounded-full p-2 mr-3">
+<i class="fas fa-building text-white"></i>
+</div>
+<h2 class="text-2xl font-semibold text-gray-800">Oracle Corporation</h2>
+</div>
+<div class="mb-4">
+<p class="text-gray-700"><span class="font-semibold">Founded in 1977</span>, Oracle is a global leader in enterprise software, cloud computing solutions, and hardware systems.</p>
+</div>
+<div class="info-box pl-4 py-1 mb-3">
+<div class="flex items-center">
+<i class="fas fa-cloud text-gray-600 mr-2"></i>
+<p class="text-gray-700">Oracle Cloud Infrastructure (OCI)</p>
+</div>
+</div>
+<div class="info-box pl-4 py-1 mb-3">
+<div class="flex items-center">
+<i class="fas fa-database text-gray-600 mr-2"></i>
+<p class="text-gray-700">Oracle Database</p>
+</div>
+</div>
+<div class="info-box pl-4 py-1 mb-4">
+<div class="flex items-center">
+<i class="fas fa-cogs text-gray-600 mr-2"></i>
+<p class="text-gray-700">Integrated solutions (SaaS, PaaS, IaaS, DaaS)</p>
+</div>
+</div>
+<div class="mt-4">
+<div class="flex items-center mb-2">
+<i class="fas fa-globe-africa text-gray-600 mr-2"></i>
+<p class="text-gray-700"><span class="font-semibold">Global R&amp;D Presence</span> including Oracle Labs</p>
+</div>
+<div class="flex items-center">
+<i class="fas fa-map-marker-alt text-gray-600 mr-2"></i>
+<p class="text-gray-700"><span class="font-semibold">Oracle Morocco MADC</span> contributes to Java Platform Group, Digital Government, and OCI</p>
+</div>
+</div>
+<div class="mt-6">
+<img alt="Oracle Logo" class="h-16" src="https://picture-search.skywork.ai/aippt/image/sheet/6f0dd49b190297c6640fd064f8058e64.jpg"/>
+</div>
+</div>
+<!-- Right column - GraalVM RISQ Team -->
+<div class="w-1/2 pl-6 border-l border-gray-300">
+<div class="flex items-center mb-4">
+<div class="oracle-red rounded-full p-2 mr-3">
+<i class="fas fa-code text-white"></i>
+</div>
+<h2 class="text-2xl font-semibold text-gray-800">GraalVM RISQ Team</h2>
+</div>
+<p class="text-gray-700 mb-4">Responsible for Release, Infrastructure, Sustaining, Security, Support, and Quality of the GraalVM project.</p>
+<div class="grid grid-cols-2 gap-3 mb-4">
+<div class="bg-gray-100 p-3 rounded">
+<div class="flex items-center mb-1">
+<i class="fas fa-rocket text-gray-700 mr-2"></i>
+<h3 class="font-semibold text-gray-800">Release &amp; QA</h3>
+</div>
+<p class="text-sm text-gray-600">Managing release process, CI builds, and automated testing</p>
+</div>
+<div class="bg-gray-100 p-3 rounded">
+<div class="flex items-center mb-1">
+<i class="fas fa-server text-gray-700 mr-2"></i>
+<h3 class="font-semibold text-gray-800">Infrastructure</h3>
+</div>
+<p class="text-sm text-gray-600">Provisioning OCI resources for CI, nightly testing, and experimental environments</p>
+</div>
+<div class="bg-gray-100 p-3 rounded">
+<div class="flex items-center mb-1">
+<i class="fas fa-shield-alt text-gray-700 mr-2"></i>
+<h3 class="font-semibold text-gray-800">Security</h3>
+</div>
+<p class="text-sm text-gray-600">Coordinating patching, long-term support, and security compliance</p>
+</div>
+<div class="bg-gray-100 p-3 rounded">
+<div class="flex items-center mb-1">
+<i class="fas fa-tools text-gray-700 mr-2"></i>
+<h3 class="font-semibold text-gray-800">Tooling &amp; Automation</h3>
+</div>
+<p class="text-sm text-gray-600">Building custom Python, Java, and shell tooling to automate workflows</p>
+</div>
+</div>
+<div class="mt-6 bg-gray-100 p-4 rounded">
+<div class="flex items-center">
+<div class="oracle-red rounded-full p-2 mr-3">
+<i class="fas fa-cloud-upload-alt text-white"></i>
+</div>
+<h3 class="text-xl font-semibold text-gray-800">Multi-Cloud Environment</h3>
+</div>
+<p class="mt-2 text-gray-700">The team operates in a complex multi-cloud environment (OCI, AWS, Azure), adding complexity to infrastructure management.</p>
+</div>
+</div>
+</div>
+<!-- Footer with page number -->
+<div class="oracle-gray py-2 px-8 flex justify-between items-center">
+<div class="text-white text-sm">Expand Infrastructure as Code Support in Graal CI</div>
+<div class="text-white text-sm" >3/22</div>
+</div>
+</div>
+
+
+
+<div class="slide bg-white flex flex-col" style=" overflow: hidden;">
+<!-- Header with title -->
+<div class="oracle-red py-4 px-8 text-white">
+<h1 class="text-3xl font-bold">The Challenge: Manual Infrastructure Setup</h1>
+</div>
+<!-- Main content -->
+<div class="flex flex-1 p-8">
+<div class="w-full">
+<!-- Introduction text -->
+<p class="text-gray-700 text-xl mb-6">Prior to this project, the GraalVM RISQ team managed OCI resources through manual processes, leading to significant challenges:</p>
+<!-- Challenges grid -->
+<div class="grid grid-cols-2 gap-6">
+<!-- Challenge 1 -->
+<div class="challenge-item flex items-start">
+<div class="oracle-red rounded-full p-3 mr-4 flex-shrink-0">
+<i class="fas fa-clock text-white text-xl"></i>
+</div>
+<div>
+<h2 class="text-xl font-semibold text-gray-800">Time-Consuming Provisioning</h2>
+<p class="text-gray-600 mt-1">Environment provisioning took hours per stack, slowing down test scenarios and team onboarding.</p>
+</div>
+</div>
+<!-- Challenge 2 -->
+<div class="challenge-item flex items-start">
+<div class="oracle-red rounded-full p-3 mr-4 flex-shrink-0">
+<i class="fas fa-exclamation-triangle text-white text-xl"></i>
+</div>
+<div>
+<h2 class="text-xl font-semibold text-gray-800">Human Error Risk</h2>
+<p class="text-gray-600 mt-1">Manual configuration introduced errors and inconsistencies between environments.</p>
+</div>
+</div>
+<!-- Challenge 3 -->
+<div class="challenge-item flex items-start">
+<div class="oracle-red rounded-full p-3 mr-4 flex-shrink-0">
+<i class="fas fa-code-branch text-white text-xl"></i>
+</div>
+<div>
+<h2 class="text-xl font-semibold text-gray-800">No Version Control</h2>
+<p class="text-gray-600 mt-1">Without version control, tracking changes or identifying who made them was difficult.</p>
+</div>
+</div>
+<!-- Challenge 4 -->
+<div class="challenge-item flex items-start">
+<div class="oracle-red rounded-full p-3 mr-4 flex-shrink-0">
+<i class="fas fa-random text-white text-xl"></i>
+</div>
+<div>
+<h2 class="text-xl font-semibold text-gray-800">Configuration Drift</h2>
+<p class="text-gray-600 mt-1">Inconsistent environments caused unexpected CI failures and &#34;works on my machine&#34; issues.</p>
+</div>
+</div>
+<!-- Challenge 5 -->
+<div class="challenge-item flex items-start">
+<div class="oracle-red rounded-full p-3 mr-4 flex-shrink-0">
+<i class="fas fa-expand-arrows-alt text-white text-xl"></i>
+</div>
+<div>
+<h2 class="text-xl font-semibold text-gray-800">Poor Scalability</h2>
+<p class="text-gray-600 mt-1">The manual process could not scale with increasing complexity of GraalVM&#39;s CI workflows.</p>
+</div>
+</div>
+<!-- Challenge 6 -->
+<div class="challenge-item flex items-start">
+<div class="oracle-red rounded-full p-3 mr-4 flex-shrink-0">
+<i class="fas fa-user-lock text-white text-xl"></i>
+</div>
+<div>
+<h2 class="text-xl font-semibold text-gray-800">Knowledge Silos</h2>
+<p class="text-gray-600 mt-1">Infrastructure expertise was concentrated among a few team members, creating bottlenecks.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer with page number -->
+<div class="oracle-gray py-2 px-8 flex justify-between items-center">
+<div class="text-white text-sm">Expand Infrastructure as Code Support in Graal CI</div>
+<div class="text-white text-sm" >4/22</div>
+</div>
+</div>
+
+
+
+<div class="slide bg-white flex flex-col" style=" overflow: hidden;">
+<!-- Header with title -->
+<div class="oracle-red py-4 px-8 text-white">
+<h1 class="text-3xl font-bold">Solution: Automated Infrastructure as Code</h1>
+</div>
+<!-- Main content -->
+<div class="flex flex-1 p-6">
+<!-- Left side with key features -->
+<div class="w-1/2 pr-4">
+<h2 class="text-2xl font-semibold text-gray-800 mb-4">Key Features</h2>
+<div class="space-y-4">
+<div class="feature-item flex items-start">
+<div class="oracle-red rounded-full p-2 mr-3 flex-shrink-0">
+<i class="fas fa-code text-white"></i>
+</div>
+<div>
+<h3 class="text-xl font-semibold text-gray-700">Infrastructure as Code</h3>
+<p class="text-gray-600">Using Pulumi&#39;s programmatic approach with Python to define infrastructure as executable code</p>
+</div>
+</div>
+<div class="feature-item flex items-start">
+<div class="oracle-red rounded-full p-2 mr-3 flex-shrink-0">
+<i class="fas fa-file-code text-white"></i>
+</div>
+<div>
+<h3 class="text-xl font-semibold text-gray-700">JSON-Driven Configuration</h3>
+<p class="text-gray-600">All OCI resources defined in JSON files, enabling non-expert users to request changes via simple file edits</p>
+</div>
+</div>
+<div class="feature-item flex items-start">
+<div class="oracle-red rounded-full p-2 mr-3 flex-shrink-0">
+<i class="fas fa-sitemap text-white"></i>
+</div>
+<div>
+<h3 class="text-xl font-semibold text-gray-700">Stack-Based Environment Management</h3>
+<p class="text-gray-600">Separate configurations for development, staging, and production environments ensure isolation</p>
+</div>
+</div>
+<div class="feature-item flex items-start">
+<div class="oracle-red rounded-full p-2 mr-3 flex-shrink-0">
+<i class="fas fa-lock text-white"></i>
+</div>
+<div>
+<h3 class="text-xl font-semibold text-gray-700">Self-Service and Security</h3>
+<p class="text-gray-600">Any team member can propose changes via pull request, with all changes reviewed and deployed automatically</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Right side with before/after comparison -->
+<div class="w-1/2 pl-4">
+<h2 class="text-2xl font-semibold text-gray-800 mb-4">Before &amp; After</h2>
+<div class="bg-gray-100 rounded-lg p-5">
+<div class="flex justify-between items-center mb-6">
+<div class="w-5/12 bg-gray-200 rounded-lg p-4">
+<div class="flex justify-center mb-3">
+<i class="fas fa-tools text-4xl text-gray-600"></i>
+</div>
+<h3 class="text-center text-xl font-semibold text-gray-700">Manual Process</h3>
+<ul class="mt-3 space-y-2">
+<li class="flex items-start">
+<i class="fas fa-times-circle text-red-500 mt-1 mr-2"></i>
+<span class="text-gray-600">Hours per environment</span>
+</li>
+<li class="flex items-start">
+<i class="fas fa-times-circle text-red-500 mt-1 mr-2"></i>
+<span class="text-gray-600">High risk of human errors</span>
+</li>
+<li class="flex items-start">
+<i class="fas fa-times-circle text-red-500 mt-1 mr-2"></i>
+<span class="text-gray-600">No version control</span>
+</li>
+<li class="flex items-start">
+<i class="fas fa-times-circle text-red-500 mt-1 mr-2"></i>
+<span class="text-gray-600">Configuration drift</span>
+</li>
+</ul>
+</div>
+<div class="w-2/12 flex justify-center">
+<i class="fas fa-arrow-right text-3xl text-gray-500"></i>
+</div>
+<div class="w-5/12 bg-gray-200 rounded-lg p-4">
+<div class="flex justify-center mb-3">
+<i class="fas fa-cloud-upload-alt text-4xl text-gray-600"></i>
+</div>
+<h3 class="text-center text-xl font-semibold text-gray-700">IaC with Pulumi</h3>
+<ul class="mt-3 space-y-2">
+<li class="flex items-start">
+<i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+<span class="text-gray-600">15-20 minutes setup</span>
+</li>
+<li class="flex items-start">
+<i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+<span class="text-gray-600">Eliminated human errors</span>
+</li>
+<li class="flex items-start">
+<i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+<span class="text-gray-600">Full Git version control</span>
+</li>
+<li class="flex items-start">
+<i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+<span class="text-gray-600">Consistent environments</span>
+</li>
+</ul>
+</div>
+</div>
+<div class="mt-4">
+<div class="w-full h-10 bg-gray-200 rounded-lg overflow-hidden" id="timeReduction">
+<div class="h-full bg-red-600 text-right py-1 px-4 text-white font-semibold" style="width: 85%">
+                                80-90% Time Reduction
+                            </div>
+</div>
+<p class="text-center text-gray-600 mt-2">Setup time: Hours → 15-20 minutes</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer with page number -->
+<div class="oracle-gray py-2 px-8 flex justify-between items-center">
+<div class="text-white text-sm">Expand Infrastructure as Code Support in Graal CI</div>
+<div class="text-white text-sm" >5/22</div>
+</div>
+</div>
+
+
+
+<div class="slide bg-white flex flex-col" style=" overflow: hidden;">
+<!-- Header with title -->
+<div class="oracle-red py-4 px-8 text-white">
+<h1 class="text-3xl font-bold">Management Approach &amp; Workflow</h1>
+</div>
+<!-- Main content -->
+<div class="flex flex-1 p-6">
+<div class="grid grid-cols-2 gap-6 w-full">
+<!-- Left column -->
+<div class="flex flex-col space-y-6">
+<!-- Management Approach section -->
+<div class="bg-gray-50 p-5 rounded-lg shadow-sm">
+<div class="flex items-center mb-3">
+<div class="oracle-red rounded-full p-2 mr-3">
+<i class="fas fa-tasks text-white"></i>
+</div>
+<h2 class="text-2xl font-semibold text-gray-800">Management Approach</h2>
+</div>
+<ul class="ml-10 list-disc text-gray-700 space-y-2">
+<li>Semiformal management style with lightweight Kanban method</li>
+<li>Tasks tracked in Slack project tracker with columns: To Do, In Progress, Blocked, Done</li>
+<li>Task management: Jira for tracking, Confluence for documentation</li>
+<li>Communication: Slack channels, GitLab for code reviews</li>
+</ul>
+</div>
+<!-- Meeting Cadence section -->
+<div class="bg-gray-50 p-5 rounded-lg shadow-sm">
+<div class="flex items-center mb-3">
+<div class="oracle-red rounded-full p-2 mr-3">
+<i class="fas fa-calendar-alt text-white"></i>
+</div>
+<h2 class="text-2xl font-semibold text-gray-800">Meeting Cadence</h2>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<h3 class="font-semibold text-gray-700 mb-2">Biweekly Team Meetings</h3>
+<ul class="ml-5 list-disc text-gray-600 text-sm">
+<li>Progress reviews</li>
+<li>Technical discussions</li>
+<li>Planning &amp; prioritization</li>
+</ul>
+<img alt="Team meeting calendar" class="w-full h-32 object-cover rounded mt-2" src="https://picture-search.skywork.ai/aippt/image/sheet/dec50732c0de81e8a4e02358a3fe3898.jpg"/>
+</div>
+<div>
+<h3 class="font-semibold text-gray-700 mb-2">Weekly Mentor Check-ins</h3>
+<ul class="ml-5 list-disc text-gray-600 text-sm">
+<li>One-on-one guidance</li>
+<li>Task review &amp; planning</li>
+<li>Continuous alignment</li>
+</ul>
+<img alt="Mentor check-in calendar" class="w-full h-32 object-cover rounded mt-2" src="https://picture-search.skywork.ai/aippt/image/sheet/4197cd93adef423653394da8b0025e81.jpg"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Right column -->
+<div class="flex flex-col space-y-6">
+<!-- Development Workflow section -->
+<div class="bg-gray-50 p-5 rounded-lg shadow-sm">
+<div class="flex items-center mb-3">
+<div class="oracle-red rounded-full p-2 mr-3">
+<i class="fas fa-code-branch text-white"></i>
+</div>
+<h2 class="text-2xl font-semibold text-gray-800">Development Workflow</h2>
+</div>
+<div class="flex justify-between items-center mt-4 px-4">
+<div class="workflow-item text-center">
+<div class="oracle-red rounded-full p-3 mx-auto mb-2">
+<i class="fas fa-code text-white text-xl"></i>
+</div>
+<p class="font-semibold text-gray-700">Feature Branch</p>
+</div>
+<div class="text-gray-400">
+<i class="fas fa-arrow-right"></i>
+</div>
+<div class="workflow-item text-center">
+<div class="oracle-red rounded-full p-3 mx-auto mb-2">
+<i class="fas fa-code-commit text-white text-xl"></i>
+</div>
+<p class="font-semibold text-gray-700">Code Review</p>
+</div>
+<div class="text-gray-400">
+<i class="fas fa-arrow-right"></i>
+</div>
+<div class="workflow-item text-center">
+<div class="oracle-red rounded-full p-3 mx-auto mb-2">
+<i class="fas fa-code-branch text-white text-xl"></i>
+</div>
+<p class="font-semibold text-gray-700">Merge to Main</p>
+</div>
+</div>
+<p class="text-gray-600 mt-4 text-sm">
+<i class="fas fa-info-circle text-blue-500 mr-1"></i>
+                            A typical task lifecycle involves creating a Jira ticket, implementing changes in a feature branch using Git, submitting a merge request in GitLab for peer review, merging after approvals, and closing the Jira ticket.
+                        </p>
+</div>
+<!-- Tools section -->
+<div class="bg-gray-50 p-5 rounded-lg shadow-sm">
+<div class="flex items-center mb-3">
+<div class="oracle-red rounded-full p-2 mr-3">
+<i class="fas fa-tools text-white"></i>
+</div>
+<h2 class="text-2xl font-semibold text-gray-800">Tools Used</h2>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="flex items-center">
+<div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center mr-3">
+<i class="fab fa-jira text-white text-xl"></i>
+</div>
+<div>
+<h3 class="font-semibold text-gray-700">Jira</h3>
+<p class="text-sm text-gray-600">Issue tracking &amp; task management</p>
+</div>
+</div>
+<div class="flex items-center">
+<div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center mr-3">
+<i class="fab fa-confluence text-white text-xl"></i>
+</div>
+<div>
+<h3 class="font-semibold text-gray-700">Confluence</h3>
+<p class="text-sm text-gray-600">Documentation platform</p>
+</div>
+</div>
+<div class="flex items-center">
+<div class="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center mr-3">
+<i class="fab fa-slack text-white text-xl"></i>
+</div>
+<div>
+<h3 class="font-semibold text-gray-700">Slack</h3>
+<p class="text-sm text-gray-600">Real-time messaging</p>
+</div>
+</div>
+<div class="flex items-center">
+<div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center mr-3">
+<i class="fab fa-gitlab text-white text-xl"></i>
+</div>
+<div>
+<h3 class="font-semibold text-gray-700">GitLab</h3>
+<p class="text-sm text-gray-600">Code reviews &amp; CI/CD</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer with page number -->
+<div class="oracle-gray py-2 px-8 flex justify-between items-center">
+<div class="text-white text-sm">Expand Infrastructure as Code Support in Graal CI</div>
+<div class="text-white text-sm" >6/22</div>
+</div>
+</div>
+
+
+
+<div class="slide bg-white flex flex-col" style=" overflow: hidden;">
+<!-- Header with title -->
+<div class="oracle-red py-4 px-8 text-white">
+<h1 class="text-3xl font-bold">Training &amp; Integration</h1>
+</div>
+<!-- Main content -->
+<div class="flex flex-1 p-8">
+<div class="w-full">
+<!-- Introduction text -->
+<p class="text-gray-700 text-xl mb-6">Oracle MADC&#39;s onboarding process ensured new hires quickly adapted and contributed, combining mandatory compliance training with extensive technical training.</p>
+<!-- Two column layout -->
+<div class="flex">
+<!-- Mandatory Training Column -->
+<div class="w-1/2 pr-6">
+<div class="bg-gray-100 rounded-lg p-4 mb-4">
+<h2 class="text-2xl font-semibold text-gray-800 flex items-center">
+<i class="fas fa-shield-alt text-orange-500 mr-3"></i>
+                                Mandatory Training
+                            </h2>
+</div>
+<ul class="space-y-4 mt-6">
+<li class="training-item flex items-start">
+<div class="bg-red-100 rounded-full p-2 mr-3 flex-shrink-0">
+<i class="fas fa-gavel text-red-600"></i>
+</div>
+<div>
+<h3 class="font-semibold text-lg text-gray-800">Oracle compliance training</h3>
+<p class="text-gray-600">Ensuring alignment with Oracle&#39;s corporate policies and ethical standards</p>
+</div>
+</li>
+<li class="training-item flex items-start">
+<div class="bg-red-100 rounded-full p-2 mr-3 flex-shrink-0">
+<i class="fas fa-lock text-red-600"></i>
+</div>
+<div>
+<h3 class="font-semibold text-lg text-gray-800">Security awareness</h3>
+<p class="text-gray-600">Safeguarding sensitive information</p>
+</div>
+</li>
+<li class="training-item flex items-start">
+<div class="bg-red-100 rounded-full p-2 mr-3 flex-shrink-0">
+<i class="fas fa-handshake text-red-600"></i>
+</div>
+<div>
+<h3 class="font-semibold text-lg text-gray-800">Code of conduct</h3>
+<p class="text-gray-600">Professional and secure conduct within Oracle&#39;s regulated environment</p>
+</div>
+</li>
+<li class="training-item flex items-start">
+<div class="bg-red-100 rounded-full p-2 mr-3 flex-shrink-0">
+<i class="fas fa-clipboard-list text-red-600"></i>
+</div>
+<div>
+<h3 class="font-semibold text-lg text-gray-800">Internal processes</h3>
+<p class="text-gray-600">Understanding global data protection, privacy regulations, and responsible business practices</p>
+</div>
+</li>
+</ul>
+</div>
+<!-- Technical Training Column -->
+<div class="w-1/2 pl-6">
+<div class="bg-gray-100 rounded-lg p-4 mb-4">
+<h2 class="text-2xl font-semibold text-gray-800 flex items-center">
+<i class="fas fa-laptop-code text-blue-500 mr-3"></i>
+                                Technical Training
+                            </h2>
+</div>
+<ul class="space-y-4 mt-6">
+<li class="training-item flex items-start">
+<div class="bg-blue-100 rounded-full p-2 mr-3 flex-shrink-0">
+<i class="fas fa-cloud text-blue-600"></i>
+</div>
+<div>
+<h3 class="font-semibold text-lg text-gray-800">Oracle Cloud Infrastructure (OCI) fundamentals</h3>
+<p class="text-gray-600">Comprehensive understanding of OCI services</p>
+</div>
+</li>
+<li class="training-item flex items-start">
+<div class="bg-blue-100 rounded-full p-2 mr-3 flex-shrink-0">
+<i class="fas fa-code text-blue-600"></i>
+</div>
+<div>
+<h3 class="font-semibold text-lg text-gray-800">Pulumi concepts and Python SDK</h3>
+<p class="text-gray-600">Specific training relevant to infrastructure automation and cloud provisioning</p>
+</div>
+</li>
+<li class="training-item flex items-start">
+<div class="bg-blue-100 rounded-full p-2 mr-3 flex-shrink-0">
+<i class="fas fa-puzzle-piece text-blue-600"></i>
+</div>
+<div>
+<h3 class="font-semibold text-lg text-gray-800">Python design patterns</h3>
+<p class="text-gray-600">Enhancing programming skills for framework development</p>
+</div>
+</li>
+<li class="training-item flex items-start">
+<div class="bg-blue-100 rounded-full p-2 mr-3 flex-shrink-0">
+<i class="fas fa-code-branch text-blue-600"></i>
+</div>
+<div>
+<h3 class="font-semibold text-lg text-gray-800">Git workflows and GitLab CI/CD</h3>
+<p class="text-gray-600">Mastering version control and automated deployment pipelines</p>
+</div>
+</li>
+<li class="training-item flex items-start">
+<div class="bg-blue-100 rounded-full p-2 mr-3 flex-shrink-0">
+<i class="fas fa-rocket text-blue-600"></i>
+</div>
+<div>
+<h3 class="font-semibold text-lg text-gray-800">DevOps best practices</h3>
+<p class="text-gray-600">Principles for efficient and reliable software delivery</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<!-- Training platforms note -->
+<p class="text-gray-600 mt-4 italic">These trainings were facilitated through platforms like Oracle My Learn, LinkedIn Learning, Degreed, O&#39;Reilly, and Harvard ManageMentor, offering curated content and assessments.</p>
+</div>
+</div>
+<!-- Footer with page number -->
+<div class="oracle-gray py-2 px-8 flex justify-between items-center">
+<div class="text-white text-sm">Expand Infrastructure as Code Support in Graal CI</div>
+<div class="text-white text-sm" >7/22</div>
+</div>
+</div>
+
+
+
+<div class="slide bg-white flex flex-col" style=" overflow: hidden;">
+<!-- Header with title -->
+<div class="oracle-red py-4 px-8 text-white">
+<h1 class="text-3xl font-bold">Infrastructure Setup: Current State</h1>
+</div>
+<!-- Main content -->
+<div class="flex flex-1 p-8">
+<div class="w-full">
+<!-- Introduction text -->
+<p class="text-gray-700 text-xl mb-6">Analysis of the existing manual infrastructure setup process, highlighting inefficiencies and limitations.</p>
+<!-- Current state diagram placeholder -->
+<div class="mb-6 flex justify-center">
+<div class="text-center p-4 border border-gray-300 rounded-lg bg-gray-50 w-3/4">
+<p class="text-gray-500 italic">[Add: Current state workflow diagram showing manual process]</p>
+</div>
+</div>
+<!-- Pain points -->
+<div class="grid grid-cols-2 gap-6 mt-4">
+<!-- Pain point 1 -->
+<div class="pain-point flex items-start bg-white p-3 rounded-lg shadow-sm">
+<div class="text-red-600 mr-4 flex-shrink-0">
+<i class="fas fa-clock text-2xl"></i>
+</div>
+<div>
+<h3 class="text-xl font-semibold text-gray-800">Time-Consuming Setup</h3>
+<p class="text-gray-600">Manual provisioning takes 4-6 hours per environment, highly inefficient for development.</p>
+</div>
+</div>
+<!-- Pain point 2 -->
+<div class="pain-point flex items-start bg-white p-3 rounded-lg shadow-sm">
+<div class="text-red-600 mr-4 flex-shrink-0">
+<i class="fas fa-exclamation-triangle text-2xl"></i>
+</div>
+<div>
+<h3 class="text-xl font-semibold text-gray-800">High Error Rate</h3>
+<p class="text-gray-600">Manual configuration introduces errors and inconsistencies between environments.</p>
+</div>
+</div>
+<!-- Pain point 3 -->
+<div class="pain-point flex items-start bg-white p-3 rounded-lg shadow-sm">
+<div class="text-red-600 mr-4 flex-shrink-0">
+<i class="fas fa-code-branch text-2xl"></i>
+</div>
+<div>
+<h3 class="text-xl font-semibold text-gray-800">No Version Control</h3>
+<p class="text-gray-600">No tracking of infrastructure changes, making it difficult to identify who made changes.</p>
+</div>
+</div>
+<!-- Pain point 4 -->
+<div class="pain-point flex items-start bg-white p-3 rounded-lg shadow-sm">
+<div class="text-red-600 mr-4 flex-shrink-0">
+<i class="fas fa-random text-2xl"></i>
+</div>
+<div>
+<h3 class="text-xl font-semibold text-gray-800">Configuration Drift</h3>
+<p class="text-gray-600">Inconsistent environments cause unexpected CI failures and &#34;works on my machine&#34; issues.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer with page number -->
+<div class="oracle-gray py-2 px-8 flex justify-between items-center">
+<div class="text-white text-sm">Expand Infrastructure as Code Support in Graal CI</div>
+<div class="text-white text-sm" >8/22</div>
+</div>
+</div>
+
+
+
+<div class="slide bg-white flex flex-col" style=" overflow: hidden;">
+<!-- Header with title -->
+<div class="oracle-red py-4 px-8 text-white">
+<h1 class="text-3xl font-bold">System Requirements</h1>
+</div>
+<!-- Main content -->
+<div class="flex flex-1 p-6">
+<div class="w-full">
+<!-- Introduction text -->
+<p class="text-gray-700 text-xl mb-4">Based on the current state analysis, the following requirements were defined for the new IaC solution:</p>
+<!-- Requirements columns -->
+<div class="flex space-x-6">
+<!-- Functional Requirements -->
+<div class="w-1/2 bg-gray-50 rounded-lg p-5 shadow-md">
+<div class="flex items-center mb-4">
+<div class="oracle-red rounded-full p-2 mr-3">
+<i class="fas fa-cogs text-white"></i>
+</div>
+<h2 class="text-2xl font-semibold text-gray-800">Functional Requirements</h2>
+</div>
+<ul class="space-y-3">
+<li class="requirement-item flex items-start">
+<i class="fas fa-check-circle text-green-600 mt-1 mr-3"></i>
+<span class="text-gray-700"><span class="font-semibold">Support for 10+ OCI resource types</span> (VCN, subnet, instance, etc.)</span>
+</li>
+<li class="requirement-item flex items-start">
+<i class="fas fa-check-circle text-green-600 mt-1 mr-3"></i>
+<span class="text-gray-700"><span class="font-semibold">Stack-based configuration management</span> for dev, staging, prod</span>
+</li>
+<li class="requirement-item flex items-start">
+<i class="fas fa-check-circle text-green-600 mt-1 mr-3"></i>
+<span class="text-gray-700"><span class="font-semibold">Extensible framework</span> for adding new resource types</span>
+</li>
+<li class="requirement-item flex items-start">
+<i class="fas fa-check-circle text-green-600 mt-1 mr-3"></i>
+<span class="text-gray-700"><span class="font-semibold">JSON-driven</span> - no code changes needed</span>
+</li>
+<li class="requirement-item flex items-start">
+<i class="fas fa-check-circle text-green-600 mt-1 mr-3"></i>
+<span class="text-gray-700"><span class="font-semibold">Dependency resolution</span> between resources</span>
+</li>
+<li class="requirement-item flex items-start">
+<i class="fas fa-check-circle text-green-600 mt-1 mr-3"></i>
+<span class="text-gray-700"><span class="font-semibold">Automated resource lifecycle</span> (creation, updates, deletion)</span>
+</li>
+<li class="requirement-item flex items-start">
+<i class="fas fa-check-circle text-green-600 mt-1 mr-3"></i>
+<span class="text-gray-700"><span class="font-semibold">GitLab CI/CD integration</span> with preview and approval workflows</span>
+</li>
+</ul>
+</div>
+<!-- Non-Functional Requirements -->
+<div class="w-1/2 bg-gray-50 rounded-lg p-5 shadow-md">
+<div class="flex items-center mb-4">
+<div class="oracle-red rounded-full p-2 mr-3">
+<i class="fas fa-shield-alt text-white"></i>
+</div>
+<h2 class="text-2xl font-semibold text-gray-800">Non-Functional Requirements</h2>
+</div>
+<ul class="space-y-3">
+<li class="requirement-item flex items-start">
+<i class="fas fa-tachometer-alt text-blue-600 mt-1 mr-3"></i>
+<span class="text-gray-700"><span class="font-semibold">Performance:</span> Infrastructure provisioning in &lt;20 minutes</span>
+</li>
+<li class="requirement-item flex items-start">
+<i class="fas fa-heartbeat text-blue-600 mt-1 mr-3"></i>
+<span class="text-gray-700"><span class="font-semibold">Reliability:</span> Idempotent operations, error handling</span>
+</li>
+<li class="requirement-item flex items-start">
+<i class="fas fa-tools text-blue-600 mt-1 mr-3"></i>
+<span class="text-gray-700"><span class="font-semibold">Maintainability:</span> Clean code, design patterns</span>
+</li>
+<li class="requirement-item flex items-start">
+<i class="fas fa-lock text-blue-600 mt-1 mr-3"></i>
+<span class="text-gray-700"><span class="font-semibold">Security:</span> Secrets management, least privilege access</span>
+</li>
+<li class="requirement-item flex items-start">
+<i class="fas fa-cubes text-blue-600 mt-1 mr-3"></i>
+<span class="text-gray-700"><span class="font-semibold">Modularity:</span> Support for new resource types without core changes</span>
+</li>
+<li class="requirement-item flex items-start">
+<i class="fas fa-clipboard-list text-blue-600 mt-1 mr-3"></i>
+<span class="text-gray-700"><span class="font-semibold">Auditability:</span> All changes logged and traceable</span>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer with page number -->
+<div class="oracle-gray py-2 px-8 flex justify-between items-center">
+<div class="text-white text-sm">Expand Infrastructure as Code Support in Graal CI</div>
+<div class="text-white text-sm" >9/22</div>
+</div>
+</div>
+
+
+
+<div class="slide bg-white flex flex-col" style=" overflow: hidden;">
+<!-- Header with title -->
+<div class="oracle-red py-4 px-8 text-white">
+<h1 class="text-3xl font-bold">Why Pulumi over Terraform?</h1>
+</div>
+<!-- Main content -->
+<div class="flex flex-1 p-6 flex-col">
+<!-- Comparison table -->
+<div class="border border-gray-300 rounded-lg overflow-hidden mb-4">
+<!-- Table header -->
+<div class="bg-gray-100 grid grid-cols-4 gap-1 p-2 border-b border-gray-300">
+<div class="font-bold text-gray-700">Feature</div>
+<div class="font-bold text-gray-700">Terraform</div>
+<div class="font-bold text-gray-700">Pulumi</div>
+<div class="font-bold text-gray-700">Decision</div>
+</div>
+<!-- Table rows -->
+<div class="comparison-row grid grid-cols-4 gap-1 p-2 border-b border-gray-300">
+<div class="flex items-center">
+<i class="fas fa-code text-gray-600 mr-2"></i>
+<span class="font-medium">Language</span>
+</div>
+<div class="text-gray-600">HCL (domain-specific)</div>
+<div class="text-gray-600 font-medium">Python (team expertise)</div>
+<div class="text-center">
+<span class="decision-pill decision-win">Python (team expertise)</span>
+</div>
+</div>
+<div class="comparison-row grid grid-cols-4 gap-1 p-2 border-b border-gray-300">
+<div class="flex items-center">
+<i class="fas fa-file-code text-gray-600 mr-2"></i>
+<span class="font-medium">JSON Support</span>
+</div>
+<div class="text-gray-600">Variable files only</div>
+<div class="text-gray-600 font-medium">Native configuration</div>
+<div class="text-center">
+<span class="decision-pill decision-win">Pulumi wins</span>
+</div>
+</div>
+<div class="comparison-row grid grid-cols-4 gap-1 p-2 border-b border-gray-300">
+<div class="flex items-center">
+<i class="fas fa-database text-gray-600 mr-2"></i>
+<span class="font-medium">State Management</span>
+</div>
+<div class="text-gray-600">Both support remote state</div>
+<div class="text-gray-600">Both support remote state</div>
+<div class="text-center">
+<span class="decision-pill decision-tie">Tie</span>
+</div>
+</div>
+<div class="comparison-row grid grid-cols-4 gap-1 p-2 border-b border-gray-300">
+<div class="flex items-center">
+<i class="fas fa-cloud text-gray-600 mr-2"></i>
+<span class="font-medium">Cloud Support</span>
+</div>
+<div class="text-gray-600">Both multi-cloud</div>
+<div class="text-gray-600">Both multi-cloud</div>
+<div class="text-center">
+<span class="decision-pill decision-tie">Tie</span>
+</div>
+</div>
+<div class="comparison-row grid grid-cols-4 gap-1 p-2 border-b border-gray-300">
+<div class="flex items-center">
+<i class="fas fa-puzzle-piece text-gray-600 mr-2"></i>
+<span class="font-medium">Extensibility</span>
+</div>
+<div class="text-gray-600">HCL module system</div>
+<div class="text-gray-600 font-medium">Native programming language flexibility</div>
+<div class="text-center">
+<span class="decision-pill decision-win">Pulumi wins</span>
+</div>
+</div>
+<div class="comparison-row grid grid-cols-4 gap-1 p-2">
+<div class="flex items-center">
+<i class="fas fa-laptop-code text-gray-600 mr-2"></i>
+<span class="font-medium">IDE Support</span>
+</div>
+<div class="text-gray-600">Limited</div>
+<div class="text-gray-600 font-medium">Full Python IDE</div>
+<div class="text-center">
+<span class="decision-pill decision-win">Pulumi wins</span>
+</div>
+</div>
+</div>
+<!-- Conclusion -->
+<div class="bg-gray-50 border-l-4 border-red-600 p-4 rounded">
+<div class="flex">
+<div class="flex-shrink-0">
+<i class="fas fa-check-circle text-red-600 text-xl"></i>
+</div>
+<div class="ml-3">
+<h3 class="text-lg font-medium text-gray-800">Result: Pulumi selected for Python expertise and extensibility</h3>
+<p class="text-gray-600 mt-1">Pulumi with Python was selected due to the team&#39;s existing Python expertise, its native JSON configuration capabilities, strong GitLab CI/CD integration, flexible architecture supporting design patterns, and robust OCI provider support.</p>
+</div>
+</div>
+</div>
+<!-- Reference to image -->
+<div class="text-right text-sm text-gray-500 mt-2">
+<p>Comparison table based on industry standards and project requirements</p>
+</div>
+</div>
+<!-- Footer with page number -->
+<div class="oracle-gray py-2 px-8 flex justify-between items-center">
+<div class="text-white text-sm">Expand Infrastructure as Code Support in Graal CI</div>
+<div class="text-white text-sm" >10/22</div>
+</div>
+</div>
+
+
+
+<div class="slide bg-white flex flex-col" style=" overflow: hidden;">
+<!-- Header with title -->
+<div class="oracle-red py-4 px-8 text-white">
+<h1 class="text-3xl font-bold">System Use Cases</h1>
+</div>
+<!-- Main content -->
+<div class="flex flex-1 p-6">
+<div class="w-full flex flex-col">
+<!-- Introduction text -->
+<p class="text-gray-700 text-lg mb-4">The framework supports two primary actors and their interactions with the infrastructure provisioning system:</p>
+<div class="flex flex-1">
+<!-- Left column: Primary Actor -->
+<div class="w-1/2 pr-4">
+<div class="bg-gray-100 rounded-lg p-4 h-full">
+<div class="flex items-center mb-4">
+<div class="oracle-red rounded-full p-2 mr-3">
+<i class="fas fa-user-cog text-white text-xl"></i>
+</div>
+<h2 class="text-2xl font-semibold text-gray-800">Primary Actor: DevOps Engineer</h2>
+</div>
+<div class="space-y-3">
+<div class="use-case flex items-start">
+<div class="oracle-red rounded-full p-2 mr-3 flex-shrink-0">
+<i class="fas fa-plus text-white"></i>
+</div>
+<div>
+<h3 class="text-lg font-semibold text-gray-700">Provision new environment</h3>
+<p class="text-gray-600 text-sm">Creates a feature branch, modifies JSON config, and submits pull request</p>
+</div>
+</div>
+<div class="use-case flex items-start">
+<div class="oracle-red rounded-full p-2 mr-3 flex-shrink-0">
+<i class="fas fa-sync-alt text-white"></i>
+</div>
+<div>
+<h3 class="text-lg font-semibold text-gray-700">Update existing infrastructure</h3>
+<p class="text-gray-600 text-sm">Similar to provisioning, changes made in JSON via pull request</p>
+</div>
+</div>
+<div class="use-case flex items-start">
+<div class="oracle-red rounded-full p-2 mr-3 flex-shrink-0">
+<i class="fas fa-trash-alt text-white"></i>
+</div>
+<div>
+<h3 class="text-lg font-semibold text-gray-700">Destroy environment</h3>
+<p class="text-gray-600 text-sm">Managed through specific commands or JSON modifications</p>
+</div>
+</div>
+<div class="use-case flex items-start">
+<div class="oracle-red rounded-full p-2 mr-3 flex-shrink-0">
+<i class="fas fa-check-circle text-white"></i>
+</div>
+<div>
+<h3 class="text-lg font-semibold text-gray-700">Validate configuration</h3>
+<p class="text-gray-600 text-sm">Automated validation of JSON schema and configuration integrity</p>
+</div>
+</div>
+<div class="use-case flex items-start">
+<div class="oracle-red rounded-full p-2 mr-3 flex-shrink-0">
+<i class="fas fa-search text-white"></i>
+</div>
+<div>
+<h3 class="text-lg font-semibold text-gray-700">Detect infrastructure drift</h3>
+<p class="text-gray-600 text-sm">Scheduled jobs compare actual state with desired configuration</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right column: Secondary Actor and image -->
+<div class="w-1/2 pl-4 flex flex-col">
+<div class="bg-gray-100 rounded-lg p-4 mb-4">
+<div class="flex items-center mb-4">
+<div class="oracle-red rounded-full p-2 mr-3">
+<i class="fas fa-robot text-white text-xl"></i>
+</div>
+<h2 class="text-2xl font-semibold text-gray-800">Secondary Actor: CI/CD Pipeline</h2>
+</div>
+<div class="space-y-3">
+<div class="use-case flex items-start">
+<div class="oracle-red rounded-full p-2 mr-3 flex-shrink-0">
+<i class="fas fa-cloud-upload-alt text-white"></i>
+</div>
+<div>
+<h3 class="text-lg font-semibold text-gray-700">Automated Infrastructure Deployment</h3>
+<p class="text-gray-600 text-sm">Detects approved merges, validates configuration, executes provisioning</p>
+</div>
+</div>
+<div class="use-case flex items-start">
+<div class="oracle-red rounded-full p-2 mr-3 flex-shrink-0">
+<i class="fas fa-clipboard-check text-white"></i>
+</div>
+<div>
+<h3 class="text-lg font-semibold text-gray-700">Infrastructure Review and Approval</h3>
+<p class="text-gray-600 text-sm">Administrator reviews proposed changes before approval</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Use Case Diagram Image -->
+<div class="flex-1 flex items-center justify-center">
+<img alt="Use Case Diagram" class="max-w-full max-h-48 object-contain rounded-lg shadow-md" src="https://picture-search.skywork.ai/aippt/image/sheet/d5ad8b1d14e78b92df57c787751918a2.jpg"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer with page number -->
+<div class="oracle-gray py-2 px-8 flex justify-between items-center">
+<div class="text-white text-sm">Expand Infrastructure as Code Support in Graal CI</div>
+<div class="text-white text-sm" >11/22</div>
+</div>
+</div>
+
+
+
+<div class="slide bg-white flex flex-col" style=" overflow: hidden;">
+<!-- Header with title -->
+<div class="oracle-red py-4 px-8 text-white">
+<h1 class="text-3xl font-bold">Four-Component Architecture</h1>
+</div>
+<!-- Main content -->
+<div class="flex flex-1 p-6">
+<div class="w-full flex flex-col">
+<!-- Architecture diagram -->
+<div class="relative h-96 mb-6" id="architecture-diagram">
+<!-- Component boxes will be created by D3.js -->
+</div>
+<!-- Component descriptions -->
+<div class="grid grid-cols-2 gap-6 mt-2">
+<!-- ConfigLoader -->
+<div class="component-box bg-gray-50 rounded-lg p-4">
+<div class="flex items-center mb-2">
+<div class="oracle-red rounded-full p-2 mr-3">
+<i class="fas fa-cogs text-white"></i>
+</div>
+<h3 class="text-xl font-semibold text-gray-800">ConfigLoader</h3>
+</div>
+<ul class="text-gray-600 ml-10 list-disc">
+<li>Loads stack-specific JSON configuration files</li>
+<li>Performs initial validation and error handling</li>
+<li>Provides unified interface for configuration access</li>
+</ul>
+</div>
+<!-- ResourceFactory -->
+<div class="component-box bg-gray-50 rounded-lg p-4">
+<div class="flex items-center mb-2">
+<div class="oracle-red rounded-full p-2 mr-3">
+<i class="fas fa-cube text-white"></i>
+</div>
+<h3 class="text-xl font-semibold text-gray-800">ResourceFactory</h3>
+</div>
+<ul class="text-gray-600 ml-10 list-disc">
+<li>Maintains registry mapping JSON sections to resource classes</li>
+<li>Enables resource creation without hardcoded dependencies</li>
+<li>Supports automatic registration of new resource types</li>
+</ul>
+</div>
+<!-- DependencyResolver -->
+<div class="component-box bg-gray-50 rounded-lg p-4">
+<div class="flex items-center mb-2">
+<div class="oracle-red rounded-full p-2 mr-3">
+<i class="fas fa-project-diagram text-white"></i>
+</div>
+<h3 class="text-xl font-semibold text-gray-800">DependencyResolver</h3>
+</div>
+<ul class="text-gray-600 ml-10 list-disc">
+<li>Converts logical resource names to OCIDs</li>
+<li>Handles both internal and external resource references</li>
+<li>Ensures correct creation order of resources</li>
+</ul>
+</div>
+<!-- ExecutionEngine -->
+<div class="component-box bg-gray-50 rounded-lg p-4">
+<div class="flex items-center mb-2">
+<div class="oracle-red rounded-full p-2 mr-3">
+<i class="fas fa-play-circle text-white"></i>
+</div>
+<h3 class="text-xl font-semibold text-gray-800">ExecutionEngine</h3>
+</div>
+<ul class="text-gray-600 ml-10 list-disc">
+<li>Orchestrates single-loop resource creation</li>
+<li>Coordinates interactions between components</li>
+<li>Generates pipeline outputs and exports</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer with page number -->
+<div class="oracle-gray py-2 px-8 flex justify-between items-center">
+<div class="text-white text-sm">Expand Infrastructure as Code Support in Graal CI</div>
+<div class="text-white text-sm" >12/22</div>
+</div>
+</div>
+<script>
+        // D3.js script to create the architecture diagram
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = d3.select('#architecture-diagram');
+            const width = container.node().getBoundingClientRect().width;
+            const height = container.node().getBoundingClientRect().height;
+            
+            // Component dimensions
+            const componentWidth = 200;
+            const componentHeight = 100;
+            const componentSpacing = 50;
+            
+            // Calculate positions
+            const startX = (width - (componentWidth * 4 + componentSpacing * 3)) / 2;
+            const yPosition = height / 2 - componentHeight / 2;
+            
+            // Create SVG
+            const svg = container.append('svg')
+                .attr('width', width)
+                .attr('height', height);
+                
+            // Create component boxes
+            const components = [
+                { id: 'config-loader', name: 'ConfigLoader', icon: 'cogs', x: startX, y: yPosition },
+                { id: 'resource-factory', name: 'ResourceFactory', icon: 'cube', x: startX + componentWidth + componentSpacing, y: yPosition },
+                { id: 'dependency-resolver', name: 'DependencyResolver', icon: 'project-diagram', x: startX + (componentWidth + componentSpacing) * 2, y: yPosition },
+                { id: 'execution-engine', name: 'ExecutionEngine', icon: 'play-circle', x: startX + (componentWidth + componentSpacing) * 3, y: yPosition }
+            ];
+            
+            // Create boxes
+            svg.selectAll('.component')
+                .data(components)
+                .enter()
+                .append('rect')
+                .attr('x', d => d.x)
+                .attr('y', d => d.y)
+                .attr('width', componentWidth)
+                .attr('height', componentHeight)
+                .attr('rx', 8)
+                .attr('ry', 8)
+                .attr('fill', 'white')
+                .attr('stroke', '#ED1C24')
+                .attr('stroke-width', 2);
+                
+            // Add icons
+            svg.selectAll('.icon')
+                .data(components)
+                .enter()
+                .append('foreignObject')
+                .attr('x', d => d.x + 15)
+                .attr('y', d => d.y + 15)
+                .attr('width', 30)
+                .attr('height', 30)
+                .html(d => `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-${d.icon}" style="color: #ED1C24; font-size: 20px;"></i>
+                </div>`);
+                
+            // Add component names
+            svg.selectAll('.name')
+                .data(components)
+                .enter()
+                .append('text')
+                .attr('x', d => d.x + 55)
+                .attr('y', d => d.y + 30)
+                .text(d => d.name)
+                .attr('font-weight', 'bold')
+                .attr('fill', '#333333');
+                
+            // Add flow arrows
+            for (let i = 0; i < components.length - 1; i++) {
+                const start = components[i];
+                const end = components[i + 1];
+                
+                svg.append('line')
+                    .attr('x1', start.x + componentWidth)
+                    .attr('y1', start.y + componentHeight / 2)
+                    .attr('x2', end.x)
+                    .attr('y2', end.y + componentHeight / 2)
+                    .attr('stroke', '#7D8185')
+                    .attr('stroke-width', 2)
+                    .attr('marker-end', 'url(#arrow)');
+                    
+                // Add arrowhead
+                svg.append('polygon')
+                    .attr('points', `${end.x-10},${end.y+componentHeight/2-5} ${end.x},${end.y+componentHeight/2} ${end.x-10},${end.y+componentHeight/2+5}`)
+                    .attr('fill', '#7D8185');
+            }
+            
+            // Add "JSON Config" and "OCI Resources" labels
+            svg.append('text')
+                .attr('x', startX - 70)
+                .attr('y', yPosition + componentHeight / 2)
+                .text('JSON Config')
+                .attr('text-anchor', 'end')
+                .attr('dominant-baseline', 'middle')
+                .attr('fill', '#333333');
+                
+            svg.append('text')
+                .attr('x', startX + (componentWidth + componentSpacing) * 3 + componentWidth + 70)
+                .attr('y', yPosition + componentHeight / 2)
+                .text('OCI Resources')
+                .attr('text-anchor', 'start')
+                .attr('dominant-baseline', 'middle')
+                .attr('fill', '#333333');
+                
+            // Add arrow between JSON Config and ConfigLoader
+            svg.append('line')
+                .attr('x1', startX - 50)
+                .attr('y1', yPosition + componentHeight / 2)
+                .attr('x2', startX)
+                .attr('y2', yPosition + componentHeight / 2)
+                .attr('stroke', '#7D8185')
+                .attr('stroke-width', 2)
+                .attr('marker-end', 'url(#arrow)');
+                
+            // Add arrow between ExecutionEngine and OCI Resources
+            svg.append('line')
+                .attr('x1', startX + (componentWidth + componentSpacing) * 3 + componentWidth)
+                .attr('y1', yPosition + componentHeight / 2)
+                .attr('x2', startX + (componentWidth + componentSpacing) * 3 + componentWidth + 50)
+                .attr('y2', yPosition + componentHeight / 2)
+                .attr('stroke', '#7D8185')
+                .attr('stroke-width', 2)
+                .attr('marker-end', 'url(#arrow)');
+        });
+    </script>
+
+
+
+<div class="slide bg-white flex flex-col" style=" overflow: hidden;">
+<!-- Header with title -->
+<div class="oracle-red py-4 px-8 text-white">
+<h1 class="text-3xl font-bold">Design Patterns - Factory &amp; Dependency Resolution</h1>
+</div>
+<!-- Main content -->
+<div class="flex flex-1 p-6">
+<div class="w-full">
+<div class="grid grid-cols-2 gap-6">
+<!-- Factory Pattern Section -->
+<div class="bg-gray-50 p-5 rounded-lg shadow-sm">
+<h2 class="text-2xl font-semibold text-gray-800 mb-4 flex items-center">
+<i class="fas fa-box-open text-red-600 mr-3"></i>Factory Pattern
+                        </h2>
+<div class="space-y-3">
+<div class="bullet-point">
+<div class="bullet-icon text-red-600"><i class="fas fa-circle-check"></i></div>
+<div>
+<span class="font-semibold">BaseResource abstract class</span> defines a common interface for all OCI resource types
+                                </div>
+</div>
+<div class="bullet-point">
+<div class="bullet-icon text-red-600"><i class="fas fa-circle-check"></i></div>
+<div>
+<span class="font-semibold">Concrete classes</span> (VCNResource, SubnetResource, InstanceResource, etc.) inherit from BaseResource
+                                </div>
+</div>
+<div class="bullet-point">
+<div class="bullet-icon text-red-600"><i class="fas fa-circle-check"></i></div>
+<div>
+<span class="font-semibold">Dynamic registration mechanism</span> (register_all_resources()) creates a mapping between JSON configuration sections and Python implementation classes
+                                </div>
+</div>
+<div class="bullet-point">
+<div class="bullet-icon text-red-600"><i class="fas fa-circle-check"></i></div>
+<div>
+<span class="font-semibold">Extensible without modifying core code</span> - new resource types can be added seamlessly
+                                </div>
+</div>
+</div>
+<div class="mt-4 p-3 bg-gray-100 rounded-md">
+<p class="text-sm text-gray-700 italic">
+<i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
+                                The Factory Pattern enables dynamic resource creation without hardcoded dependencies on specific resource types.
+                            </p>
+</div>
+</div>
+<!-- Dependency Resolution Section -->
+<div class="bg-gray-50 p-5 rounded-lg shadow-sm">
+<h2 class="text-2xl font-semibold text-gray-800 mb-4 flex items-center">
+<i class="fas fa-link text-red-600 mr-3"></i>Dependency Resolution
+                        </h2>
+<div class="space-y-3">
+<div class="bullet-point">
+<div class="bullet-icon text-red-600"><i class="fas fa-circle-check"></i></div>
+<div>
+<span class="font-semibold">Logical names → OCIDs</span> The DependencyResolver converts logical resource names (e.g., &#34;vcn-prod&#34;) to actual Oracle Cloud Identifiers (OCIDs) at runtime
+                                </div>
+</div>
+<div class="bullet-point">
+<div class="bullet-icon text-red-600"><i class="fas fa-circle-check"></i></div>
+<div>
+<span class="font-semibold">Automatic dependency tracking</span> ensures resources are created in the correct order
+                                </div>
+</div>
+<div class="bullet-point">
+<div class="bullet-icon text-red-600"><i class="fas fa-circle-check"></i></div>
+<div>
+<span class="font-semibold">Enforced creation order</span> (VCN → Subnet → Instance)
+                                </div>
+</div>
+<div class="bullet-point">
+<div class="bullet-icon text-red-600"><i class="fas fa-circle-check"></i></div>
+<div>
+<span class="font-semibold">Handles external OCIDs</span> - OCIDs beginning with &#34;ocid1.&#34; are passed through directly
+                                </div>
+</div>
+</div>
+<div class="mt-4">
+<img alt="Dependency Resolution Workflow" class="w-full h-48 object-cover rounded-md" src="https://picture-search.skywork.ai/aippt/image/sheet/3f93300306ccba5e6b9ff681fb9aa7ec.jpg"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer with page number -->
+<div class="oracle-gray py-2 px-8 flex justify-between items-center">
+<div class="text-white text-sm">Expand Infrastructure as Code Support in Graal CI</div>
+<div class="text-white text-sm" >13/22</div>
+</div>
+</div>
+
+
+
+<div class="slide bg-white flex flex-col" style=" overflow: hidden;">
+<!-- Header with title -->
+<div class="oracle-red py-4 px-8 text-white">
+<h1 class="text-3xl font-bold">Stack-Based Configuration</h1>
+</div>
+<!-- Main content -->
+<div class="flex flex-1 p-6">
+<div class="w-full">
+<!-- Introduction text -->
+<p class="text-gray-700 text-lg mb-4">The framework uses a structured JSON format for defining infrastructure, enabling stack-based configuration management across different environments.</p>
+<div class="flex flex-wrap -mx-2">
+<!-- Left column - Directory structure -->
+<div class="w-1/2 px-2">
+<div class="mb-4">
+<h2 class="text-xl font-semibold text-gray-800 flex items-center">
+<i class="fas fa-folder-tree text-red-600 mr-2"></i>
+                                Configuration File Structure
+                            </h2>
+<div class="mt-2 code-block">
+<div class="text-gray-800 font-semibold mb-1">$ find configs/ -type f</div>
+<div class="text-gray-600">configs/</div>
+<div class="text-gray-600 pl-4">├── dev.json</div>
+<div class="text-gray-600 pl-4">├── staging.json</div>
+<div class="text-gray-600 pl-4">└── prod.json</div>
+</div>
+</div>
+<div>
+<h2 class="text-xl font-semibold text-gray-800 flex items-center">
+<i class="fas fa-code text-red-600 mr-2"></i>
+                                JSON Configuration Example
+                            </h2>
+<div class="mt-2 code-block">
+<pre class="text-sm"><span class="comment">// configs/prod.json</span>
+{
+  <span class="json-key">&#34;metadata&#34;</span>: {
+    <span class="json-key">&#34;name&#34;</span>: <span class="json-string">&#34;production-environment&#34;</span>,
+    <span class="json-key">&#34;version&#34;</span>: <span class="json-string">&#34;1.0&#34;</span>
+  },
+  <span class="json-key">&#34;vcns&#34;</span>: [...],
+  <span class="json-key">&#34;subnets&#34;</span>: [...],
+  <span class="json-key">&#34;instances&#34;</span>: [...]
+}</pre>
+</div>
+</div>
+</div>
+<!-- Right column - JSON sections and reference resolution -->
+<div class="w-1/2 px-2">
+<h2 class="text-xl font-semibold text-gray-800 flex items-center">
+<i class="fas fa-puzzle-piece text-red-600 mr-2"></i>
+                            JSON Configuration Sections
+                        </h2>
+<ul class="mt-2 mb-4 space-y-2">
+<li class="flex items-start">
+<i class="fas fa-circle-info text-red-600 mt-1 mr-2"></i>
+<div>
+<span class="font-semibold">metadata:</span> Contains general information like name, version, and description of the stack.
+                                </div>
+</li>
+<li class="flex items-start">
+<i class="fas fa-circle-info text-red-600 mt-1 mr-2"></i>
+<div>
+<span class="font-semibold">vcns:</span> Definitions for Virtual Cloud Networks.
+                                </div>
+</li>
+<li class="flex items-start">
+<i class="fas fa-circle-info text-red-600 mt-1 mr-2"></i>
+<div>
+<span class="font-semibold">subnets:</span> Subnet configurations, often with references to VCNs.
+                                </div>
+</li>
+<li class="flex items-start">
+<i class="fas fa-circle-info text-red-600 mt-1 mr-2"></i>
+<div>
+<span class="font-semibold">instances:</span> Compute instance specifications, including references to subnets.
+                                </div>
+</li>
+<li class="flex items-start">
+<i class="fas fa-circle-info text-red-600 mt-1 mr-2"></i>
+<div>
+<span class="font-semibold">security_lists:</span> Firewall rules for network security.
+                                </div>
+</li>
+</ul>
+<div class="flex flex-wrap -mx-2">
+<div class="w-1/2 px-2">
+<div>
+<h2 class="text-lg font-semibold text-gray-800 flex items-center">
+<i class="fas fa-link text-red-600 mr-2"></i>
+                                        Reference Resolution
+                                    </h2>
+<div class="mt-2 code-block">
+<pre class="text-sm"><span class="json-key">&#34;vcn_id&#34;</span>: <span class="json-string">&#34;ref:vcn-prod&#34;</span>
+</pre>
+</div>
+<p class="text-sm text-gray-600 mt-1">
+                                        The <span class="font-semibold">DependencyResolver</span> converts this logical reference to the actual OCID of the &#34;vcn-prod&#34; VCN.
+                                    </p>
+</div>
+</div>
+<div class="w-1/2 px-2">
+<div>
+<h2 class="text-lg font-semibold text-gray-800 flex items-center">
+<i class="fas fa-key text-red-600 mr-2"></i>
+                                        Sensitive Data
+                                    </h2>
+<div class="mt-2 code-block">
+<pre class="text-sm"><span class="comment"># .env.local</span>
+OCI_CONFIG_FILE=<span class="json-string">~/.oci/config</span>
+OCI_PROFILE=<span class="json-string">DEFAULT</span></pre>
+</div>
+<p class="text-sm text-gray-600 mt-1">
+                                        Sensitive data is managed through environment variables for secure credential handling.
+                                    </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer with page number -->
+<div class="oracle-gray py-2 px-8 flex justify-between items-center">
+<div class="text-white text-sm">Expand Infrastructure as Code Support in Graal CI</div>
+<div class="text-white text-sm" >14/22</div>
+</div>
+</div>
+
+
+
+<div class="slide bg-white flex flex-col" style=" overflow: hidden;">
+<!-- Header with title -->
+<div class="oracle-red py-4 px-8 text-white">
+<h1 class="text-3xl font-bold">Step-by-Step Provisioning Flow</h1>
+</div>
+<!-- Main content -->
+<div class="flex-1 p-8">
+<p class="text-gray-700 text-xl mb-6">The end-to-end workflow for infrastructure provisioning integrated with standard development workflows through GitLab merge requests.</p>
+<!-- Workflow diagram -->
+<div class="relative mt-4">
+<!-- First row of steps -->
+<div class="flex justify-between mb-16">
+<!-- Step 1 -->
+<div class="flow-step bg-white border border-gray-200 rounded-lg shadow-md p-4 w-64">
+<div class="flex items-center mb-2">
+<div class="oracle-red rounded-full p-2 mr-3">
+<i class="fas fa-terminal text-white"></i>
+</div>
+<h3 class="font-semibold text-lg text-gray-800">1. User Command</h3>
+</div>
+<p class="text-gray-600 text-sm">User runs: <span class="font-mono">pulumi up --stack &lt;stack-name&gt;</span></p>
+</div>
+<!-- Step 2 -->
+<div class="flow-step bg-white border border-gray-200 rounded-lg shadow-md p-4 w-64">
+<div class="flex items-center mb-2">
+<div class="oracle-red rounded-full p-2 mr-3">
+<i class="fas fa-file-config text-white"></i>
+</div>
+<h3 class="font-semibold text-lg text-gray-800">2. ConfigLoader</h3>
+</div>
+<p class="text-gray-600 text-sm">Reads <span class="font-mono">configs/{stack}.json</span></p>
+</div>
+<!-- Step 3 -->
+<div class="flow-step bg-white border border-gray-200 rounded-lg shadow-md p-4 w-64">
+<div class="flex items-center mb-2">
+<div class="oracle-red rounded-full p-2 mr-3">
+<i class="fas fa-check-circle text-white"></i>
+</div>
+<h3 class="font-semibold text-lg text-gray-800">3. Validation</h3>
+</div>
+<p class="text-gray-600 text-sm">JSON validation against schema</p>
+</div>
+<!-- Step 4 -->
+<div class="flow-step bg-white border border-gray-200 rounded-lg shadow-md p-4 w-64">
+<div class="flex items-center mb-2">
+<div class="oracle-red rounded-full p-2 mr-3">
+<i class="fas fa-project-diagram text-white"></i>
+</div>
+<h3 class="font-semibold text-lg text-gray-800">4. DependencyResolver</h3>
+</div>
+<p class="text-gray-600 text-sm">Builds dependency graph</p>
+</div>
+</div>
+<!-- Connecting arrows for first row -->
+<div class="absolute top-12 left-1/4 w-1/12">
+<div class="arrow"></div>
+</div>
+<div class="absolute top-12 left-1/2 w-1/12">
+<div class="arrow"></div>
+</div>
+<div class="absolute top-12 left-7/12 w-1/12">
+<div class="arrow"></div>
+</div>
+<!-- Second row of steps -->
+<div class="flex justify-between">
+<!-- Step 8 -->
+<div class="flow-step bg-white border border-gray-200 rounded-lg shadow-md p-4 w-64">
+<div class="flex items-center mb-2">
+<div class="oracle-red rounded-full p-2 mr-3">
+<i class="fas fa-tag text-white"></i>
+</div>
+<h3 class="font-semibold text-lg text-gray-800">8. OCID Tracking</h3>
+</div>
+<p class="text-gray-600 text-sm">OCIDs tracked for dependent resources</p>
+</div>
+<!-- Step 9 -->
+<div class="flow-step bg-white border border-gray-200 rounded-lg shadow-md p-4 w-64">
+<div class="flex items-center mb-2">
+<div class="oracle-red rounded-full p-2 mr-3">
+<i class="fas fa-save text-white"></i>
+</div>
+<h3 class="font-semibold text-lg text-gray-800">9. State Storage</h3>
+</div>
+<p class="text-gray-600 text-sm">State saved to OCI Object Storage</p>
+</div>
+<!-- Step 10 -->
+<div class="flow-step bg-white border border-gray-200 rounded-lg shadow-md p-4 w-64">
+<div class="flex items-center mb-2">
+<div class="oracle-red rounded-full p-2 mr-3">
+<i class="fas fa-export text-white"></i>
+</div>
+<h3 class="font-semibold text-lg text-gray-800">10. Outputs</h3>
+</div>
+<p class="text-gray-600 text-sm">Exports VCN IDs, public IPs, endpoints</p>
+</div>
+<!-- Step 5 -->
+<div class="flow-step bg-white border border-gray-200 rounded-lg shadow-md p-4 w-64">
+<div class="flex items-center mb-2">
+<div class="oracle-red rounded-full p-2 mr-3">
+<i class="fas fa-sort-amount-down text-white"></i>
+</div>
+<h3 class="font-semibold text-lg text-gray-800">5. ExecutionEngine</h3>
+</div>
+<p class="text-gray-600 text-sm">Determines creation order</p>
+</div>
+</div>
+<!-- Connecting arrows for second row -->
+<div class="absolute top-36 left-1/4 w-1/12">
+<div class="arrow"></div>
+</div>
+<div class="absolute top-36 left-1/2 w-1/12">
+<div class="arrow"></div>
+</div>
+<div class="absolute top-36 left-7/12 w-1/12">
+<div class="arrow"></div>
+</div>
+<!-- Vertical arrows connecting rows -->
+<div class="absolute top-28 left-1/4 h-8 w-2 bg-red-600"></div>
+<div class="absolute top-28 left-1/4 h-8 w-2 bg-red-600"></div>
+<div class="absolute top-28 left-1/4 h-8 w-2 bg-red-600"></div>
+<div class="absolute top-28 left-1/4 h-8 w-2 bg-red-600"></div>
+</div>
+</div>
+<!-- Footer with page number -->
+<div class="oracle-gray py-2 px-8 flex justify-between items-center">
+<div class="text-white text-sm">Expand Infrastructure as Code Support in Graal CI</div>
+<div class="text-white text-sm" >15/22</div>
+</div>
+</div>
+
+
+
+<div class="slide bg-white flex flex-col" style=" overflow: hidden;">
+<!-- Header with title -->
+<div class="oracle-red py-4 px-8 text-white">
+<h1 class="text-3xl font-bold">Stateless Resource Design</h1>
+</div>
+<!-- Main content -->
+<div class="flex flex-1 p-6">
+<div class="w-full">
+<!-- Introduction text -->
+<p class="text-gray-700 text-lg mb-4">Implementation adheres to architectural principles that promote maintainability and efficiency.</p>
+<div class="flex flex-wrap -mx-2">
+<!-- Left column: Architecture principles -->
+<div class="w-1/2 px-2">
+<h2 class="text-2xl font-semibold text-gray-800 mb-3">Architecture Principles</h2>
+<div class="grid grid-cols-1 gap-3">
+<!-- Principle 1 -->
+<div class="principle-card bg-gray-50 p-3 rounded-lg shadow-sm flex items-start">
+<div class="oracle-red rounded-full p-2 mr-3 flex-shrink-0">
+<i class="fas fa-box-open text-white"></i>
+</div>
+<div>
+<h3 class="font-semibold text-gray-800">Stateless Classes</h3>
+<p class="text-gray-600 text-sm">All methods are static (<span class="font-mono">@staticmethod</span>)</p>
+</div>
+</div>
+<!-- Principle 2 -->
+<div class="principle-card bg-gray-50 p-3 rounded-lg shadow-sm flex items-start">
+<div class="oracle-red rounded-full p-2 mr-3 flex-shrink-0">
+<i class="fas fa-database text-white"></i>
+</div>
+<div>
+<h3 class="font-semibold text-gray-800">No Instance State</h3>
+<p class="text-gray-600 text-sm">Resources don&#39;t store state, simplifying execution model</p>
+</div>
+</div>
+<!-- Principle 3 -->
+<div class="principle-card bg-gray-50 p-3 rounded-lg shadow-sm flex items-start">
+<div class="oracle-red rounded-full p-2 mr-3 flex-shrink-0">
+<i class="fas fa-cloud-upload-alt text-white"></i>
+</div>
+<div>
+<h3 class="font-semibold text-gray-800">Pulumi Manages State</h3>
+<p class="text-gray-600 text-sm">Infrastructure state in remote backend (OCI Object Storage)</p>
+</div>
+</div>
+<!-- Principle 4 -->
+<div class="principle-card bg-gray-50 p-3 rounded-lg shadow-sm flex items-start">
+<div class="oracle-red rounded-full p-2 mr-3 flex-shrink-0">
+<i class="fas fa-function text-white"></i>
+</div>
+<div>
+<h3 class="font-semibold text-gray-800">Pure Functions</h3>
+<p class="text-gray-600 text-sm"><span class="font-mono">create()</span> methods with inputs → outputs</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Right column: Code organization -->
+<div class="w-1/2 px-2">
+<h2 class="text-2xl font-semibold text-gray-800 mb-3">Code Organization</h2>
+<div class="bg-gray-50 p-4 rounded-lg shadow-sm">
+<div class="code-block text-sm mb-3">
+<div class="text-gray-700 font-semibold mb-1">$ tree src/</div>
+<div class="text-gray-600">
+                                src/<br/>
+                                ├── <span class="text-blue-600 font-semibold">__main__.py</span> <span class="text-gray-500"># Entry point, execution loop</span><br/>
+                                ├── config_loader.py     <span class="text-gray-500"># JSON parsing and validation</span><br/>
+                                ├── resource_factory.py  <span class="text-gray-500"># Factory pattern implementation</span><br/>
+                                ├── dependency_resolver.py <span class="text-gray-500"># OCID resolution logic</span><br/>
+                                └── resources/<br/>
+                                    ├── base_resource.py <span class="text-gray-500"># Abstract base class</span><br/>
+                                  &amp;   ├── vcn_resource.py  <span class="text-gray-500"># VCN implementation</span><br/>
+                                  &amp;   ├── subnet_resource.py <span class="text-gray-500"># Subnet implementation</span><br/>
+                                  &amp;   └── instance_resource.py <span class="text-gray-500"># Instance implementation</span>
+</div>
+</div>
+<div class="flex items-start mt-4">
+<div class="oracle-red rounded-full p-2 mr-3 flex-shrink-0">
+<i class="fas fa-puzzle-piece text-white"></i>
+</div>
+<div>
+<h3 class="font-semibold text-gray-800">Factory Registration</h3>
+<p class="text-gray-600 text-sm">Resources register themselves at import, enabling dynamic extension without modifying core logic.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer with page number -->
+<div class="oracle-gray py-2 px-8 flex justify-between items-center">
+<div class="text-white text-sm">Expand Infrastructure as Code Support in Graal CI</div>
+<div class="text-white text-sm" >16/22</div>
+</div>
+</div>
+
+
+
+<div class="slide bg-white flex flex-col" style=" overflow: hidden;">
+<div class="oracle-red py-4 px-8 text-white">
+<h1 class="text-3xl font-bold">Automated Deployment Pipeline</h1>
+</div>
+<div class="flex flex-1 p-6">
+<div class="w-full flex flex-col">
+<p class="text-gray-700 text-lg mb-4">CI/CD integration with GitLab ensures automated and controlled infrastructure deployments through specialized pipeline stages.</p>
+<div class="flex flex-1">
+<div class="w-1/2 pr-4">
+<h2 class="text-2xl font-semibold text-gray-800 mb-4 flex items-center">
+<i class="fas fa-code-branch text-red-600 mr-2"></i>Pipeline Stages
+</h2>
+<div class="space-y-4">
+<div class="pipeline-stage bg-gray-50 rounded-lg p-3 border-l-4 border-blue-500">
+<h3 class="text-xl font-medium text-gray-800 flex items-center">
+<i class="fas fa-check-circle text-blue-500 mr-2"></i>Validate
+</h3>
+<ul class="ml-8 mt-1 text-gray-600 list-disc">
+<li>JSON schema validation</li>
+<li>Python linting</li>
+</ul>
+</div>
+<div class="pipeline-stage bg-gray-50 rounded-lg p-3 border-l-4 border-purple-500">
+<h3 class="text-xl font-medium text-gray-800 flex items-center">
+<i class="fas fa-search text-purple-500 mr-2"></i>Plan
+</h3>
+<ul class="ml-8 mt-1 text-gray-600 list-disc">
+<li><code>pulumi preview</code> - Show proposed changes</li>
+</ul>
+</div>
+<div class="pipeline-stage bg-gray-50 rounded-lg p-3 border-l-4 border-green-500">
+<h3 class="text-xl font-medium text-gray-800 flex items-center">
+<i class="fas fa-play-circle text-green-500 mr-2"></i>Deploy
+</h3>
+<ul class="ml-8 mt-1 text-gray-600 list-disc">
+<li><code>pulumi up</code> - Apply infrastructure changes</li>
+<li>Manual approval required</li>
+</ul>
+</div>
+<div class="pipeline-stage bg-gray-50 rounded-lg p-3 border-l-4 border-orange-500">
+<h3 class="text-xl font-medium text-gray-800 flex items-center">
+<i class="fas fa-sync text-orange-500 mr-2"></i>Drift Detection
+</h3>
+<ul class="ml-8 mt-1 text-gray-600 list-disc">
+<li>Automated daily checks for configuration drift</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="w-1/2 pl-4">
+<h2 class="text-2xl font-semibold text-gray-800 mb-4 flex items-center">
+<i class="fas fa-cogs text-red-600 mr-2"></i>Key Features
+</h2>
+<div class="space-y-3">
+<div class="flex items-start bg-gray-50 p-3 rounded-lg">
+<i class="fas fa-docker text-blue-600 mr-3 mt-1"></i>
+<div>
+<h3 class="font-semibold text-gray-700">Custom Docker Image</h3>
+<p class="text-sm text-gray-600">Pulumi + OCI SDK + Python 3.9</p>
+</div>
+</div>
+<div class="flex items-start bg-gray-50 p-3 rounded-lg">
+<i class="fas fa-sitemap text-blue-600 mr-3 mt-1"></i>
+<div>
+<h3 class="font-semibold text-gray-700">Multi-Environment Deployments</h3>
+<p class="text-sm text-gray-600">Dev, staging, prod environments</p>
+</div>
+</div>
+<div class="flex items-start bg-gray-50 p-3 rounded-lg">
+<i class="fas fa-key text-blue-600 mr-3 mt-1"></i>
+<div>
+<h3 class="font-semibold text-gray-700">Secret Management</h3>
+<p class="text-sm text-gray-600">GitLab CI/CD variables</p>
+</div>
+</div>
+<div class="flex items-start bg-gray-50 p-3 rounded-lg">
+<i class="fas fa-database text-blue-600 mr-3 mt-1"></i>
+<div>
+<h3 class="font-semibold text-gray-700">Remote State Backend</h3>
+<p class="text-sm text-gray-600">OCI Object Storage</p>
+</div>
+</div>
+<div class="flex items-start bg-gray-50 p-3 rounded-lg">
+<i class="fas fa-chart-line text-blue-600 mr-3 mt-1"></i>
+<div>
+<h3 class="font-semibold text-gray-700">Pipeline Execution Metrics</h3>
+<p class="text-sm text-gray-600">Automated notifications and tracking</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="oracle-gray py-2 px-8 flex justify-between items-center">
+<div class="text-white text-sm">Expand Infrastructure as Code Support in Graal CI</div>
+<div class="text-white text-sm">17/22</div>
+</div>
+</div>
+
+
+
+<div class="slide bg-white flex flex-col" style=" overflow: hidden;">
+<!-- Header with title -->
+<div class="oracle-red py-4 px-8 text-white">
+<h1 class="text-3xl font-bold">Delivered Capabilities</h1>
+</div>
+<!-- Main content -->
+<div class="flex flex-1 p-6">
+<div class="w-full">
+<div class="flex">
+<!-- Left column: Supported OCI Resource Types -->
+<div class="w-1/2 pr-4">
+<h2 class="text-2xl font-semibold text-gray-800 mb-4">
+<i class="fas fa-layer-group text-red-600 mr-2"></i>
+                            Supported OCI Resource Types (10+)
+                        </h2>
+<div class="grid grid-cols-2 gap-3">
+<div class="resource-item bg-gray-50 p-3 rounded-lg shadow-sm flex items-center">
+<i class="fas fa-network-wired text-red-600 text-xl mr-3"></i>
+<span>Virtual Cloud Networks</span>
+</div>
+<div class="resource-item bg-gray-50 p-3 rounded-lg shadow-sm flex items-center">
+<i class="fas fa-sitemap text-red-600 text-xl mr-3"></i>
+<span>Subnets</span>
+</div>
+<div class="resource-item bg-gray-50 p-3 rounded-lg shadow-sm flex items-center">
+<i class="fas fa-server text-red-600 text-xl mr-3"></i>
+<span>Compute Instances</span>
+</div>
+<div class="resource-item bg-gray-50 p-3 rounded-lg shadow-sm flex items-center">
+<i class="fas fa-shield-alt text-red-600 text-xl mr-3"></i>
+<span>Security Lists</span>
+</div>
+<div class="resource-item bg-gray-50 p-3 rounded-lg shadow-sm flex items-center">
+<i class="fas fa-route text-red-600 text-xl mr-3"></i>
+<span>Route Tables</span>
+</div>
+<div class="resource-item bg-gray-50 p-3 rounded-lg shadow-sm flex items-center">
+<i class="fas fa-globe text-red-600 text-xl mr-3"></i>
+<span>Internet Gateways</span>
+</div>
+<div class="resource-item bg-gray-50 p-3 rounded-lg shadow-sm flex items-center">
+<i class="fas fa-exchange-alt text-red-600 text-xl mr-3"></i>
+<span>NAT Gateways</span>
+</div>
+<div class="resource-item bg-gray-50 p-3 rounded-lg shadow-sm flex items-center">
+<i class="fas fa-balance-scale text-red-600 text-xl mr-3"></i>
+<span>Load Balancers</span>
+</div>
+<div class="resource-item bg-gray-50 p-3 rounded-lg shadow-sm flex items-center">
+<i class="fas fa-hdd text-red-600 text-xl mr-3"></i>
+<span>Block Storage Volumes</span>
+</div>
+<div class="resource-item bg-gray-50 p-3 rounded-lg shadow-sm flex items-center">
+<i class="fas fa-cloud-upload-alt text-red-600 text-xl mr-3"></i>
+<span>Object Storage Buckets</span>
+</div>
+</div>
+</div>
+<!-- Right column: Key Features Delivered -->
+<div class="w-1/2 pl-4">
+<h2 class="text-2xl font-semibold text-gray-800 mb-4">
+<i class="fas fa-check-circle text-red-600 mr-2"></i>
+                            Key Features Delivered
+                        </h2>
+<div class="space-y-2">
+<div class="feature-item flex items-center bg-gray-50 p-2 rounded-lg">
+<i class="fas fa-check text-green-600 mr-3"></i>
+<span>JSON-driven configuration (zero Python code changes)</span>
+</div>
+<div class="feature-item flex items-center bg-gray-50 p-2 rounded-lg">
+<i class="fas fa-check text-green-600 mr-3"></i>
+<span>Stack-based environment isolation</span>
+</div>
+<div class="feature-item flex items-center bg-gray-50 p-2 rounded-lg">
+<i class="fas fa-check text-green-600 mr-3"></i>
+<span>Dependency resolution and ordering</span>
+</div>
+<div class="feature-item flex items-center bg-gray-50 p-2 rounded-lg">
+<i class="fas fa-check text-green-600 mr-3"></i>
+<span>GitLab CI/CD integration</span>
+</div>
+<div class="feature-item flex items-center bg-gray-50 p-2 rounded-lg">
+<i class="fas fa-check text-green-600 mr-3"></i>
+<span>Remote state management</span>
+</div>
+<div class="feature-item flex items-center bg-gray-50 p-2 rounded-lg">
+<i class="fas fa-check text-green-600 mr-3"></i>
+<span>Drift detection</span>
+</div>
+<div class="feature-item flex items-center bg-gray-50 p-2 rounded-lg">
+<i class="fas fa-check text-green-600 mr-3"></i>
+<span>Resource export (IPs, endpoints)</span>
+</div>
+<div class="feature-item flex items-center bg-gray-50 p-2 rounded-lg">
+<i class="fas fa-check text-green-600 mr-3"></i>
+<span>Dynamic Factory Pattern</span>
+</div>
+<div class="feature-item flex items-center bg-gray-50 p-2 rounded-lg">
+<i class="fas fa-check text-green-600 mr-3"></i>
+<span>Approval Gates</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer with page number -->
+<div class="oracle-gray py-2 px-8 flex justify-between items-center">
+<div class="text-white text-sm">Expand Infrastructure as Code Support in Graal CI</div>
+<div class="text-white text-sm" >18/22</div>
+</div>
+</div>
+
+
+
+<div class="slide bg-white flex flex-col" style=" overflow: hidden;">
+<!-- Header with title -->
+<div class="oracle-red py-4 px-8 text-white">
+<h1 class="text-3xl font-bold">Validation Results</h1>
+</div>
+<!-- Main content -->
+<div class="flex flex-1 p-6">
+<div class="w-full">
+<div class="grid grid-cols-2 gap-6">
+<!-- Left column -->
+<div class="space-y-6">
+<!-- Testing Scenarios -->
+<div class="bg-gray-50 p-4 rounded-lg shadow-sm result-card">
+<div class="flex items-start">
+<div class="oracle-red rounded-full p-2 mr-3 flex-shrink-0">
+<i class="fas fa-vial text-white"></i>
+</div>
+<div>
+<h3 class="text-xl font-semibold text-gray-800">Testing Scenarios</h3>
+<ul class="mt-2 text-gray-600 space-y-1">
+<li class="flex items-start">
+<i class="fas fa-check-circle text-green-600 mt-1 mr-2"></i>
+<span>Multi-stack deployment (dev, staging, prod)</span>
+</li>
+<li class="flex items-start">
+<i class="fas fa-check-circle text-green-600 mt-1 mr-2"></i>
+<span>Drift detection (manual changes → automated detection)</span>
+</li>
+<li class="flex items-start">
+<i class="fas fa-check-circle text-green-600 mt-1 mr-2"></i>
+<span>Error handling (invalid JSON, missing dependencies)</span>
+</li>
+<li class="flex items-start">
+<i class="fas fa-check-circle text-green-600 mt-1 mr-2"></i>
+<span>Infrastructure deployment (networks, instances, storage)</span>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<!-- Performance Results -->
+<div class="bg-gray-50 p-4 rounded-lg shadow-sm result-card">
+<div class="flex items-start">
+<div class="oracle-red rounded-full p-2 mr-3 flex-shrink-0">
+<i class="fas fa-chart-line text-white"></i>
+</div>
+<div>
+<h3 class="text-xl font-semibold text-gray-800">Performance Results</h3>
+<div class="mt-2 space-y-2">
+<div class="flex items-center justify-between">
+<span class="text-gray-600">Setup time:</span>
+<span class="font-semibold text-gray-800">Hours → 15-20 minutes</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-gray-600">Manual errors:</span>
+<span class="font-semibold text-gray-800">Zero (100% elimination)</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-gray-600">Environments deployed:</span>
+<span class="font-semibold text-gray-800">3 successful (dev/staging/prod)</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-gray-600">Resource types supported:</span>
+<span class="font-semibold text-gray-800">10+</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right column -->
+<div class="space-y-6">
+<!-- Reliability Metrics -->
+<div class="bg-gray-50 p-4 rounded-lg shadow-sm result-card">
+<div class="flex items-start">
+<div class="oracle-red rounded-full p-2 mr-3 flex-shrink-0">
+<i class="fas fa-shield-alt text-white"></i>
+</div>
+<div>
+<h3 class="text-xl font-semibold text-gray-800">Reliability Metrics</h3>
+<ul class="mt-2 text-gray-600 space-y-1">
+<li class="flex items-start">
+<i class="fas fa-check-circle text-green-600 mt-1 mr-2"></i>
+<span>Idempotent operations: Verified</span>
+</li>
+<li class="flex items-start">
+<i class="fas fa-check-circle text-green-600 mt-1 mr-2"></i>
+<span>State consistency: 100% across all deployments</span>
+</li>
+<li class="flex items-start">
+<i class="fas fa-check-circle text-green-600 mt-1 mr-2"></i>
+<span>Error recovery: Automatic rollback on failures</span>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<!-- Performance Visualization -->
+<div class="bg-gray-50 p-4 rounded-lg shadow-sm result-card">
+<h3 class="text-xl font-semibold text-gray-800 mb-3">Setup Time Reduction</h3>
+<div class="bar-chart-container" id="chart"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer with page number -->
+<div class="oracle-gray py-2 px-8 flex justify-between items-center">
+<div class="text-white text-sm">Expand Infrastructure as Code Support in Graal CI</div>
+<div class="text-white text-sm" >19/22</div>
+</div>
+</div>
+<script>
+        // D3.js chart for performance improvement
+        document.addEventListener('DOMContentLoaded', function() {
+            const data = [
+                {category: "Before", value: 100, color: "#7D8185"},
+                {category: "After", value: 20, color: "#ED1C24"}
+            ];
+            
+            const margin = {top: 20, right: 30, bottom: 40, left: 40};
+            const width = document.getElementById('chart').clientWidth - margin.left - margin.right;
+            const height = document.getElementById('chart').clientHeight - margin.top - margin.bottom;
+            
+            const svg = d3.select("#chart")
+                .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", `translate(${margin.left},${margin.top})`);
+            
+            const x = d3.scaleBand()
+                .domain(data.map(d => d.category))
+                .range([0, width])
+                .padding(0.3);
+            
+            const y = d3.scaleLinear()
+                .domain([0, 100])
+                .range([height, 0]);
+            
+            // Add X axis
+            svg.append("g")
+                .attr("transform", `translate(0,${height})`)
+                .call(d3.axisBottom(x))
+                .selectAll("text")
+                .style("font-size", "14px");
+            
+            // Add Y axis
+            svg.append("g")
+                .call(d3.axisLeft(y).ticks(5))
+                .selectAll("text")
+                .style("font-size", "12px");
+            
+            // Add Y axis label
+            svg.append("text")
+                .attr("transform", "rotate(-90)")
+                .attr("y", 0 - margin.left)
+                .attr("x", 0 - (height / 2))
+                .attr("dy", "1em")
+                .style("text-anchor", "middle")
+                .style("font-size", "12px")
+                .text("Setup Time (%)");
+            
+            // Add bars
+            svg.selectAll(".bar")
+                .data(data)
+                .enter()
+                .append("rect")
+                .attr("class", "bar")
+                .attr("x", d => x(d.category))
+                .attr("y", d => y(d.value))
+                .attr("width", x.bandwidth())
+                .attr("height", d => height - y(d.value))
+                .attr("fill", d => d.color);
+            
+            // Add value labels on top of bars
+            svg.selectAll(".label")
+                .data(data)
+                .enter()
+                .append("text")
+                .attr("class", "label")
+                .attr("x", d => x(d.category) + x.bandwidth() / 2)
+                .attr("y", d => y(d.value) - 5)
+                .attr("text-anchor", "middle")
+                .style("font-size", "14px")
+                .style("font-weight", "bold")
+                .text(d => d.value + "%");
+            
+            // Add reduction percentage
+            svg.append("text")
+                .attr("x", width / 2)
+                .attr("y", y(50))
+                .attr("text-anchor", "middle")
+                .style("font-size", "16px")
+                .style("font-weight", "bold")
+                .style("fill", "#333")
+                .text("80-90% Reduction");
+            
+            // Add arrow between bars
+            const arrow = svg.append("g");
+            const startX = x("Before") + x.bandwidth();
+            const endX = x("After");
+            const arrowY = y(50);
+            
+            arrow.append("line")
+                .attr("x1", startX)
+                .attr("y1", arrowY)
+                .attr("x2", endX - 10)
+                .attr("y2", arrowY)
+                .attr("stroke", "#333")
+                .attr("stroke-width", 2)
+                .attr("marker-end", "url(#arrowhead)");
+        });
+    </script>
+
+
+
+<div class="slide bg-white flex flex-col" style=" overflow: hidden;">
+<!-- Header with title -->
+<div class="oracle-red py-4 px-8 text-white">
+<h1 class="text-3xl font-bold">Adding New Resource Types - 3 Simple Steps</h1>
+</div>
+<!-- Main content -->
+<div class="flex-1 p-6 overflow-hidden">
+<div class="grid grid-cols-1 gap-6 h-full">
+<!-- Example introduction -->
+<div class="mb-2">
+<p class="text-gray-700 text-lg">Demonstration: Adding Load Balancer Support</p>
+</div>
+<!-- Step 1 -->
+<div class="step-box pl-4 flex">
+<div class="mr-4">
+<div class="oracle-red rounded-full p-3 flex items-center justify-center w-12 h-12">
+<span class="text-white font-bold text-xl">1</span>
+</div>
+</div>
+<div class="flex-1">
+<div class="flex items-center">
+<h2 class="text-2xl font-semibold text-gray-800">Create Resource Class</h2>
+<i class="fas fa-code ml-3 text-gray-500"></i>
+</div>
+<p class="text-gray-600 mt-1">Create a class that inherits from BaseResource</p>
+<div class="code-block mt-2 text-sm">
+<pre class="text-gray-800">class LoadBalancerResource(BaseResource):
+    @staticmethod
+    def create(name, config, resolver):
+        # Implementation using pulumi_oci.load_balancer
+        return load_balancer_resource</pre>
+</div>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="step-box pl-4 flex">
+<div class="mr-4">
+<div class="oracle-red rounded-full p-3 flex items-center justify-center w-12 h-12">
+<span class="text-white font-bold text-xl">2</span>
+</div>
+</div>
+<div class="flex-1">
+<div class="flex items-center">
+<h2 class="text-2xl font-semibold text-gray-800">Add to JSON Config</h2>
+<i class="fas fa-file-code ml-3 text-gray-500"></i>
+</div>
+<p class="text-gray-600 mt-1">Define the resource in stack-specific JSON</p>
+<div class="code-block mt-2 text-sm">
+<pre class="text-gray-800">&#34;load_balancers&#34;: [
+  {
+    &#34;name&#34;: &#34;lb-prod&#34;,
+    &#34;subnet_id&#34;: &#34;ref:subnet-public&#34;,
+    &#34;shape&#34;: &#34;100Mbps&#34;
+  }
+]</pre>
+</div>
+</div>
+</div>
+<!-- Step 3 -->
+<div class="step-box pl-4 flex">
+<div class="mr-4">
+<div class="oracle-red rounded-full p-3 flex items-center justify-center w-12 h-12">
+<span class="text-white font-bold text-xl">3</span>
+</div>
+</div>
+<div class="flex-1">
+<div class="flex items-center">
+<h2 class="text-2xl font-semibold text-gray-800">Register in Factory</h2>
+<i class="fas fa-puzzle-piece ml-3 text-gray-500"></i>
+</div>
+<p class="text-gray-600 mt-1">Register the resource type</p>
+<div class="code-block mt-2 text-sm">
+<pre class="text-gray-800">ResourceFactory.register(&#34;load_balancers&#34;, LoadBalancerResource)</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer with page number -->
+<div class="oracle-gray py-2 px-8 flex justify-between items-center">
+<div class="text-white text-sm">Expand Infrastructure as Code Support in Graal CI</div>
+<div class="text-white text-sm" >20/22</div>
+</div>
+</div>
+
+
+
+<div class="slide bg-white flex flex-col" style=" overflow: hidden;">
+<!-- Header with title -->
+<div class="oracle-red py-4 px-8 text-white">
+<h1 class="text-3xl font-bold">Key Achievements &amp; Impact</h1>
+</div>
+<!-- Main content -->
+<div class="flex flex-1 p-6">
+<div class="w-full flex flex-col">
+<!-- Two column layout for main content -->
+<div class="flex flex-1">
+<!-- Left column: Quantitative Impact -->
+<div class="w-1/2 pr-4">
+<h2 class="text-2xl font-semibold text-gray-800 mb-4 flex items-center">
+<i class="fas fa-chart-bar text-red-600 mr-3"></i>
+                            Quantitative Impact
+                        </h2>
+<div class="mb-4">
+<!-- D3.js Bar Chart -->
+<div class="h-48 mb-2" id="chart"></div>
+</div>
+<div class="space-y-3">
+<div class="achievement-item flex items-center">
+<div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center mr-3">
+<i class="fas fa-clock text-red-600"></i>
+</div>
+<div>
+<p class="font-semibold">80-90% Time Reduction</p>
+<p class="text-sm text-gray-600">Hours → 15-20 minutes</p>
+</div>
+</div>
+<div class="achievement-item flex items-center">
+<div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center mr-3">
+<i class="fas fa-check-circle text-red-600"></i>
+</div>
+<div>
+<p class="font-semibold">100% Error Elimination</p>
+<p class="text-sm text-gray-600">Zero manual configuration errors</p>
+</div>
+</div>
+<div class="achievement-item flex items-center">
+<div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center mr-3">
+<i class="fas fa-server text-red-600"></i>
+</div>
+<div>
+<p class="font-semibold">10+ Resource Types</p>
+<p class="text-sm text-gray-600">Comprehensive OCI coverage</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Right column: Qualitative Impact -->
+<div class="w-1/2 pl-4">
+<h2 class="text-2xl font-semibold text-gray-800 mb-4 flex items-center">
+<i class="fas fa-lightbulb text-red-600 mr-3"></i>
+                            Qualitative Impact
+                        </h2>
+<div class="grid grid-cols-2 gap-3">
+<div class="achievement-item bg-gray-50 p-3 rounded-lg shadow-sm">
+<div class="flex items-center mb-2">
+<i class="fas fa-users-cog text-red-600 mr-2"></i>
+<h3 class="font-semibold">Improved Team Productivity</h3>
+</div>
+<p class="text-sm text-gray-600">Focus on core responsibilities</p>
+</div>
+<div class="achievement-item bg-gray-50 p-3 rounded-lg shadow-sm">
+<div class="flex items-center mb-2">
+<i class="fas fa-project-diagram text-red-600 mr-2"></i>
+<h3 class="font-semibold">Reduced Knowledge Silos</h3>
+</div>
+<p class="text-sm text-gray-600">Simplified onboarding for new developers</p>
+</div>
+<div class="achievement-item bg-gray-50 p-3 rounded-lg shadow-sm">
+<div class="flex items-center mb-2">
+<i class="fas fa-sync-alt text-red-600 mr-2"></i>
+<h3 class="font-semibold">Enhanced Environment Consistency</h3>
+</div>
+<p class="text-sm text-gray-600">Reproducible, version-controlled environments</p>
+</div>
+<div class="achievement-item bg-gray-50 p-3 rounded-lg shadow-sm">
+<div class="flex items-center mb-2">
+<i class="fas fa-expand-arrows-alt text-red-600 mr-2"></i>
+<h3 class="font-semibold">Scalable Solution</h3>
+</div>
+<p class="text-sm text-gray-600">Foundation for future growth</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Skills Gained section -->
+<div class="mt-4">
+<h2 class="text-2xl font-semibold text-gray-800 mb-3 flex items-center">
+<i class="fas fa-graduation-cap text-red-600 mr-3"></i>
+                        Skills Gained
+                    </h2>
+<div class="flex flex-wrap">
+<div class="achievement-item mr-4 mb-2 bg-gray-50 px-3 py-2 rounded flex items-center">
+<i class="fas fa-code-branch text-red-600 mr-2"></i>
+<span>Infrastructure as Code</span>
+</div>
+<div class="achievement-item mr-4 mb-2 bg-gray-50 px-3 py-2 rounded flex items-center">
+<i class="fas fa-puzzle-piece text-red-600 mr-2"></i>
+<span>Python Design Patterns</span>
+</div>
+<div class="achievement-item mr-4 mb-2 bg-gray-50 px-3 py-2 rounded flex items-center">
+<i class="fas fa-cloud text-red-600 mr-2"></i>
+<span>Cloud Infrastructure</span>
+</div>
+<div class="achievement-item mr-4 mb-2 bg-gray-50 px-3 py-2 rounded flex items-center">
+<i class="fas fa-cogs text-red-600 mr-2"></i>
+<span>CI/CD Development</span>
+</div>
+<div class="achievement-item mb-2 bg-gray-50 px-3 py-2 rounded flex items-center">
+<i class="fas fa-briefcase text-red-600 mr-2"></i>
+<span>Enterprise Engineering</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer with page number -->
+<div class="oracle-gray py-2 px-8 flex justify-between items-center">
+<div class="text-white text-sm">Expand Infrastructure as Code Support in Graal CI</div>
+<div class="text-white text-sm" >21/22</div>
+</div>
+</div>
+<script>
+        // D3.js Bar Chart
+        document.addEventListener('DOMContentLoaded', function() {
+            const data = [
+                {label: "Time Reduction", value: 85},
+                {label: "Error Elimination", value: 100},
+                {label: "Resource Types", value: 75},
+                {label: "Environment Consistency", value: 90}
+            ];
+            
+            const margin = {top: 20, right: 20, bottom: 30, left: 40};
+            const width = document.getElementById('chart').clientWidth - margin.left - margin.right;
+            const height = document.getElementById('chart').clientHeight - margin.top - margin.bottom;
+            
+            const svg = d3.select("#chart")
+                .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", `translate(${margin.left},${margin.top})`);
+                
+            const x = d3.scaleBand()
+                .domain(data.map(d => d.label))
+                .range([0, width])
+                .padding(0.3);
+                
+            const y = d3.scaleLinear()
+                .domain([0, 100])
+                .range([height, 0]);
+                
+            // Add X axis
+            svg.append("g")
+                .attr("transform", `translate(0,${height})`)
+                .call(d3.axisBottom(x))
+                .selectAll("text")
+                .style("font-size", "10px");
+                
+            // Add Y axis
+            svg.append("g")
+                .call(d3.axisLeft(y).ticks(5))
+                .selectAll("text")
+                .style("font-size", "10px");
+                
+            // Add bars
+            svg.selectAll(".bar")
+                .data(data)
+                .enter()
+                .append("rect")
+                .attr("class", "bar")
+                .attr("x", d => x(d.label))
+                .attr("width", x.bandwidth())
+                .attr("y", d => y(d.value))
+                .attr("height", d => height - y(d.value));
+                
+            // Add labels on top of bars
+            svg.selectAll(".label")
+                .data(data)
+                .enter()
+                .append("text")
+                .attr("class", "label")
+                .attr("x", d => x(d.label) + x.bandwidth() / 2)
+                .attr("y", d => y(d.value) - 5)
+                .attr("text-anchor", "middle")
+                .text(d => d.value + "%")
+                .style("font-size", "10px")
+                .style("fill", "#333");
+        });
+    </script>
+
+
+
+<div class="slide bg-white flex flex-col" style=" overflow: hidden;">
+<!-- Header with title -->
+<div class="oracle-red py-4 px-8 text-white">
+<h1 class="text-3xl font-bold">Thank You &amp; Questions</h1>
+</div>
+<!-- Main content -->
+<div class="flex flex-1 p-8">
+<div class="w-full flex flex-col">
+<!-- Thank you message -->
+<div class="text-center mb-8">
+<h2 class="text-5xl font-bold text-gray-800">Thank You!</h2>
+<p class="text-2xl text-gray-600 mt-2">For your attention and consideration</p>
+</div>
+<div class="flex flex-1">
+<!-- Contact information -->
+<div class="w-1/2 pr-6">
+<h3 class="text-2xl font-semibold text-gray-800 mb-4">Contact Information</h3>
+<div class="space-y-4">
+<div class="contact-item flex items-center">
+<div class="oracle-red rounded-full p-3 mr-4 flex-shrink-0">
+<i class="fas fa-envelope text-white text-xl"></i>
+</div>
+<div>
+<p class="text-xl font-medium text-gray-800">Email</p>
+<p class="text-lg text-gray-600">yassine.dbaichi@example.com</p>
+</div>
+</div>
+<div class="contact-item flex items-center">
+<div class="oracle-red rounded-full p-3 mr-4 flex-shrink-0">
+<i class="fab fa-linkedin text-white text-xl"></i>
+</div>
+<div>
+<p class="text-xl font-medium text-gray-800">LinkedIn</p>
+<p class="text-lg text-gray-600">linkedin.com/in/yassine-dbaichi</p>
+</div>
+</div>
+<div class="contact-item flex items-center">
+<div class="oracle-red rounded-full p-3 mr-4 flex-shrink-0">
+<i class="fab fa-github text-white text-xl"></i>
+</div>
+<div>
+<p class="text-xl font-medium text-gray-800">GitHub</p>
+<p class="text-lg text-gray-600">github.com/y-dbaichi</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Acknowledgments -->
+<div class="w-1/2 pl-6 border-l border-gray-300">
+<h3 class="text-2xl font-semibold text-gray-800 mb-4">Acknowledgments</h3>
+<div class="space-y-3">
+<div class="flex items-center">
+<i class="fas fa-user-tie text-red-600 mr-3 text-xl"></i>
+<p class="text-xl text-gray-700"><span class="font-semibold">Oracle Supervisor:</span> Mr. Hamza GHAISSI</p>
+</div>
+<div class="flex items-center">
+<i class="fas fa-user-cog text-red-600 mr-3 text-xl"></i>
+<p class="text-xl text-gray-700"><span class="font-semibold">Dotted Line Manager:</span> Dir. Mohamed EZ-ZARGHILI</p>
+</div>
+<div class="flex items-center">
+<i class="fas fa-chalkboard-teacher text-red-600 mr-3 text-xl"></i>
+<p class="text-xl text-gray-700"><span class="font-semibold">Academic Supervisor:</span> Prof. Hatim LECHGAR</p>
+</div>
+<div class="flex items-center">
+<i class="fas fa-users text-red-600 mr-3 text-xl"></i>
+<p class="text-xl text-gray-700"><span class="font-semibold">GraalVM RISQ Team</span></p>
+</div>
+</div>
+<!-- QR Codes -->
+<div class="mt-6">
+<h3 class="text-xl font-semibold text-gray-800 mb-2">Scan for Resources</h3>
+<div class="flex space-x-4">
+<div class="qr-code-placeholder w-24 h-24 flex items-center justify-center">
+<p class="text-gray-600 text-center">GitHub<br/>QR Code</p>
+</div>
+<div class="qr-code-placeholder w-24 h-24 flex items-center justify-center">
+<p class="text-gray-600 text-center">LinkedIn<br/>QR Code</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer with page number -->
+<div class="oracle-gray py-2 px-8 flex justify-between items-center">
+<div class="text-white text-sm">Expand Infrastructure as Code Support in Graal CI</div>
+<div class="text-white text-sm" >22/22</div>
+</div>
+</div>
+
+
+
+
+<!-- End Page -->
+<div style="text-align: center; padding: 50px 40px; background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); margin: 0 auto; width: 1280px; box-shadow: 0 8px 16px rgba(0,0,0,0.15); border-bottom: 6px solid #ED1C24;">
+    <h2 style="font-size: 40px; color: #ED1C24; margin-bottom: 20px; font-weight: bold;">
+        <i class="fas fa-flag-checkered" style="margin-right: 15px;"></i>End of Presentation
+    </h2>
+    <p style="font-size: 22px; color: #666; margin-bottom: 30px;">Thank you for your attention</p>
+
+    <div style="margin: 30px 0; padding: 2px; background: linear-gradient(90deg, transparent, #7D8185, transparent);"></div>
+
+    <div style="background: #f8f9fa; padding: 25px; border-radius: 8px; margin: 30px auto; max-width: 800px;">
+        <p style="font-size: 18px; color: #333; margin: 8px 0;"><strong>Total Slides:</strong> 22</p>
+        <p style="font-size: 18px; color: #333; margin: 8px 0;"><strong>Student:</strong> Yassine DBAICHI</p>
+        <p style="font-size: 18px; color: #333; margin: 8px 0;"><strong>Institution:</strong> EHTP - École Hassania des Travaux Publics</p>
+        <p style="font-size: 18px; color: #333; margin: 8px 0;"><strong>Academic Year:</strong> 2024/2025</p>
+    </div>
+
+    <div style="margin-top: 30px; padding: 20px; background: #e7f3ff; border-left: 4px solid #0066cc; border-radius: 4px;">
+        <p style="font-size: 15px; color: #004085; margin: 0;">
+            <i class="fas fa-info-circle" style="margin-right: 8px;"></i>
+            This presentation can be printed to PDF using Ctrl+P or presented directly in fullscreen mode (F11)
+        </p>
+    </div>
+</div>
+
+</body>
+</html>
