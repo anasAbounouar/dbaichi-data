@@ -22,6 +22,11 @@ MongoClient.connect(MONGO_URI)
     })
     .catch(error => console.error('MongoDB connection error:', error));
 
+// Serve presentation.html at root
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/presentation.html');
+});
+
 // Get all notes for a presentation
 app.get('/api/notes/:presentationId', async (req, res) => {
     try {
