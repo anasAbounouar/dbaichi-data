@@ -113,10 +113,10 @@ app.listen(PORT, () => {
     console.log('='.repeat(50));
     console.log(`📡 Server running on http://localhost:${PORT}`);
     console.log('');
-    console.log('📂 Available presentations:');
-    console.log(`   • Portfolio: http://localhost:${PORT}/`);
-    console.log(`   • Book Marketplace: http://localhost:${PORT}/presentations/book-marketplace/presentation.html`);
-    console.log(`   • Oracle IaC: http://localhost:${PORT}/presentations/oracle-iac/presentation.html`);
-    console.log(`   • Oracle Presenter: http://localhost:${PORT}/presentations/oracle-iac/presenter.html`);
+    console.log('📂 Available resources:');
+    console.log(`   • Complete Presentation (Oracle + SIG): http://localhost:${PORT}/presentation.html`);
+    console.log(`   • Q&A Guide: http://localhost:${PORT}/qa-guide.html`);
+    console.log('');
+    console.log('🎯 Press P for Presenter View | Use arrow keys to navigate');
     console.log('='.repeat(50));
 });
