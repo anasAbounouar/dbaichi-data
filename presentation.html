@@ -2120,10 +2120,13 @@
         }
 
         let currentSlide = initialSlide;
-        const slides = document.querySelectorAll('#slides-container > .slide');
+        // Select only direct children slides, not nested slide-content divs
+        const allSlides = document.querySelectorAll('.slide');
+        const slides = Array.from(allSlides).filter(slide =>
+            slide.parentElement && slide.parentElement.id === 'slides-container'
+        );
         const totalSlides = slides.length;
-        console.log('🔍 DEBUG: Total slides found:', totalSlides);
-        console.log('🔍 DEBUG: Slides array:', slides);
+        console.log('🔍 Total slides found:', totalSlides);
         const navbar = document.getElementById('navbar');
         const slideCounter = document.getElementById('slideCounter');
 
