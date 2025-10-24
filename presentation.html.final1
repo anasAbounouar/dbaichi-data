@@ -730,8 +730,8 @@
                         <div class="card-content">
                             <ul style="margin-left: 1.5rem;">
                                 <li>Provision infrastructure in <5 minutes</li>
-                                <li>Support deployment via pull requests</li>
-                                <li>Framework respect coding best practices</li>
+                                <li>Support concurrent deployments</li>
+                                <li>Minimal API calls to OCI</li>
                             </ul>
                         </div>
                     </div>
@@ -946,7 +946,7 @@
             </div>
         </div>
 
-        <!-- Slide 22: Timeline & Milestones -->
+        <!-- Slide 22: Timeline <!-- Slide 28: Timeline & Milestones --> Milestones -->
         <div data-presentation="oracle" class="slide content-slide" data-section="3">
             <h2 class="slide-title">Project Timeline & Key Milestones</h2>
             <div data-presentation="oracle" class="slide-content">
@@ -1023,7 +1023,7 @@
 
         <!-- SECTION 4: TECHNICAL IMPLEMENTATION -->
 
-        <!-- Slide 23: Section Divider -->
+        <!-- Slide 17: Section Divider -->
         <div data-presentation="oracle" class="slide divider-slide" data-hide-navbar="true" style="background: linear-gradient(135deg, #14535F 0%, #0a3940 100%) !important; display: flex !important; align-items: center; justify-content: center;">
             <h2 class="divider-title">Technical Implementation</h2>
         </div>
@@ -1372,7 +1372,7 @@
 
         <!-- SECTION 6: FUTURE ENHANCEMENTS -->
 
-        <!-- Slide 41: Section Divider -->
+        <!-- Slide 35: Section Divider -->
         <div data-presentation="oracle" class="slide divider-slide" data-hide-navbar="true" style="background: linear-gradient(135deg, #14535F 0%, #0a3940 100%) !important; display: flex !important; align-items: center; justify-content: center;">
             <h2 class="divider-title">Future Enhancements</h2>
         </div>

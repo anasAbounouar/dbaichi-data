@@ -730,8 +730,8 @@
                         <div class="card-content">
                             <ul style="margin-left: 1.5rem;">
                                 <li>Provision infrastructure in <5 minutes</li>
-                                <li>Support deployment via pull requests</li>
-                                <li>Framework respect coding best practices</li>
+                                <li>Support concurrent deployments</li>
+                                <li>Minimal API calls to OCI</li>
                             </ul>
                         </div>
                     </div>
@@ -946,7 +946,7 @@
             </div>
         </div>
 
-        <!-- Slide 22: Timeline & Milestones -->
+        <!-- Slide 22: Timeline <!-- Slide 28: Timeline & Milestones --> Milestones -->
         <div data-presentation="oracle" class="slide content-slide" data-section="3">
             <h2 class="slide-title">Project Timeline & Key Milestones</h2>
             <div data-presentation="oracle" class="slide-content">
@@ -1023,7 +1023,7 @@
 
         <!-- SECTION 4: TECHNICAL IMPLEMENTATION -->
 
-        <!-- Slide 23: Section Divider -->
+        <!-- Slide 17: Section Divider -->
         <div data-presentation="oracle" class="slide divider-slide" data-hide-navbar="true" style="background: linear-gradient(135deg, #14535F 0%, #0a3940 100%) !important; display: flex !important; align-items: center; justify-content: center;">
             <h2 class="divider-title">Technical Implementation</h2>
         </div>
@@ -1372,7 +1372,7 @@
 
         <!-- SECTION 6: FUTURE ENHANCEMENTS -->
 
-        <!-- Slide 41: Section Divider -->
+        <!-- Slide 35: Section Divider -->
         <div data-presentation="oracle" class="slide divider-slide" data-hide-navbar="true" style="background: linear-gradient(135deg, #14535F 0%, #0a3940 100%) !important; display: flex !important; align-items: center; justify-content: center;">
             <h2 class="divider-title">Future Enhancements</h2>
         </div>
@@ -1432,7 +1432,7 @@
 
 
 
-        <!-- Slide 45: Title Slide -->
+        <!-- Slide 1: Title Slide -->
         <div data-presentation="book" class="slide active title-slide">
             <div class="logo-container">
                 <div style="width: 100px; height: 100px; background: white; border-radius: 1rem; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.5rem; color: #14535F;">EHTP</div>
@@ -1442,7 +1442,7 @@
             <p class="subtitle">Automatic Delivery Route Planning for Book Sellers</p>
         </div>
 
-        <!-- Slide 46: Table of Contents -->
+        <!-- Slide 2: Table of Contents -->
         <div data-presentation="book" class="slide content-slide">
             <h2 class="slide-title">Agenda</h2>
             <div data-presentation="book" class="slide-content">
@@ -1477,12 +1477,12 @@
 
         <!-- SECTION 1: INTRODUCTION -->
 
-        <!-- Slide 47: Section Divider -->
+        <!-- Slide 3: Section Divider -->
         <div data-presentation="book" class="slide divider-slide" data-hide-navbar="true">
             <h2 class="divider-title">Introduction</h2>
         </div>
 
-        <!-- Slide 48: Context -->
+        <!-- Slide 4: Context -->
         <div data-presentation="book" class="slide content-slide" data-section="1">
             <h2 class="slide-title">Context</h2>
             <div data-presentation="book" class="slide-content">
@@ -1496,7 +1496,7 @@
             </div>
         </div>
 
-        <!-- Slide 49: Problem Statement -->
+        <!-- Slide 5: Problem Statement -->
         <div data-presentation="book" class="slide content-slide" data-section="1">
             <h2 class="slide-title">Problem Statement</h2>
             <div data-presentation="book" class="slide-content">
@@ -1521,7 +1521,7 @@
             </div>
         </div>
 
-        <!-- Slide 50: Proposed Solution -->
+        <!-- Slide 6: Proposed Solution -->
         <div data-presentation="book" class="slide content-slide" data-section="1">
             <h2 class="slide-title">Proposed Solution</h2>
             <div data-presentation="book" class="slide-content">
@@ -1536,7 +1536,7 @@
             </div>
         </div>
 
-        <!-- Slide 51: Objectives -->
+        <!-- Slide 7: Objectives -->
         <div data-presentation="book" class="slide content-slide" data-section="1">
             <h2 class="slide-title">Project Objectives</h2>
             <div data-presentation="book" class="slide-content">
@@ -1571,12 +1571,12 @@
 
         <!-- SECTION 2: SYSTEM CONCEPTION -->
 
-        <!-- Slide 52: Section Divider -->
+        <!-- Slide 8: Section Divider -->
         <div data-presentation="book" class="slide divider-slide" data-hide-navbar="true">
             <h2 class="divider-title">System Conception</h2>
         </div>
 
-        <!-- Slide 53: Functional Requirements -->
+        <!-- Slide 9: Functional Requirements -->
         <div data-presentation="book" class="slide content-slide" data-section="2">
             <h2 class="slide-title">Functional Requirements</h2>
             <div data-presentation="oracle" class="slide-content">
@@ -1635,7 +1635,7 @@
             </div>
         </div>
 
-        <!-- Slide 54: Data Model -->
+        <!-- Slide 10: Data Model -->
         <div data-presentation="book" class="slide content-slide" data-section="2">
             <h2 class="slide-title">Data Model</h2>
             <div data-presentation="oracle" class="slide-content">
@@ -1684,12 +1684,12 @@
 
         <!-- SECTION 3: WORKFLOW -->
 
-        <!-- Slide 55: Section Divider -->
+        <!-- Slide 11: Section Divider -->
         <div data-presentation="book" class="slide divider-slide" data-hide-navbar="true">
             <h2 class="divider-title">Application Workflow</h2>
         </div>
 
-        <!-- Slide 56: Buyer Workflow -->
+        <!-- Slide 12: Buyer Workflow -->
         <div data-presentation="book" class="slide content-slide" data-section="3">
             <h2 class="slide-title">Buyer Workflow</h2>
             <div data-presentation="book" class="slide-content">
@@ -1725,7 +1725,7 @@
             </div>
         </div>
 
-        <!-- Slide 57: Seller Workflow -->
+        <!-- Slide 13: Seller Workflow -->
         <div data-presentation="book" class="slide content-slide" data-section="3">
             <h2 class="slide-title">Seller Workflow</h2>
             <div data-presentation="book" class="slide-content">
@@ -1768,12 +1768,12 @@
 
         <!-- SECTION 4: IMPLEMENTATION -->
 
-        <!-- Slide 58: Section Divider -->
+        <!-- Slide 14: Section Divider -->
         <div data-presentation="book" class="slide divider-slide" data-hide-navbar="true">
             <h2 class="divider-title">Implementation</h2>
         </div>
 
-        <!-- Slide 59: System Architecture -->
+        <!-- Slide 15: System Architecture -->
         <div data-presentation="book" class="slide content-slide" data-section="4">
             <h2 class="slide-title">System Architecture</h2>
             <div data-presentation="oracle" class="slide-content" style="display: flex; align-items: center; justify-content: center; height: 100%;">
@@ -1781,7 +1781,7 @@
             </div>
         </div>
 
-        <!-- Slide 60: Technologies Used -->
+        <!-- Slide 16: Technologies Used -->
         <div data-presentation="book" class="slide content-slide" data-section="4">
             <h2 class="slide-title">Technology Stack</h2>
             <div data-presentation="book" class="slide-content">
@@ -1851,7 +1851,7 @@
             </div>
         </div>
 
-        <!-- Slide 61: Address Data Flow -->
+        <!-- Slide 17: Address Data Flow -->
         <div data-presentation="book" class="slide content-slide" data-section="4">
             <h2 class="slide-title">How Address Data Flows</h2>
             <div data-presentation="book" class="slide-content">
@@ -1879,7 +1879,7 @@
             </div>
         </div>
 
-        <!-- Slide 62: Route Optimization Algorithm -->
+        <!-- Slide 18: Route Optimization Algorithm -->
         <div data-presentation="book" class="slide content-slide" data-section="4">
             <h2 class="slide-title">Route Optimization Algorithm</h2>
             <div data-presentation="book" class="slide-content">
@@ -1932,7 +1932,7 @@
             </div>
         </div>
 
-        <!-- Slide 63: Navigation Integration -->
+        <!-- Slide 19: Navigation Integration -->
         <div data-presentation="book" class="slide content-slide" data-section="4">
             <h2 class="slide-title">Navigation Options</h2>
             <div data-presentation="book" class="slide-content">
@@ -1975,7 +1975,7 @@
 
         <!-- SECTION 5: RESULTS -->
 
-        <!-- Slide 64: Section Divider -->
+        <!-- Slide 20: Section Divider -->
         <div data-presentation="book" class="slide divider-slide" data-hide-navbar="true">
             <h2 class="divider-title">Results</h2>
         </div>
@@ -2178,19 +2178,19 @@
             { start: 2, end: 7, name: 'Company & Team' },          // Divider + slides 3-8
             { start: 8, end: 15, name: 'Problem & Solution' },     // Divider + slides 9-16
             { start: 16, end: 21, name: 'Project Management' },    // Divider + slides 17-22
-            { start: 22, end: 33, name: 'Technical Implementation' }, // Divider + slides 23-34
-            { start: 34, end: 39, name: 'Results & Validations' }, // Divider + slides 35-40
-            { start: 40, end: 43, name: 'Future Enhancements' }    // Divider + slides 41-44
+            { start: 22, end: 39, name: 'Technical Implementation' }, // Divider + slides 23-40
+            { start: 40, end: 45, name: 'Results & Validations' }, // Divider + slides 41-46
+            { start: 46, end: 49, name: 'Future Enhancements' }    // Divider + slides 47-50
         ];
 
         const bookSections = [
-            { start: 44, end: 45, name: '' },      // Intro: Title + Agenda (no button)
-            { start: 46, end: 50, name: 'Introduction' },       // Divider + slides 47-51
-            { start: 51, end: 53, name: 'System Conception' },  // Divider + slides 52-54
-            { start: 54, end: 56, name: 'Workflow' },           // Divider + slides 55-57
-            { start: 57, end: 62, name: 'Implementation' },     // Divider + slides 58-63
-            { start: 63, end: 63, name: 'Results' },            // Divider (slide 64)
-            { start: 64, end: 68, name: 'Conclusion' }          // Divider + slides 65-69
+            { start: 50, end: 51, name: '' },      // Intro: Title + Agenda (no button)
+            { start: 52, end: 56, name: 'Introduction' },       // Divider + slides 53-57
+            { start: 57, end: 59, name: 'System Conception' },  // Divider + slides 58-60
+            { start: 60, end: 62, name: 'Workflow' },           // Divider + slides 61-63
+            { start: 63, end: 68, name: 'Implementation' },     // Divider + slides 64-69
+            { start: 69, end: 69, name: 'Results' },            // Divider (slide 70)
+            { start: 70, end: 74, name: 'Conclusion' }          // Divider + slides 71-75
         ];
 
         // Current active sections (will be set dynamically based on data-presentation attribute)
