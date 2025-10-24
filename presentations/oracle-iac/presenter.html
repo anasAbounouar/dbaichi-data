@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Presenter View - PowerPoint Mode</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #1e1e1e;
+            color: white;
+            overflow: hidden;
+        }
+
+        .presenter-container {
+            display: grid;
+            grid-template-columns: 2.5fr 1fr;
+            grid-template-rows: auto 1fr;
+            gap: 15px;
+            height: 100vh;
+            padding: 15px;
+        }
+
+        /* Top toolbar */
+        .toolbar {
+            grid-column: 1 / -1;
+            background: #252525;
+            padding: 12px 20px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .timer-display {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .timer {
+            font-size: 32px;
+            font-weight: bold;
+            color: #4ade80;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+        }
+
+        .slide-counter {
+            font-size: 20px;
+            color: #9ca3af;
+            font-weight: 600;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .control-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .control-btn:hover {
+            background: #2563eb;
+            transform: scale(1.05);
+        }
+
+        .control-btn.danger {
+            background: #ef4444;
+        }
+
+        .control-btn.danger:hover {
+            background: #dc2626;
+        }
+
+        /* Main slide preview */
+        .current-slide-panel {
+            background: #252525;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            font-size: 12px;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .slide-frame {
+            flex: 1;
+            background: #1e1e1e;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slide-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+            zoom: 0.75;
+        }
+
+        /* Right panel */
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Next slide preview */
+        .next-slide-panel {
+            background: #252525;
+            border-radius: 12px;
+            padding: 15px;
+            flex: 0 0 auto;
+            height: 320px;
+        }
+
+        .next-slide-frame {
+            width: 100%;
+            height: calc(100% - 30px);
+            background: #1e1e1e;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+            position: relative;
+            border: 2px solid #374151;
+        }
+
+        .next-slide-frame::before {
+            content: 'NEXT';
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #3b82f6;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            z-index: 10;
+        }
+
+        .next-slide-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            pointer-events: none;
+            zoom: 0.27;
+        }
+
+        .end-of-presentation {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #6b7280;
+            font-size: 14px;
+            font-style: italic;
+        }
+
+        /* Notes panel */
+        .notes-panel {
+            background: #252525;
+            border-radius: 12px;
+            padding: 20px;
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .notes-textarea {
+            flex: 1;
+            background: #1e1e1e;
+            border: 2px solid #374151;
+            border-radius: 8px;
+            color: #e5e7eb;
+            font-size: 15px;
+            line-height: 1.8;
+            padding: 15px;
+            font-family: 'Inter', sans-serif;
+            resize: none;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .notes-textarea:focus {
+            border-color: #3b82f6;
+            background: #1a1a1a;
+        }
+
+        .notes-textarea::placeholder {
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        .notes-textarea::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .notes-textarea::-webkit-scrollbar-track {
+            background: #1e1e1e;
+            border-radius: 4px;
+        }
+
+        .notes-textarea::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 4px;
+        }
+
+        .notes-textarea::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
+        }
+
+        .notes-actions {
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .save-indicator {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .save-indicator.saving {
+            color: #fbbf24;
+        }
+
+        .save-indicator.saved {
+            color: #10b981;
+        }
+
+        /* Slide navigation */
+        .slide-nav {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .nav-btn {
+            background: #374151;
+            color: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background: #4b5563;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        /* Status indicators */
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .switch-view-btn {
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .switch-view-btn:hover {
+            background: #7c3aed;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="presenter-container">
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <div class="timer-display">
+                <div class="timer" id="timer">00:00</div>
+                <div class="slide-counter" id="slideCounter">Slide 1 of 46</div>
+                <div class="status">
+                    <div class="status-dot"></div>
+                    <span>Connected</span>
+                </div>
+            </div>
+            <div class="controls">
+                <div class="slide-nav">
+                    <button class="nav-btn" id="prevBtn" onclick="goToPrevSlide()">◀</button>
+                    <button class="nav-btn" id="nextBtn" onclick="goToNextSlide()">▶</button>
+                </div>
+                <button class="switch-view-btn" onclick="switchToProjectorMode()" title="Switch this window to Projector Mode (slides only)">📽️ Projector Mode</button>
+                <button class="control-btn" onclick="resetTimer()">Reset Timer</button>
+                <button class="control-btn danger" onclick="endPresentation()">End Show</button>
+            </div>
+        </div>
+
+        <!-- Current slide (large) -->
+        <div class="current-slide-panel">
+            <div class="panel-header">Current Slide</div>
+            <div class="slide-frame">
+                <iframe id="currentSlideFrame" class="slide-iframe" src="about:blank"></iframe>
+            </div>
+        </div>
+
+        <!-- Right panel -->
+        <div class="right-panel">
+            <!-- Next slide preview -->
+            <div class="next-slide-panel">
+                <div class="panel-header">Next Slide</div>
+                <div class="next-slide-frame">
+                    <iframe id="nextSlideFrame" class="next-slide-iframe" src="about:blank"></iframe>
+                </div>
+            </div>
+
+            <!-- Speaker notes -->
+            <div class="notes-panel">
+                <div class="panel-header">Speaker Notes</div>
+                <textarea class="notes-textarea" id="notesTextarea" placeholder="Click here to add speaker notes for this slide...&#10;&#10;Tips:&#10;• Type freely - changes auto-save&#10;• Press Ctrl+S to save immediately&#10;• Notes sync to MongoDB"></textarea>
+                <div class="notes-actions">
+                    <span class="save-indicator" id="saveIndicator"></span>
+                    <button class="control-btn" onclick="saveNotes()" style="padding: 6px 12px; font-size: 12px;">💾 Save Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let mainWindow = window.opener;
+
+        // Get initial slide from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const initialSlideFromUrl = parseInt(urlParams.get('slide')) || 0;
+
+        let currentSlide = initialSlideFromUrl;
+        let totalSlides = 0;
+        let slidesData = [];
+        let startTime = null;
+        let autoSaveTimer = null;
+        const API_BASE_URL = 'http://localhost:3000/api';
+        const PRESENTATION_ID = 'pfe-oracle-2025';
+
+        // Sync channel for communication with projector window
+        let syncChannel = null;
+
+        try {
+            syncChannel = new BroadcastChannel('presentation-sync');
+            console.log('✅ PRESENTER: BroadcastChannel created successfully');
+
+            // Listen for slide changes from projector window
+            syncChannel.onmessage = (event) => {
+                console.log('📡 PRESENTER: Received message:', event.data);
+                if (event.data.type === 'slide-change' && event.data.slide !== currentSlide) {
+                    console.log('🔄 PRESENTER: Syncing to slide:', event.data.slide);
+                    currentSlide = event.data.slide;
+                    updatePresenterView();
+                }
+            };
+        } catch (error) {
+            console.error('❌ PRESENTER: BroadcastChannel not supported:', error);
+        }
+
+        // Load notes and initialize if we're in standalone mode (not opened from main window)
+        if (!mainWindow || mainWindow.closed) {
+            console.log('Standalone presenter mode - loading data...');
+            loadPresenterDataStandalone();
+        }
+
+        // Listen for messages from main window
+        window.addEventListener('message', (event) => {
+            console.log('Presenter received message:', event.data.type);
+
+            if (event.data.type === 'init') {
+                slidesData = event.data.slides;
+                currentSlide = event.data.slide;
+                totalSlides = event.data.totalSlides;
+                startTime = Date.now();
+
+                console.log('=== PRESENTER RECEIVED INIT ===');
+                console.log('Total slides:', totalSlides);
+                console.log('Current slide:', currentSlide);
+                console.log('Slides data length:', slidesData.length);
+                console.log('First 3 slides notes:', slidesData.slice(0, 3).map((s, i) => ({
+                    index: i,
+                    title: s.title,
+                    notes: s.notes
+                })));
+
+                updatePresenterView();
+            } else if (event.data.type === 'slide-change') {
+                console.log('=== SLIDE CHANGE MESSAGE RECEIVED ===');
+                console.log('New slide index:', event.data.slide);
+                currentSlide = event.data.slide;
+                updatePresenterView();
+            } else if (event.data.type === 'timer') {
+                updateTimer(event.data.elapsed);
+            }
+        });
+
+        function updatePresenterView() {
+            if (!slidesData || slidesData.length === 0) {
+                console.log('updatePresenterView: No slides data yet');
+                return;
+            }
+
+            console.log(`=== UPDATING PRESENTER VIEW ===`);
+            console.log('Current slide:', currentSlide);
+            console.log('Total slides:', totalSlides);
+
+            // Update slide counter
+            const slideCounterElement = document.getElementById('slideCounter');
+            if (slideCounterElement) {
+                slideCounterElement.textContent = `Slide ${currentSlide + 1} of ${totalSlides}`;
+                console.log('Updated slide counter to:', slideCounterElement.textContent);
+            } else {
+                console.error('slideCounter element not found!');
+            }
+
+            // Update navigation buttons
+            document.getElementById('prevBtn').disabled = currentSlide === 0;
+            document.getElementById('nextBtn').disabled = currentSlide >= totalSlides - 1;
+
+            // Load current slide in iframe
+            const currentFrame = document.getElementById('currentSlideFrame');
+            currentFrame.src = `presentation.html?slide=${currentSlide}&view=presenter`;
+
+            // Load next slide in iframe
+            const nextFrame = document.getElementById('nextSlideFrame');
+            if (currentSlide + 1 < totalSlides) {
+                nextFrame.src = `presentation.html?slide=${currentSlide + 1}&view=presenter`;
+            } else {
+                nextFrame.src = 'about:blank';
+            }
+
+            // Update notes in textarea
+            const notesTextarea = document.getElementById('notesTextarea');
+            const notes = slidesData[currentSlide]?.notes || '';
+
+            console.log(`=== UPDATING NOTES FOR SLIDE ${currentSlide} ===`);
+            console.log('slidesData[currentSlide]:', slidesData[currentSlide]);
+            console.log('Notes value:', notes);
+            console.log('Notes length:', notes.length);
+
+            // Display notes (even if empty, let user add them)
+            notesTextarea.value = (notes === 'No notes for this slide') ? '' : notes;
+        }
+
+        // Auto-save notes on typing
+        document.getElementById('notesTextarea').addEventListener('input', () => {
+            clearTimeout(autoSaveTimer);
+            showSaveStatus('typing');
+            autoSaveTimer = setTimeout(() => {
+                saveNotes();
+            }, 2000);
+        });
+
+        // Save notes function
+        async function saveNotes() {
+            const notes = document.getElementById('notesTextarea').value.trim();
+
+            // Update local cache
+            if (slidesData[currentSlide]) {
+                slidesData[currentSlide].notes = notes || 'No notes for this slide';
+            }
+
+            // Save to MongoDB
+            try {
+                showSaveStatus('saving');
+
+                const response = await fetch(`${API_BASE_URL}/notes/${PRESENTATION_ID}/${currentSlide}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ notes: notes || '' })
+                });
+
+                if (response.ok) {
+                    showSaveStatus('saved');
+                    // Also notify main window to update its cache
+                    if (mainWindow && !mainWindow.closed) {
+                        mainWindow.postMessage({
+                            type: 'note-updated',
+                            slide: currentSlide,
+                            notes: notes
+                        }, '*');
+                    }
+                } else {
+                    throw new Error('Save failed');
+                }
+            } catch (error) {
+                console.error('Failed to save notes:', error);
+                showSaveStatus('error');
+            }
+        }
+
+        function showSaveStatus(status) {
+            const indicator = document.getElementById('saveIndicator');
+            indicator.className = 'save-indicator';
+
+            if (status === 'typing') {
+                indicator.textContent = '';
+            } else if (status === 'saving') {
+                indicator.textContent = 'Saving...';
+                indicator.classList.add('saving');
+            } else if (status === 'saved') {
+                indicator.textContent = '✓ Saved to MongoDB';
+                indicator.classList.add('saved');
+                setTimeout(() => {
+                    indicator.textContent = '';
+                    indicator.className = 'save-indicator';
+                }, 3000);
+            } else if (status === 'error') {
+                indicator.textContent = '⚠ Save failed';
+                indicator.style.color = '#ef4444';
+                setTimeout(() => {
+                    indicator.textContent = '';
+                    indicator.className = 'save-indicator';
+                }, 3000);
+            }
+        }
+
+        function updateTimer(elapsed) {
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            document.getElementById('timer').textContent =
+                String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+        }
+
+        function goToPrevSlide() {
+            if (mainWindow && !mainWindow.closed) {
+                mainWindow.postMessage({type: 'navigate', direction: 'prev'}, '*');
+            } else {
+                // Standalone mode - navigate directly
+                if (currentSlide > 0) {
+                    currentSlide--;
+                    updatePresenterView();
+                    // Broadcast to projector window
+                    if (syncChannel) {
+                        console.log('📤 PRESENTER: Broadcasting prev slide:', currentSlide);
+                        syncChannel.postMessage({ type: 'slide-change', slide: currentSlide });
+                    }
+                }
+            }
+        }
+
+        function goToNextSlide() {
+            if (mainWindow && !mainWindow.closed) {
+                mainWindow.postMessage({type: 'navigate', direction: 'next'}, '*');
+            } else {
+                // Standalone mode - navigate directly
+                if (currentSlide < totalSlides - 1) {
+                    currentSlide++;
+                    updatePresenterView();
+                    // Broadcast to projector window
+                    if (syncChannel) {
+                        console.log('📤 PRESENTER: Broadcasting next slide:', currentSlide);
+                        syncChannel.postMessage({ type: 'slide-change', slide: currentSlide });
+                    }
+                }
+            }
+        }
+
+        function resetTimer() {
+            if (mainWindow && !mainWindow.closed) {
+                mainWindow.postMessage({type: 'reset-timer'}, '*');
+            } else {
+                // Standalone mode - reset timer directly
+                startTime = Date.now();
+            }
+        }
+
+        // Start timer update interval for standalone mode
+        if (!mainWindow || mainWindow.closed) {
+            setInterval(() => {
+                if (startTime) {
+                    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                    updateTimer(elapsed);
+                }
+            }, 1000);
+        }
+
+        function endPresentation() {
+            if (confirm('End presentation and close presenter view?')) {
+                window.close();
+            }
+        }
+
+        function switchToProjectorMode() {
+            // Switch this window to projector mode (clean slides only)
+            window.location.href = `presentation.html?slide=${currentSlide}`;
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                goToNextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                goToPrevSlide();
+            } else if (e.key === 'Escape') {
+                endPresentation();
+            } else if (e.key === 's' && (e.ctrlKey || e.metaKey)) {
+                e.preventDefault();
+                saveNotes();
+            }
+        });
+
+        // Load presenter data in standalone mode (when opened directly, not via P key)
+        async function loadPresenterDataStandalone() {
+            try {
+                // Fetch total slide count and notes from MongoDB
+                const response = await fetch(`${API_BASE_URL}/notes/${PRESENTATION_ID}`);
+                const notes = await response.json();
+
+                // Build slidesData array - we need to know total slides
+                // For now, assume 54 slides (or fetch from a config endpoint)
+                totalSlides = 54;
+                slidesData = Array.from({ length: totalSlides }, (_, i) => ({
+                    title: `Slide ${i + 1}`,
+                    notes: ''
+                }));
+
+                // Apply notes from MongoDB
+                notes.forEach(note => {
+                    if (slidesData[note.slideIndex]) {
+                        slidesData[note.slideIndex].notes = note.notes;
+                    }
+                });
+
+                console.log(`Loaded ${notes.length} notes in standalone mode`);
+                startTime = Date.now();
+                updatePresenterView();
+            } catch (error) {
+                console.error('Failed to load presenter data:', error);
+                // Fallback to basic initialization
+                totalSlides = 54;
+                slidesData = Array.from({ length: totalSlides }, (_, i) => ({
+                    title: `Slide ${i + 1}`,
+                    notes: 'No notes for this slide'
+                }));
+                startTime = Date.now();
+                updatePresenterView();
+            }
+        }
+
+        // Request initial data
+        if (mainWindow && !mainWindow.closed) {
+            console.log('Requesting data from main window');
+            mainWindow.postMessage({type: 'presenter-ready'}, '*');
+        }
+
+        // Keep checking if main window is still open (only if opened from main window)
+        if (mainWindow && !mainWindow.closed) {
+            let hasShownWarning = false;
+            setInterval(() => {
+                if (mainWindow && mainWindow.closed && !hasShownWarning) {
+                    console.log('Main window closed');
+                    hasShownWarning = true;
+                    if (confirm('Main presentation window closed. Close presenter view?')) {
+                        window.close();
+                    }
+                }
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

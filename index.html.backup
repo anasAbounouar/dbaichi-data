@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yassine DBAICHI - Portfolio Presentations</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #14535F 0%, #0a3940 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .background-pattern {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+
+        .background-pattern::before {
+            content: '';
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+            border-radius: 50%;
+            top: -400px;
+            right: -400px;
+        }
+
+        .background-pattern::after {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(199,70,52,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            bottom: -300px;
+            left: -300px;
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 1200px;
+            width: 90%;
+            padding: 3rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 4rem;
+            color: white;
+        }
+
+        .main-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            font-weight: 400;
+            opacity: 0.9;
+        }
+
+        .presentations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .presentation-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .presentation-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(20,83,95,0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .presentation-card:hover::before {
+            left: 100%;
+        }
+
+        .presentation-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+        }
+
+        .card-header {
+            border-bottom: 4px solid #14535F;
+            padding-bottom: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #14535F;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-category {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #C74634;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .card-description {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #334155;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-details {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .card-details li {
+            padding: 0.5rem 0;
+            font-size: 0.875rem;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-details li::before {
+            content: '●';
+            color: #14535F;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+
+        .card-button {
+            display: inline-block;
+            width: 100%;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #14535F 0%, #0f766e 100%);
+            color: white;
+            text-align: center;
+            border-radius: 0.75rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(20,83,95,0.3);
+        }
+
+        .card-button:hover {
+            background: linear-gradient(135deg, #0f766e 0%, #14535F 100%);
+            box-shadow: 0 8px 20px rgba(20,83,95,0.5);
+            transform: translateY(-2px);
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            opacity: 0.8;
+            font-size: 0.875rem;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .logo-container {
+            display: flex;
+            gap: 3rem;
+            justify-content: center;
+            align-items: center;
+            margin-top: 2rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .logo-box {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.25rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2.5rem;
+            }
+
+            .presentations-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-pattern"></div>
+
+    <div class="container">
+        <div class="header">
+            <h1 class="main-title">Yassine DBAICHI</h1>
+            <p class="subtitle">Portfolio Presentations</p>
+            <p style="margin-top: 1rem; font-size: 1.125rem; opacity: 0.8;">École Hassania des Travaux Publics - Academic Year 2024/2025</p>
+        </div>
+
+        <div class="presentations-grid">
+            <!-- Book Marketplace Presentation -->
+            <div class="presentation-card">
+                <div class="card-header">
+                    <div class="card-category">GIS Project - MIG Department</div>
+                    <h2 class="card-title">Book Marketplace Platform</h2>
+                </div>
+                <p class="card-description">
+                    An integrated e-commerce platform combining book marketplace functionality with automatic delivery route optimization using TSP algorithm. Features real-time route planning, turn-by-turn navigation, and seamless integration with Google Maps and Waze.
+                </p>
+                <ul class="card-details">
+                    <li>React Web Application + Flutter Mobile App</li>
+                    <li>TSP Algorithm for Route Optimization</li>
+                    <li>OpenRouteService, Google Maps & Waze Integration</li>
+                    <li>Node.js Backend with MongoDB</li>
+                    <li>30 Slides with Live Demos</li>
+                </ul>
+                <a href="presentations/book-marketplace/presentation.html" class="card-button">View Presentation →</a>
+            </div>
+
+            <!-- Oracle IaC Presentation -->
+            <div class="presentation-card">
+                <div class="card-header">
+                    <div class="card-category">Oracle Labs Internship</div>
+                    <h2 class="card-title">Infrastructure as Code in Graal CI</h2>
+                </div>
+                <p class="card-description">
+                    A production-ready IaC framework for Oracle Labs' GraalVM RISQ team. JSON-driven infrastructure provisioning using Pulumi, with full GitLab CI/CD integration. Reduces deployment time by 90% and eliminates configuration drift.
+                </p>
+                <ul class="card-details">
+                    <li>Python Framework with Pulumi SDK</li>
+                    <li>7 OCI Resource Types Supported</li>
+                    <li>GitLab CI/CD Pipeline Integration</li>
+                    <li>Factory Pattern + Dependency Resolution</li>
+                    <li>58 Slides with Architecture Diagrams</li>
+                </ul>
+                <a href="presentations/oracle-iac/presentation.html" class="card-button">View Presentation →</a>
+            </div>
+        </div>
+
+        <div class="logo-container">
+            <div class="logo-box" style="color: #14535F;">EHTP</div>
+            <div class="logo-box" style="color: #C74634;">MIG</div>
+            <div class="logo-box" style="color: #0f766e;">GIS</div>
+        </div>
+
+        <div class="footer" style="margin-top: 3rem;">
+            <p>Department of MIG - GIS Specialization</p>
+            <p style="margin-top: 0.5rem;">Supervisor: Prof. Hatim LECHGAR (Book Marketplace) | Oracle Labs - GraalVM RISQ Team (IaC)</p>
+        </div>
+    </div>
+</body>
+</html>

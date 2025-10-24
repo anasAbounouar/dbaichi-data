@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yassine DBAICHI - Complete Portfolio Presentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #14535F 0%, #0a3940 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            padding: 2rem 1rem;
+        }
+
+        .background-pattern {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .background-pattern::before {
+            content: '';
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+            border-radius: 50%;
+            top: -400px;
+            right: -400px;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .background-pattern::after {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(199,70,52,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            bottom: -300px;
+            left: -300px;
+            animation: float 15s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(30px, -30px); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: white;
+        }
+
+        .main-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            font-weight: 400;
+            opacity: 0.95;
+            animation: fadeIn 1s ease-out 0.3s both;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .main-card {
+            background: white;
+            border-radius: 2rem;
+            padding: 3rem;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.4);
+            animation: scaleIn 0.8s ease-out 0.2s both;
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .card-header {
+            text-align: center;
+            border-bottom: 6px solid #14535F;
+            padding-bottom: 2rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #0f766e, #14535F);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 2.75rem;
+            font-weight: 800;
+            color: #14535F;
+            margin-bottom: 0.75rem;
+        }
+
+        .slide-count {
+            font-size: 1.125rem;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .section {
+            background: #f8fafc;
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            border-left: 6px solid #14535F;
+            transition: all 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateX(8px);
+            box-shadow: 0 8px 20px rgba(20,83,95,0.15);
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #14535F;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-icon {
+            font-size: 2rem;
+        }
+
+        .section-description {
+            color: #475569;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            margin-bottom: 1.25rem;
+        }
+
+        .highlights {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .highlights li {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #64748b;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .highlights li::before {
+            content: '✓';
+            color: #0f766e;
+            font-weight: 800;
+            font-size: 1.25rem;
+        }
+
+        .buttons {
+            display: grid;
+            gap: 1rem;
+            margin-top: 3rem;
+        }
+
+        .btn-primary {
+            display: block;
+            background: linear-gradient(135deg, #0f766e 0%, #14535F 100%);
+            color: white;
+            text-align: center;
+            padding: 1.5rem 2rem;
+            border-radius: 1rem;
+            font-size: 1.35rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 20px rgba(20,83,95,0.35);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px rgba(20,83,95,0.5);
+        }
+
+        .btn-secondary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .btn-secondary {
+            display: block;
+            background: rgba(20,83,95,0.08);
+            color: #14535F;
+            text-align: center;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            border: 2px solid rgba(20,83,95,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(20,83,95,0.15);
+            border-color: #14535F;
+            transform: translateY(-2px);
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            opacity: 0.9;
+            margin-top: 3rem;
+            font-size: 0.95rem;
+            animation: fadeIn 1s ease-out 0.8s both;
+        }
+
+        .footer p {
+            margin: 0.5rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2.5rem;
+            }
+
+            .card-title {
+                font-size: 2rem;
+            }
+
+            .main-card {
+                padding: 2rem 1.5rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .btn-secondary-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-pattern"></div>
+
+    <div class="container">
+        <div class="header">
+            <h1 class="main-title">Yassine DBAICHI</h1>
+            <p class="subtitle">Complete Portfolio Presentation</p>
+            <p style="margin-top: 1rem; font-size: 1.05rem; opacity: 0.85;">École Hassania des Travaux Publics - Academic Year 2024/2025</p>
+        </div>
+
+        <div class="main-card">
+            <div class="card-header">
+                <span class="category-badge">Complete Portfolio</span>
+                <h2 class="card-title">Two Major Projects</h2>
+                <p class="slide-count">🎯 111 Comprehensive Slides</p>
+            </div>
+
+            <div class="section">
+                <h3 class="section-title">
+                    <span class="section-icon">📚</span>
+                    Part 1: Book Marketplace Platform
+                </h3>
+                <p class="section-description">
+                    An integrated e-commerce platform combining book marketplace functionality with automatic delivery route optimization using TSP algorithm. Features real-time route planning, turn-by-turn navigation, and seamless integration with Google Maps and Waze.
+                </p>
+                <ul class="highlights">
+                    <li>React Web + Flutter Mobile</li>
+                    <li>TSP Route Optimization</li>
+                    <li>OpenRouteService Integration</li>
+                    <li>MongoDB Backend</li>
+                    <li>30 Detailed Slides</li>
+                    <li>GIS Specialization Project</li>
+                </ul>
+            </div>
+
+            <div class="section" style="border-left-color: #C74634;">
+                <h3 class="section-title">
+                    <span class="section-icon">🏢</span>
+                    Part 2: Infrastructure as Code in Graal CI
+                </h3>
+                <p class="section-description">
+                    A production-ready IaC framework for Oracle Labs' GraalVM RISQ team. JSON-driven infrastructure provisioning using Pulumi, with full GitLab CI/CD integration. Achieved 90% reduction in deployment time.
+                </p>
+                <ul class="highlights">
+                    <li>Python + Pulumi Framework</li>
+                    <li>7 OCI Resource Types</li>
+                    <li>GitLab CI/CD Integration</li>
+                    <li>Factory + Dependency Patterns</li>
+                    <li>56 Technical Slides</li>
+                    <li>Oracle Labs Internship</li>
+                </ul>
+            </div>
+
+            <div class="buttons">
+                <a href="presentation.html" class="btn-primary">
+                    🚀 View Complete Presentation (111 Slides)
+                </a>
+
+                <div class="btn-secondary-grid">
+                    <a href="presenter.html" class="btn-secondary" style="grid-column: 1 / -1; background: rgba(199,70,52,0.15); border-color: #C74634; color: #C74634; font-weight: 700;">
+                        🎤 Open Presenter View (Dual-Screen Mode)
+                    </a>
+                    <a href="presentations/book-marketplace/presentation.html" class="btn-secondary">
+                        📚 Book Marketplace Only
+                    </a>
+                    <a href="presentations/oracle-iac/presentation.html" class="btn-secondary">
+                        🏢 Oracle IaC Only
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><strong>Department of MIG - GIS Specialization</strong></p>
+            <p>Supervisor: Prof. Hatim LECHGAR (Book Marketplace) | Oracle Labs - GraalVM RISQ Team (IaC)</p>
+        </div>
+    </div>
+</body>
+</html>

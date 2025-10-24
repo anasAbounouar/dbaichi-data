@@ -1,0 +1,2492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yassine DBAICHI - Complete Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: clamp(12px, 0.875vw, 28px);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            background: #f8fafc;
+            user-select: text;
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+        }
+
+        /* Allow text selection on all slide content */
+        .slide * {
+            user-select: text;
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .slide {
+            display: none;
+            width: 100vw;
+            height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            background: transparent;
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #0f766e 0%, #14535F 100%);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            z-index: 50;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .navbar button {
+            padding: 0.5rem 1.25rem;
+            border-radius: 9999px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .navbar button:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        .navbar button.active-section {
+            background: #C74634;
+            border-color: #C74634;
+            font-weight: 600;
+        }
+
+        .slide-counter {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: rgba(20, 83, 95, 0.9);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            z-index: 50;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        .view-switcher {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            background: rgba(20, 83, 95, 0.9);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            z-index: 50;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .view-switcher:hover {
+            background: #C74634;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(199, 70, 52, 0.4);
+        }
+
+        .presenter-mode-btn {
+            background: rgba(199, 70, 52, 0.9);
+        }
+
+        .presenter-mode-btn:hover {
+            background: #C74634;
+        }
+
+        .slide.divider-slide {
+            background: linear-gradient(135deg, #14535F 0%, #0a3940 100%) !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            position: absolute !important;
+            overflow: hidden !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            top: 0 !important;
+            left: 0 !important;
+        }
+
+        .slide.divider-slide.active {
+            display: flex !important;
+            background: linear-gradient(135deg, #14535F 0%, #0a3940 100%) !important;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .divider-slide::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            top: -300px;
+            right: -300px;
+        }
+
+        .divider-slide::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(199,70,52,0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            bottom: -200px;
+            left: -200px;
+        }
+
+        .divider-title {
+            font-size: 4rem;
+            font-weight: 800;
+            color: white !important;
+            text-align: center;
+            z-index: 10;
+            position: relative;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            padding: 2rem;
+        }
+
+        .content-slide {
+            padding-top: 5rem;
+            padding-left: 3rem;
+            padding-right: 3rem;
+            padding-bottom: 3rem;
+            display: flex;
+            flex-direction: column;
+            background: #f8fafc;
+            width: 100vw;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .slide-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #14535F;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 4px solid #C74634;
+        }
+
+        .slide-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .bullet-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .bullet-list li {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: white;
+            border-left: 4px solid #14535F;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            font-size: 1.125rem;
+            line-height: 1.6;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .bullet-list li:hover {
+            transform: translateX(10px);
+            box-shadow: 0 8px 16px rgba(20,83,95,0.2);
+            border-left-width: 6px;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            height: 100%;
+        }
+
+        .image-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .image-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 0.5rem;
+        }
+
+
+        .title-slide {
+            background: linear-gradient(135deg, #14535F 0%, #0a3940 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .title-slide::before {
+            content: '';
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+            border-radius: 50%;
+            top: 0;
+            right: 0;
+        }
+
+
+
+        .logo-container {
+            display: flex;
+            gap: 4rem;
+            margin-bottom: 3rem;
+            align-items: center;
+            z-index: 10;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .logo-container img {
+            height: 100px;
+            object-fit: contain;
+            filter: brightness(1.2);
+        }
+
+        .main-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            z-index: 10;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            font-weight: 400;
+            text-align: center;
+            margin-bottom: 3rem;
+            opacity: 0.9;
+            z-index: 10;
+        }
+
+        .author-info {
+            text-align: center;
+            font-size: 1.25rem;
+            z-index: 10;
+            line-height: 2;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #14535F 0%, #0f766e 50%, #14535F 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            margin: 1rem 0;
+            font-size: 1.125rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .highlight-box:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 16px rgba(20,83,95,0.3);
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            width: 100%;
+        }
+
+        .card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-top: 4px solid #14535F;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(20,83,95,0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .card:hover::before {
+            left: 100%;
+        }
+
+        .card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 12px 24px rgba(20,83,95,0.25);
+            border-top-width: 6px;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #14535F;
+            margin-bottom: 0.75rem;
+        }
+
+        .card-content {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #334155;
+        }
+
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .tool-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .tool-item img {
+            height: 60px;
+            object-fit: contain;
+        }
+
+        .tool-name {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #14535F;
+        }
+
+        .full-image-slide {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6rem 3rem 3rem 3rem;
+        }
+
+        .full-image-slide img {
+            max-width: 90%;
+            max-height: 85vh;
+            object-fit: contain;
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <div class="navbar" id="navbar">
+        <!-- Navbar buttons will be dynamically generated based on current presentation -->
+    </div>
+
+    <!-- Slide Counter -->
+    <div data-presentation="oracle" class="slide-counter" id="slideCounter">1 / 152</div>
+
+    <!-- View Switcher Button -->
+    <button class="view-switcher" id="viewSwitcher" onclick="switchToPresenterMode()" title="Switch to Presenter View (P key)">
+        🎤 Presenter View
+    </button>
+
+    <!-- Slides Container -->
+    <div id="slides-container">
+
+        <!-- Slide 1: Title Slide -->
+        <div data-presentation="oracle" class="slide active title-slide">
+            <div class="logo-container">
+                <img src="images/logo_ehtp.jpg" alt="EHTP Logo">
+                <img src="images/logo_graalvm.png" alt="GraalVM Logo">
+            </div>
+            <h1 class="main-title">Infrastructure as Code Support<br>in Graal CI</h1>
+            <p class="subtitle">JSON-Driven IaC Framework with Pulumi & GitLab CI/CD</p>
+            <div class="author-info">
+                <strong>Yassine DBAICHI</strong><br>
+                École Hassania des Travaux Publics<br>
+                Oracle Labs - GraalVM RISQ Team<br>
+                Academic Year 2024-2025
+            </div>
+        </div>
+
+        <!-- Slide 2: Table of Contents -->
+        <div data-presentation="oracle" class="slide content-slide">
+            <h2 class="slide-title">Agenda</h2>
+            <div data-presentation="oracle" class="slide-content">
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-title">1. Company & Team Context</div>
+                        <div class="card-content">Oracle, Oracle Labs, GraalVM RISQ Team mission and focus</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">2. Problem & Solution Overview</div>
+                        <div class="card-content">Current challenges, requirements, and proposed JSON-driven IaC solution</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">3. Project Management</div>
+                        <div class="card-content">Agile methodology, communication tools, and development workflow</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">4. Technical Implementation</div>
+                        <div class="card-content">Architecture, design patterns, CI/CD integration, and deployment</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">5. Results & Validations</div>
+                        <div class="card-content">Implementation results, testing outcomes, and performance metrics</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">6. Future Enhancements</div>
+                        <div class="card-content">Current limitations, future work, and conclusion</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 1: COMPANY & TEAM CONTEXT -->
+
+        <!-- Slide 3: Section Divider -->
+        <div data-presentation="oracle" class="slide divider-slide" data-hide-navbar="true" style="background: linear-gradient(135deg, #14535F 0%, #0a3940 100%) !important; display: flex !important; align-items: center; justify-content: center;">
+            <h2 class="divider-title">Company & Team Context</h2>
+        </div>
+
+        <!-- Slide 4: Oracle Corporation -->
+        <div data-presentation="oracle" class="slide content-slide" data-section="1" data-notes="Welcome the jury. Introduce Oracle as a global technology leader founded in 1977. Mention their expertise in database and cloud solutions. Emphasize their market position as one of the largest enterprise software companies.">
+            <h2 class="slide-title">Oracle Corporation</h2>
+            <div data-presentation="oracle" class="slide-content">
+                <ul class="bullet-list">
+                    <li><strong>Global Technology Leader:</strong> Multinational computer technology corporation specializing in database software and cloud solutions</li>
+                    <li><strong>Founded:</strong> 1977 by Larry Ellison, Bob Miner, and Ed Oates</li>
+                    <li><strong>Headquarters:</strong> Austin, Texas, USA (Oracle Headquarters)</li>
+                    <li><strong>Market Position:</strong> One of the largest enterprise software companies worldwide</li>
+                    <li><strong>Core Products:</strong> Oracle Database, Oracle Cloud Infrastructure (OCI), Enterprise Applications</li>
+                    <li><strong>Revenue:</strong> $50+ billion annually with 430,000+ employees globally</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 5: Oracle Labs -->
+        <div data-presentation="oracle" class="slide content-slide" data-section="1">
+            <h2 class="slide-title">Oracle Labs - Research & Innovation</h2>
+            <div data-presentation="oracle" class="slide-content">
+                <div class="two-column">
+                    <div>
+                        <ul class="bullet-list">
+                            <li><strong>Mission:</strong> Conduct research to advance the state of the art in computer science and systems</li>
+                            <li><strong>Focus Areas:</strong>
+                                <ul style="margin-left: 2rem; margin-top: 0.5rem;">
+                                    <li>Programming languages & compilers</li>
+                                    <li>Virtual machines & runtime systems</li>
+                                    <li>Database systems & optimization</li>
+                                    <li>Cloud infrastructure & security</li>
+                                </ul>
+                            </li>
+                            <li><strong>Key Projects:</strong> GraalVM, Truffle Framework, SubstrateVM</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <div class="highlight-box">
+                            <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">Research Excellence</h3>
+                            <p style="margin-bottom: 1rem;">Oracle Labs bridges cutting-edge academic research with real-world enterprise applications</p>
+                            <p><strong>Output:</strong> Open-source projects, academic publications, and production-ready technologies</p>
+                        </div>
+                        <div class="card" style="margin-top: 1rem;">
+                            <div class="card-title">Collaboration</div>
+                            <div class="card-content">Strong partnerships with universities and research institutions worldwide</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: GraalVM Overview -->
+        <div data-presentation="oracle" class="slide content-slide" data-section="1">
+            <h2 class="slide-title">GraalVM - High-Performance Polyglot Runtime</h2>
+            <div data-presentation="oracle" class="slide-content">
+                <div class="two-column">
+                    <div>
+                        <ul class="bullet-list">
+                            <li><strong>What is GraalVM?</strong> A universal virtual machine for running applications written in JavaScript, Python, Ruby, R, JVM languages, and more</li>
+                            <li><strong>Key Features:</strong>
+                                <ul style="margin-left: 2rem; margin-top: 0.5rem;">
+                                    <li>Polyglot capabilities (multiple languages)</li>
+                                    <li>Native Image compilation</li>
+                                    <li>Superior performance optimization</li>
+                                    <li>Reduced memory footprint</li>
+                                </ul>
+                            </li>
+                            <li><strong>Use Cases:</strong> Microservices, serverless computing, containerized applications</li>
+                        </ul>
+                    </div>
+                    <div class="image-container">
+                        <img src="images/logo_graalvm.png" alt="GraalVM Logo">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: GraalVM RISQ Team -->
+        <div data-presentation="oracle" class="slide content-slide" data-section="1">
+            <h2 class="slide-title">GraalVM RISQ Team</h2>
+            <div data-presentation="oracle" class="slide-content">
+                <ul class="bullet-list">
+                    <li><strong>Team Name:</strong> RISQ (Release Infrastructure, Systems & Quality)</li>
+                    <li><strong>Mission:</strong> Ensure reliability, scalability, and quality of GraalVM infrastructure and development workflows</li>
+                    <li><strong>Responsibilities:</strong>
+                        <ul style="margin-left: 2rem; margin-top: 0.5rem;">
+                            <li>CI/CD pipeline management and optimization</li>
+                            <li>Infrastructure automation and provisioning</li>
+                            <li>Testing infrastructure maintenance</li>
+                            <li>Developer tooling and experience improvements</li>
+                        </ul>
+                    </li>
+                    <li><strong>Tech Stack:</strong> GitLab CI/CD, Oracle Cloud Infrastructure, Python, Bash scripting</li>
+                </ul>
+                <div class="highlight-box">
+                    The RISQ team acts as the backbone supporting GraalVM development, ensuring smooth operations for hundreds of developers
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Team Focus & My Role -->
+        <div data-presentation="oracle" class="slide content-slide" data-section="1">
+            <h2 class="slide-title">Project Context & Internship Focus</h2>
+            <div data-presentation="oracle" class="slide-content">
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-title">Team Challenge</div>
+                        <div class="card-content">GraalVM requires frequent infrastructure provisioning for testing, CI/CD, and development environments across multiple cloud regions</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Manual Bottleneck</div>
+                        <div class="card-content">Infrastructure management was manual, error-prone, and time-consuming - limiting team agility</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Project Goal</div>
+                        <div class="card-content">Design and implement an automated Infrastructure as Code (IaC) solution integrated with Graal CI pipeline</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">My Role</div>
+                        <div class="card-content">Lead developer responsible for architecture design, implementation, and GitLab CI/CD integration</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 2: PROBLEM & SOLUTION OVERVIEW -->
+
+        <!-- Slide 9: Section Divider -->
+        <div data-presentation="oracle" class="slide divider-slide" data-hide-navbar="true" style="background: linear-gradient(135deg, #14535F 0%, #0a3940 100%) !important; display: flex !important; align-items: center; justify-content: center;">
+            <h2 class="divider-title">Problem & Solution Overview</h2>
+        </div>
+
+        <!-- Slide 10: Current Challenges -->
+        <div data-presentation="oracle" class="slide content-slide" data-section="2" data-notes="Explain the pain points the team was facing before this project. Emphasize manual console operations taking hours each week. Mention the risks of no version control and configuration drift. This sets up the problem that the solution will address.">
+            <h2 class="slide-title">Current Infrastructure Management Challenges</h2>
+            <div data-presentation="oracle" class="slide-content">
+                <ul class="bullet-list">
+                    <li><strong>Manual Console Operations:</strong> Team members had to manually create resources through OCI web console - time-consuming and repetitive</li>
+                    <li><strong>Lack of Version Control:</strong> No tracking of infrastructure changes, making rollbacks and audits difficult</li>
+                    <li><strong>Configuration Drift:</strong> Resources created manually often diverged from documented standards</li>
+                    <li><strong>Scalability Issues:</strong> Provisioning multiple similar environments was labor-intensive</li>
+                    <li><strong>Knowledge Silos:</strong> Infrastructure knowledge concentrated in few team members</li>
+                    <li><strong>No CI/CD Integration:</strong> Infrastructure provisioning was separate from development workflow</li>
+                </ul>
+                <div class="highlight-box">
+                    Result: Slow deployment cycles, increased error rates, and reduced team productivity
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Requirements Analysis - Functional -->
+        <div data-presentation="oracle" class="slide content-slide" data-section="2">
+            <h2 class="slide-title">Functional Requirements</h2>
+            <div data-presentation="oracle" class="slide-content">
+                <ul class="bullet-list">
+                    <li><strong>FR1 - Declarative Configuration:</strong> Users define infrastructure in human-readable format (JSON) without writing Python/Terraform code</li>
+                    <li><strong>FR2 - Resource Support:</strong> Support for essential OCI resources (VCN, Subnets, Compute Instances, Storage Buckets, Security Lists, Routing)</li>
+                    <li><strong>FR3 - Dependency Management:</strong> Automatic resolution of resource dependencies (e.g., subnet requires VCN, instance requires subnet)</li>
+                    <li><strong>FR4 - CI/CD Integration:</strong> Seamless integration with GitLab CI/CD pipeline (plan, preview, apply stages)</li>
+                    <li><strong>FR5 - State Management:</strong> Track infrastructure state to enable updates and deletions</li>
+                    <li><strong>FR6 - Multi-Environment:</strong> Support for development, staging, and production configurations</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 13: Requirements Analysis - Non-Functional -->
+        <div data-presentation="oracle" class="slide content-slide" data-section="2">
+            <h2 class="slide-title">Non-Functional Requirements</h2>
+            <div data-presentation="oracle" class="slide-content">
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-title">Performance</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>Provision infrastructure in <5 minutes</li>
+                                <li>Support concurrent deployments</li>
+                                <li>Minimal API calls to OCI</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Security</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>Credentials stored securely (GitLab secrets)</li>
+                                <li>No hardcoded sensitive data</li>
+                                <li>Audit trail via Git commits</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Extensibility</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>Plugin architecture for new resources</li>
+                                <li>Support for future cloud providers</li>
+                                <li>Custom validation rules</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: Technology Comparison -->
+        <div data-presentation="oracle" class="slide content-slide" data-section="2">
+            <h2 class="slide-title">IaC Technology Selection: Terraform vs Pulumi</h2>
+            <div data-presentation="oracle" class="slide-content">
+                <div class="two-column" style="gap: 2rem;">
+                    <div class="card" style="border-top-color: #C74634;">
+                        <div class="card-title">Terraform</div>
+                        <div class="card-content">
+                            <p><strong>Pros:</strong></p>
+                            <ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
+                                <li>Industry standard with mature ecosystem</li>
+                                <li>HCL declarative language</li>
+                                <li>Large provider ecosystem</li>
+                                <li>Strong community support</li>
+                            </ul>
+                            <p><strong>Cons:</strong></p>
+                            <ul style="margin-left: 1.5rem;">
+                                <li>Custom DSL (HCL) requires learning</li>
+                                <li>Limited programming logic & abstraction</li>
+                                <li>State management complexity</li>
+                                <li>Hard to build dynamic configurations</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card" style="border-top-color: #0f766e; border: 2px solid #0f766e;">
+                        <div class="card-title">Pulumi ✓ (Selected)</div>
+                        <div class="card-content">
+                            <p><strong>Pros:</strong></p>
+                            <ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
+                                <li>Use real programming languages (Python)</li>
+                                <li>Full programmatic control & abstraction</li>
+                                <li>Built-in state management</li>
+                                <li>Excellent OCI support</li>
+                                <li>Enables framework development on top</li>
+                                <li>Team Python expertise leverage</li>
+                            </ul>
+                            <p><strong>Why chosen:</strong> Perfect fit for building JSON-driven abstraction layer. Pulumi's programmatic approach allows us to create a framework that hides IaC complexity from users.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 15: How does Pulumi work -->
+        <div data-presentation="oracle" class="slide content-slide" data-section="2">
+            <h2 class="slide-title">How does Pulumi work?</h2>
+            <div data-presentation="oracle" class="slide-content">
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-title">1. Write Code</div>
+                        <div class="card-content">Define infrastructure using Python - loops, functions, conditionals available</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">2. Preview</div>
+                        <div class="card-content">Run 'pulumi preview' to see what will change before applying</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">3. Deploy</div>
+                        <div class="card-content">Pulumi SDK translates Python to OCI API calls and provisions resources</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">4. State Management</div>
+                        <div class="card-content">Pulumi tracks all resources in state file (OCI Object Storage)</div>
+                    </div>
+                </div>
+                <ul class="bullet-list" style="margin-top: 1.5rem;">
+                    <li><strong>Python-First:</strong> Leverage existing team Python expertise</li>
+                    <li><strong>OCI Provider:</strong> First-class Oracle Cloud Infrastructure support</li>
+                    <li><strong>Framework Foundation:</strong> Enables building JSON-driven abstraction layer on top</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 16: Framework Solution Pillars -->
+        <div data-presentation="oracle" class="slide full-image-slide" data-section="2">
+            <img src="images/the framework pillars , features.png" alt="Framework Solution Pillars">
+        </div>
+
+        <!-- Slide 17: Layer Architecture -->
+        <div data-presentation="oracle" class="slide full-image-slide" data-section="2">
+            <img src="images/arch_layer architecture_system.png" alt="Layer Architecture System">
+        </div>
+
+        <!-- SECTION 3: PROJECT MANAGEMENT -->
+
+        <!-- Slide 23: Section Divider -->
+        <div data-presentation="oracle" class="slide divider-slide" data-hide-navbar="true" style="background: linear-gradient(135deg, #14535F 0%, #0a3940 100%) !important; display: flex !important; align-items: center; justify-content: center;">
+            <h2 class="divider-title">Project Management</h2>
+        </div>
+
+        <!-- Slide 24: Management Approach -->
+        <div data-presentation="oracle" class="slide content-slide" data-section="3">
+            <h2 class="slide-title">Project Management Approach</h2>
+            <div data-presentation="oracle" class="slide-content">
+                <ul class="bullet-list">
+                    <li><strong>Methodology:</strong> Kanban Agile - visual workflow management with continuous delivery</li>
+                    <li><strong>Project Tracker:</strong> Task board for tracking work items (To Do, In Progress, Done)</li>
+                    <li><strong>Regular Meetings:</strong> Weekly sync meetings with mentor to review progress and blockers</li>
+                    <li><strong>Continuous Flow:</strong> Work items pulled as capacity allows, no fixed time boundaries</li>
+                    <li><strong>Focus on Delivery:</strong> Prioritize completing tasks over starting new ones</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 25: Development Workflow -->
+        <div data-presentation="oracle" class="slide full-image-slide" data-section="3">
+            <img src="images/mgmt_task_workflow.png" alt="Development Task Workflow">
+        </div>
+
+        <!-- Slide 26: Communication Tools -->
+        <div data-presentation="oracle" class="slide content-slide" data-section="3">
+            <h2 class="slide-title">Communication & Collaboration Tools</h2>
+            <div data-presentation="oracle" class="slide-content">
+                <div class="tool-grid">
+                    <div class="tool-item">
+                        <img src="images/tool_slack.png" alt="Slack">
+                        <div class="tool-name">Slack</div>
+                        <div style="text-align: center; font-size: 0.875rem; color: #64748b;">Daily communication, quick questions, team updates</div>
+                    </div>
+                    <div class="tool-item">
+                        <img src="images/tool_zoom.png" alt="Zoom">
+                        <div class="tool-name">Zoom</div>
+                        <div style="text-align: center; font-size: 0.875rem; color: #64748b;">Weekly sync meetings, architecture discussions</div>
+                    </div>
+                    <div class="tool-item">
+                        <img src="images/tool_jira.png" alt="Jira">
+                        <div class="tool-name">Jira</div>
+                        <div style="text-align: center; font-size: 0.875rem; color: #64748b;">Task tracking, work planning, progress monitoring</div>
+                    </div>
+                    <div class="tool-item">
+                        <img src="images/tool_outlook.png" alt="Outlook">
+                        <div class="tool-name">Outlook</div>
+                        <div style="text-align: center; font-size: 0.875rem; color: #64748b;">Meeting scheduling, formal communications</div>
+                    </div>
+                    <div class="tool-item">
+                        <img src="images/confluence logo.png" alt="Confluence">
+                        <div class="tool-name">Confluence</div>
+                        <div style="text-align: center; font-size: 0.875rem; color: #64748b;">Documentation, design specs, knowledge base</div>
+                    </div>
+                    <div class="tool-item">
+                        <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #14535F, #0f766e); border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1.5rem;">Git</div>
+                        <div class="tool-name">GitLab</div>
+                        <div style="text-align: center; font-size: 0.875rem; color: #64748b;">Code repository, CI/CD, merge requests</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 27: Mentor Sessions -->
+        <div data-presentation="oracle" class="slide content-slide" data-section="3">
+            <h2 class="slide-title">Mentor Check-ins & Team Meetings</h2>
+            <div data-presentation="oracle" class="slide-content">
+                <div class="two-column">
+                    <div class="image-container">
+                        <img src="images/mgmt_mentor_session.png" alt="Mentor Session Calendar">
+                    </div>
+                    <div>
+                        <div class="card">
+                            <div class="card-title">Weekly Sync Meetings</div>
+                            <div class="card-content">
+                                <ul style="margin-left: 1.5rem;">
+                                    <li><strong>Frequency:</strong> Every Tuesday 11:00 AM</li>
+                                    <li><strong>Duration:</strong> 45-60 minutes</li>
+                                    <li><strong>Agenda:</strong> Progress review, blockers discussion, next steps planning</li>
+                                    <li><strong>Participants:</strong> Intern + mentor (Hamza Ghaissi)</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card" style="margin-top: 1rem;">
+                            <div class="card-title">Ad-hoc Sessions</div>
+                            <div class="card-content">
+                                <ul style="margin-left: 1.5rem;">
+                                    <li>Technical architecture discussions</li>
+                                    <li>Code reviews and pair programming</li>
+                                    <li>Debugging complex issues</li>
+                                    <li>Design decision consultations</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="highlight-box" style="margin-top: 1rem;">
+                            <strong>Communication Style:</strong> Open-door policy via Slack - quick responses and collaborative problem-solving
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 28: Timeline & Milestones -->
+        <div data-presentation="oracle" class="slide content-slide" data-section="3">
+            <h2 class="slide-title">Project Timeline & Key Milestones</h2>
+            <div data-presentation="oracle" class="slide-content">
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+                    <div class="card" style="border-top-color: #3b82f6;">
+                        <div class="card-title">Phase 1: Research (2 weeks)</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>OCI API exploration</li>
+                                <li>Pulumi SDK study</li>
+                                <li>Requirements gathering</li>
+                                <li>Architecture design</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card" style="border-top-color: #8b5cf6;">
+                        <div class="card-title">Phase 2: Prototype (2 weeks)</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>Core framework skeleton</li>
+                                <li>VCN + Instance resources</li>
+                                <li>Factory pattern POC</li>
+                                <li>Basic dependency resolver</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card" style="border-top-color: #ec4899;">
+                        <div class="card-title">Phase 3: Development (4 weeks)</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>All 7 resource types</li>
+                                <li>JSON configuration loader</li>
+                                <li>Dependency resolution logic</li>
+                                <li>Error handling</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card" style="border-top-color: #10b981;">
+                        <div class="card-title">Phase 4: CI/CD Integration (2 weeks)</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>GitLab pipeline config</li>
+                                <li>Plan & deploy stages</li>
+                                <li>Manual approval gates</li>
+                                <li>Pipeline testing</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card" style="border-top-color: #f59e0b;">
+                        <div class="card-title">Phase 5: Testing (2 weeks)</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>Integration testing</li>
+                                <li>Edge case validation</li>
+                                <li>Performance testing</li>
+                                <li>Bug fixes</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card" style="border-top-color: #14535F;">
+                        <div class="card-title">Phase 6: Documentation (1 week)</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>User guide creation</li>
+                                <li>Code documentation</li>
+                                <li>Architecture diagrams</li>
+                                <li>Final presentation</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 4: TECHNICAL IMPLEMENTATION -->
+
+        <!-- Slide 29: Section Divider -->
+        <div data-presentation="oracle" class="slide divider-slide" data-hide-navbar="true" style="background: linear-gradient(135deg, #14535F 0%, #0a3940 100%) !important; display: flex !important; align-items: center; justify-content: center;">
+            <h2 class="divider-title">Technical Implementation</h2>
+        </div>
+
+        <!-- Slide 30: Use Case Diagram -->
+        <div data-presentation="oracle" class="slide full-image-slide" data-section="4">
+            <img src="images/design_usecase_diagram.png" alt="Use Case Diagram">
+        </div>
+
+        <!-- Slide 31: Project Structure -->
+        <div data-presentation="oracle" class="slide full-image-slide" data-section="4">
+            <img src="images/project folders .png" alt="Project Folder Structure">
+        </div>
+
+        <!-- Slide 32: JSON Configuration Example -->
+        <div data-presentation="oracle" class="slide content-slide" data-section="4">
+            <h2 class="slide-title">JSON Configuration Example</h2>
+            <div data-presentation="oracle" class="slide-content">
+                <div class="card">
+                    <div class="card-title">infrastructure.json</div>
+                    <div class="card-content" style="font-family: 'Courier New', monospace; font-size: 0.85rem; background: #f1f5f9; padding: 1rem; border-radius: 0.5rem;">
+{<br>
+  &nbsp;&nbsp;"vcns": {<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;"production-vcn": {<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"cidr_block": "10.0.0.0/16",<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"display_name": "Production VCN"<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+  &nbsp;&nbsp;},<br>
+  &nbsp;&nbsp;"subnets": {<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;"prod-subnet": {<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"cidr_block": "10.0.1.0/24",<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"vcn_id": "production-vcn"<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+  &nbsp;&nbsp;}<br>
+}
+                    </div>
+                </div>
+                <ul class="bullet-list" style="margin-top: 1.5rem;">
+                    <li><strong>Name-Based References:</strong> Resources reference each other by name (e.g., "vcn_id": "production-vcn")</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 33: Core Framework Components -->
+        <div data-presentation="oracle" class="slide content-slide" data-section="4">
+            <h2 class="slide-title">Core Framework Components</h2>
+            <div data-presentation="oracle" class="slide-content">
+                <div class="card-grid">
+                    <div class="card" style="border-top-color: #3b82f6;">
+                        <div class="card-title">BaseResource (Abstract)</div>
+                        <div class="card-content">
+                            <p><strong>Purpose:</strong> Abstract base class defining resource interface</p>
+                        </div>
+                    </div>
+                    <div class="card" style="border-top-color: #8b5cf6;">
+                        <div class="card-title">ResourceFactory</div>
+                        <div class="card-content">
+                            <p><strong>Purpose:</strong> Factory pattern for dynamic resource instantiation</p>
+                        </div>
+                    </div>
+                    <div class="card" style="border-top-color: #10b981;">
+                        <div class="card-title">DependencyResolver</div>
+                        <div class="card-content">
+                            <p><strong>Purpose:</strong> Manages resource references and resolves dependencies between resources</p>
+                        </div>
+                    </div>
+                    <div class="card" style="border-top-color: #f59e0b;">
+                        <div class="card-title">ConfigLoader</div>
+                        <div class="card-content">
+                            <p><strong>Purpose:</strong> Parses and validates infrastructure.json configuration</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 34: Class Diagram -->
+        <div data-presentation="oracle" class="slide full-image-slide" data-section="4">
+            <img src="images/class diagram .png" alt="Class Hierarchy Diagram">
+        </div>
+
+        <!-- Slide 35: Factory Pattern -->
+        <div data-presentation="oracle" class="slide full-image-slide" data-section="4">
+            <img src="images/arch_factory_pattern.png" alt="Factory Pattern Implementation">
+        </div>
+
+        <!-- Slide 36: Dependency Resolver -->
+        <div data-presentation="oracle" class="slide full-image-slide" data-section="4">
+            <img src="images/arch_dependency_resolution.png" alt="Dependency Resolver Design">
+        </div>
+
+        <!-- Slide 37: Implemented Resources -->
+        <div data-presentation="oracle" class="slide content-slide" data-section="4">
+            <h2 class="slide-title">Implemented Resource Types</h2>
+            <div data-presentation="oracle" class="slide-content">
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+                    <div class="card">
+                        <div class="card-title">1. VCN (Virtual Cloud Network)</div>
+                        <div class="card-content">
+                            <p><strong>Purpose:</strong> Foundation network container</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">2. Internet Gateway</div>
+                        <div class="card-content">
+                            <p><strong>Purpose:</strong> Enable internet connectivity</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">3. Security List</div>
+                        <div class="card-content">
+                            <p><strong>Purpose:</strong> Firewall rules (ingress/egress)</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">4. Route Table</div>
+                        <div class="card-content">
+                            <p><strong>Purpose:</strong> Network routing configuration</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">5. Subnet</div>
+                        <div class="card-content">
+                            <p><strong>Purpose:</strong> Network segment within VCN</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">6. Compute Instance</div>
+                        <div class="card-content">
+                            <p><strong>Purpose:</strong> Virtual machine</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">7. Object Storage Bucket</div>
+                        <div class="card-content">
+                            <p><strong>Purpose:</strong> S3-compatible object storage</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 38: Workflow Design -->
+        <div data-presentation="oracle" class="slide full-image-slide" data-section="4">
+            <img src="images/workflow_design.png" alt="Workflow Design Process">
+        </div>
+
+        <!-- Slide 39: GitLab Pipeline Stages -->
+        <div data-presentation="oracle" class="slide full-image-slide" data-section="4">
+            <img src="images/cicd_gitlab_pipeline plan and deploy stages.png" alt="GitLab Pipeline Stages">
+        </div>
+
+        <!-- Slide 40: Pull Request Workflow -->
+        <div data-presentation="oracle" class="slide full-image-slide" data-section="4">
+            <img src="images/workflow_pull_request.png" alt="Pull Request Workflow">
+        </div>
+
+        <!-- SECTION 5: RESULTS & VALIDATIONS -->
+
+        <!-- Slide 45: Section Divider -->
+        <div data-presentation="oracle" class="slide divider-slide" data-hide-navbar="true" style="background: linear-gradient(135deg, #14535F 0%, #0a3940 100%) !important; display: flex !important; align-items: center; justify-content: center;">
+            <h2 class="divider-title">Results & Validations</h2>
+        </div>
+
+        <!-- Slide 46: Implementation Results -->
+        <div data-presentation="oracle" class="slide content-slide" data-section="5" data-notes="Highlight the successful completion of all deliverables. Mention the 12 resource types implemented and comprehensive testing. Emphasize production deployment success. This shows the project was not just theoretical but actually used by the team.">
+            <h2 class="slide-title">Implementation Results</h2>
+            <div data-presentation="oracle" class="slide-content">
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-title">✅ Deliverables Completed</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>Python framework (800 LOC)</li>
+                                <li>7 OCI resource types</li>
+                                <li>JSON configuration system</li>
+                                <li>GitLab CI/CD pipeline</li>
+                                <li>Documentation & diagrams</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">🎯 Requirements Met</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>✓ Declarative JSON config</li>
+                                <li>✓ Dependency resolution</li>
+                                <li>✓ CI/CD integration</li>
+                                <li>✓ Multi-environment support</li>
+                                <li>✓ State management</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">🚀 Production Ready</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>Error handling implemented</li>
+                                <li>Tested on dev & staging</li>
+                                <li>Documentation complete</li>
+                                <li>Team training delivered</li>
+                                <li>Now in active use by RISQ team</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 47: Deployment Success -->
+        <div data-presentation="oracle" class="slide full-image-slide" data-section="5">
+            <img src="images/result_instance_deployed.png" alt="Successful Instance Deployment">
+        </div>
+
+        <!-- Slide 48: Testing Results -->
+        <div data-presentation="oracle" class="slide content-slide" data-section="5">
+            <h2 class="slide-title">Testing & Validation Results</h2>
+            <div data-presentation="oracle" class="slide-content">
+                <div class="two-column">
+                    <div>
+                        <div class="card">
+                            <div class="card-title">Unit Testing</div>
+                            <div class="card-content">
+                                <p><strong>Scope:</strong> Individual resource classes</p>
+                                <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                                    <li>Factory pattern registration</li>
+                                    <li>Dependency resolver lookup</li>
+                                    <li>Config loader parsing</li>
+                                </ul>
+                                <p style="margin-top: 0.5rem; color: #10b981; font-weight: 600;">✓ All components working correctly</p>
+                            </div>
+                        </div>
+                        <div class="card" style="margin-top: 1rem;">
+                            <div class="card-title">Integration Testing</div>
+                            <div class="card-content">
+                                <p><strong>Test Cases:</strong></p>
+                                <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                                    <li>Single VCN + 1 instance</li>
+                                    <li>2 VCNs + 2 instances</li>
+                                    <li>Complex network (IGW + RT + SL)</li>
+                                    <li>Bucket creation</li>
+                                </ul>
+                                <p style="margin-top: 0.5rem; color: #10b981; font-weight: 600;">✓ End-to-end provisioning successful</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="card">
+                            <div class="card-title">CI/CD Pipeline Testing</div>
+                            <div class="card-content">
+                                <p><strong>Validated:</strong></p>
+                                <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                                    <li>Plan stage (preview changes)</li>
+                                    <li>Deploy stage (apply changes)</li>
+                                    <li>Manual approval gate</li>
+                                    <li>State persistence</li>
+                                </ul>
+                                <p style="margin-top: 0.5rem; color: #10b981; font-weight: 600;">✓ Pipeline working smoothly</p>
+                            </div>
+                        </div>
+                        <div class="card" style="margin-top: 1rem;">
+                            <div class="card-title">Edge Cases Tested</div>
+                            <div class="card-content">
+                                <ul style="margin-left: 1.5rem;">
+                                    <li>✓ Missing dependency (error caught)</li>
+                                    <li>✓ Invalid CIDR block (validation)</li>
+                                    <li>✓ Duplicate resource names (detected)</li>
+                                    <li>✓ Image not compatible with shape</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 49: Performance Metrics -->
+        <div data-presentation="oracle" class="slide content-slide" data-section="5">
+            <h2 class="slide-title">Performance Metrics & Improvements</h2>
+            <div data-presentation="oracle" class="slide-content">
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem;">
+                    <div class="highlight-box" style="text-align: center;">
+                        <div style="font-size: 3rem; font-weight: 800; margin-bottom: 0.5rem;">90%</div>
+                        <div style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">Time Reduction</div>
+                        <div style="font-size: 0.875rem; opacity: 0.9;">
+                            From ~1 hour manual setup<br>
+                            To <5 minutes automated
+                        </div>
+                    </div>
+                    <div class="highlight-box" style="text-align: center; background: linear-gradient(135deg, #0f766e, #14b8a6);">
+                        <div style="font-size: 3rem; font-weight: 800; margin-bottom: 0.5rem;">100%</div>
+                        <div style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">Consistency</div>
+                        <div style="font-size: 0.875rem; opacity: 0.9;">
+                            Zero configuration drift<br>
+                            All envs from same templates
+                        </div>
+                    </div>
+                    <div class="highlight-box" style="text-align: center; background: linear-gradient(135deg, #C74634, #dc2626);">
+                        <div style="font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem;">Enhanced</div>
+                        <div style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">Team Collaboration</div>
+                        <div style="font-size: 0.875rem; opacity: 0.9;">
+                            Better knowledge sharing<br>
+                            Standardized processes
+                        </div>
+                    </div>
+                </div>
+                <div class="card-grid" style="margin-top: 2rem;">
+                    <div class="card">
+                        <div class="card-title">Before (Manual)</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>Average setup: 2.5 hours</li>
+                                <li>Error rate: ~15%</li>
+                                <li>Documentation: Often outdated</li>
+                                <li>Reproducibility: Low</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">After (Automated)</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>Average setup: 4 minutes</li>
+                                <li>Error rate: <2%</li>
+                                <li>Documentation: Self-documenting JSON</li>
+                                <li>Reproducibility: 100%</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 50: Impact Assessment -->
+        <div data-presentation="oracle" class="slide content-slide" data-section="5">
+            <h2 class="slide-title">Business Impact & Team Benefits</h2>
+            <div data-presentation="oracle" class="slide-content">
+                <ul class="bullet-list">
+                    <li><strong>Developer Productivity:</strong> Team members can now focus on GraalVM development instead of infrastructure management - estimated 10+ hours saved per week across the team</li>
+                    <li><strong>Faster Testing Cycles:</strong> Spin up test environments in minutes instead of hours - enables rapid experimentation and bug fixes</li>
+                    <li><strong>Onboarding Acceleration:</strong> New team members can provision infrastructure on day one without specialized training - reduces onboarding time from days to hours</li>
+                    <li><strong>Cost Optimization:</strong> All infrastructure tracked in Git - easier to identify and delete unused resources, preventing budget overruns</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- SECTION 6: FUTURE ENHANCEMENTS -->
+
+        <!-- Slide 51: Section Divider -->
+        <div data-presentation="oracle" class="slide divider-slide" data-hide-navbar="true" style="background: linear-gradient(135deg, #14535F 0%, #0a3940 100%) !important; display: flex !important; align-items: center; justify-content: center;">
+            <h2 class="divider-title">Future Enhancements</h2>
+        </div>
+
+        <!-- Slide 52: Future Improvements -->
+        <div data-presentation="oracle" class="slide content-slide" data-section="6">
+            <h2 class="slide-title">Future Improvements</h2>
+            <div data-presentation="oracle" class="slide-content">
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-title">More Resource Coverage</div>
+                        <div class="card-content">
+                            <p>Expand framework to support additional OCI resources like Load Balancers, Databases, and File Storage</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Schema Validation</div>
+                        <div class="card-content">
+                            <p>Implement JSON schema validation to catch configuration errors before deployment</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Role Identification</div>
+                        <div class="card-content">
+                            <p>Define clear roles within the team on how to use the framework and establish best practices</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 53: Conclusion -->
+        <div data-presentation="oracle" class="slide content-slide" data-section="6">
+            <h2 class="slide-title">Conclusion</h2>
+            <div data-presentation="book" class="slide-content">
+                <div class="highlight-box" style="font-size: 1.5rem; text-align: center;">
+                    Successfully delivered a production-ready IaC framework that transforms infrastructure management for the GraalVM RISQ team
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 54: Thank You -->
+        <div data-presentation="book" class="slide title-slide" data-section="6">
+            <h1 class="main-title">Thank You</h1>
+            <p class="subtitle" style="font-size: 2rem; margin-bottom: 3rem;">Questions & Discussion</p>
+            <div class="author-info" style="font-size: 1.5rem;">
+                <strong>Yassine DBAICHI</strong><br>
+                Infrastructure as Code Support in Graal CI<br>
+                Oracle Labs - GraalVM RISQ Team<br>
+                Academic Year 2024-2025
+            </div>
+            <div style="margin-top: 3rem; display: flex; gap: 3rem; align-items: center; justify-content: center; z-index: 10;">
+                <img src="images/logo_ehtp.jpg" alt="EHTP Logo" style="height: 80px; filter: brightness(1.2);">
+                <img src="images/logo_graalvm.png" alt="GraalVM Logo" style="height: 80px; filter: brightness(1.2);">
+            </div>
+        </div>
+
+
+
+        <!-- Slide 1: Title Slide -->
+        <div data-presentation="book" class="slide active title-slide">
+            <div class="logo-container">
+                <div style="width: 100px; height: 100px; background: white; border-radius: 1rem; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.5rem; color: #14535F;">EHTP</div>
+                <div style="width: 100px; height: 100px; background: white; border-radius: 1rem; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.25rem; color: #C74634;">GIS</div>
+            </div>
+            <h1 class="main-title">Book Marketplace Platform<br>with Route Optimization</h1>
+            <p class="subtitle">Automatic Delivery Route Planning for Book Sellers</p>
+            <div class="author-info">
+                <strong>Yassine DBAICHI</strong><br>
+                École Hassania des Travaux Publics<br>
+                Department of MIG - GIS Specialization<br>
+                Supervisor: Prof. Hatim LECHGAR<br>
+                Academic Year 2024/2025
+            </div>
+        </div>
+
+        <!-- Slide 2: Table of Contents -->
+        <div data-presentation="book" class="slide content-slide">
+            <h2 class="slide-title">Agenda</h2>
+            <div data-presentation="book" class="slide-content">
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-title">1. Introduction</div>
+                        <div class="card-content">Context, problem statement, proposed solution, and objectives</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">2. System Conception</div>
+                        <div class="card-content">Functional requirements, use cases, and data model</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">3. Application Workflow</div>
+                        <div class="card-content">Buyer and seller journey through the platform</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">4. Implementation</div>
+                        <div class="card-content">Architecture, technologies, route optimization, deployment</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">5. Results</div>
+                        <div class="card-content">Screenshots of web and mobile applications</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">6. Conclusion</div>
+                        <div class="card-content">Achievements, benefits, limitations, and future work</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 1: INTRODUCTION -->
+
+        <!-- Slide 3: Section Divider -->
+        <div data-presentation="book" class="slide divider-slide" data-hide-navbar="true">
+            <h2 class="divider-title">Introduction</h2>
+        </div>
+
+        <!-- Slide 4: Context -->
+        <div data-presentation="book" class="slide content-slide" data-section="1">
+            <h2 class="slide-title">Context</h2>
+            <div data-presentation="book" class="slide-content">
+                <ul class="bullet-list">
+                    <li><strong>Second-Hand Book Market:</strong> Student and academic communities have numerous individual sellers operating small-scale book businesses</li>
+                    <li><strong>Delivery Challenge:</strong> Sellers must deliver books to multiple customers located at different addresses across the city</li>
+                    <li><strong>Manual Planning:</strong> Without proper tools, route planning is done manually, resulting in inefficient routes that waste time and fuel</li>
+                    <li><strong>Data Entry Burden:</strong> Sellers must manually copy each customer's delivery address from order records into navigation apps like Google Maps or Waze</li>
+                    <li><strong>Lack of Integration:</strong> Existing route optimization tools are separate from marketplace platforms, creating workflow friction</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 5: Problem Statement -->
+        <div data-presentation="book" class="slide content-slide" data-section="1">
+            <h2 class="slide-title">Problem Statement</h2>
+            <div data-presentation="book" class="slide-content">
+                <div class="card-grid">
+                    <div class="card" style="border-top-color: #C74634;">
+                        <div class="card-title">Manual Address Handling</div>
+                        <div class="card-content">Sellers must manually copy each customer's delivery address from order records into navigation applications - a time-consuming and error-prone process</div>
+                    </div>
+                    <div class="card" style="border-top-color: #FF9800;">
+                        <div class="card-title">Inefficient Routes</div>
+                        <div class="card-content">Without optimization tools, sellers visit customers in order received or based on rough geographic estimates - rarely producing efficient routes</div>
+                    </div>
+                    <div class="card" style="border-top-color: #9C27B0;">
+                        <div class="card-title">Lack of Integration</div>
+                        <div class="card-content">Route optimization tools are separate from marketplace platforms - sellers must use multiple disconnected applications, duplicating effort</div>
+                    </div>
+                    <div class="card" style="border-top-color: #0f766e;">
+                        <div class="card-title">Scalability Issues</div>
+                        <div class="card-content">Manual planning becomes impossible with 10+ daily deliveries - limiting business growth</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Proposed Solution -->
+        <div data-presentation="book" class="slide content-slide" data-section="1">
+            <h2 class="slide-title">Proposed Solution</h2>
+            <div data-presentation="book" class="slide-content">
+                <ul class="bullet-list">
+                    <li><strong>Integrated Platform:</strong> Combines e-commerce marketplace functionality with automatic delivery route optimization</li>
+                    <li><strong>One-Time Address Entry:</strong> Customers register and provide delivery address once - automatically attached to all future orders</li>
+                    <li><strong>Mobile Route Planner:</strong> Sellers use mobile app to view pending orders, select which to deliver, and get optimal route sequence</li>
+                    <li><strong>TSP Algorithm:</strong> Traveling Salesman Problem algorithm calculates the best visit order to minimize travel distance</li>
+                    <li><strong>Turn-by-Turn Navigation:</strong> Integration with OpenRouteService, Google Maps, and Waze for detailed driving directions</li>
+                    <li><strong>Seamless Data Flow:</strong> Address data flows automatically from registration → order → route planning without manual entry</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 7: Objectives -->
+        <div data-presentation="book" class="slide content-slide" data-section="1">
+            <h2 class="slide-title">Project Objectives</h2>
+            <div data-presentation="book" class="slide-content">
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+                    <div class="card">
+                        <div class="card-title">1. Web Marketplace</div>
+                        <div class="card-content">Build a web platform where users can buy and sell books</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">2. Address Capture</div>
+                        <div class="card-content">Automatically capture customer addresses during registration</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">3. Mobile App</div>
+                        <div class="card-content">Develop mobile application for sellers to view and manage orders</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">4. Route Optimization</div>
+                        <div class="card-content">Implement TSP algorithm to find best delivery sequence</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">5. Navigation Integration</div>
+                        <div class="card-content">Integrate with navigation services for turn-by-turn directions</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">6. Production Deployment</div>
+                        <div class="card-content">Deploy complete system for real-world use</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 2: SYSTEM CONCEPTION -->
+
+        <!-- Slide 8: Section Divider -->
+        <div data-presentation="book" class="slide divider-slide" data-hide-navbar="true">
+            <h2 class="divider-title">System Conception</h2>
+        </div>
+
+        <!-- Slide 9: Functional Requirements -->
+        <div data-presentation="book" class="slide content-slide" data-section="2">
+            <h2 class="slide-title">Functional Requirements</h2>
+            <div data-presentation="oracle" class="slide-content">
+                <div class="two-column">
+                    <div>
+                        <h3 style="font-size: 1.5rem; font-weight: 600; color: #14535F; margin-bottom: 1rem;">Web Application</h3>
+                        <div class="card">
+                            <div class="card-title">User Management</div>
+                            <div class="card-content">
+                                <ul style="margin-left: 1.5rem;">
+                                    <li>Registration with role selection (buyer/seller)</li>
+                                    <li>Address input during registration</li>
+                                    <li>Login and authentication</li>
+                                    <li>Profile management</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card" style="margin-top: 1rem;">
+                            <div class="card-title">Marketplace Features</div>
+                            <div class="card-content">
+                                <ul style="margin-left: 1.5rem;">
+                                    <li>Browse available books</li>
+                                    <li>Search by title/author</li>
+                                    <li>View book details</li>
+                                    <li>List books for sale</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 style="font-size: 1.5rem; font-weight: 600; color: #14535F; margin-bottom: 1rem;">Mobile Application</h3>
+                        <div class="card">
+                            <div class="card-title">Order Management</div>
+                            <div class="card-content">
+                                <ul style="margin-left: 1.5rem;">
+                                    <li>View pending orders</li>
+                                    <li>See order details with addresses</li>
+                                    <li>Filter by status</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card" style="margin-top: 1rem;">
+                            <div class="card-title">Route Optimization</div>
+                            <div class="card-content">
+                                <ul style="margin-left: 1.5rem;">
+                                    <li>Display customers on map</li>
+                                    <li>Select orders for delivery</li>
+                                    <li>Calculate optimal route</li>
+                                    <li>Turn-by-turn directions</li>
+                                    <li>Export to Google Maps/Waze</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Data Model -->
+        <div data-presentation="book" class="slide content-slide" data-section="2">
+            <h2 class="slide-title">Data Model</h2>
+            <div data-presentation="oracle" class="slide-content">
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+                    <div class="card">
+                        <div class="card-title">User Entity</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>email, password</li>
+                                <li>role (buyer/seller)</li>
+                                <li><strong>address</strong> (stored once)</li>
+                                <li>phone</li>
+                            </ul>
+                            <p style="margin-top: 0.5rem; color: #14535F; font-weight: 600;">Address captured during registration</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Book Entity</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>title, author</li>
+                                <li>price, quantity</li>
+                                <li>condition</li>
+                                <li>seller_id reference</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Order Entity</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>book_id, buyer_id, seller_id</li>
+                                <li>quantity, total_price</li>
+                                <li><strong>delivery_address</strong></li>
+                                <li>status</li>
+                            </ul>
+                            <p style="margin-top: 0.5rem; color: #4CAF50; font-weight: 600;">Address auto-copied from buyer profile</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="highlight-box" style="margin-top: 1.5rem;">
+                    <strong>Key Innovation:</strong> Address flows automatically from User → Order → Route Planning without manual entry
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 3: WORKFLOW -->
+
+        <!-- Slide 11: Section Divider -->
+        <div data-presentation="book" class="slide divider-slide" data-hide-navbar="true">
+            <h2 class="divider-title">Application Workflow</h2>
+        </div>
+
+        <!-- Slide 12: Buyer Workflow -->
+        <div data-presentation="book" class="slide content-slide" data-section="3">
+            <h2 class="slide-title">Buyer Workflow</h2>
+            <div data-presentation="book" class="slide-content">
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+                    <div class="card">
+                        <div class="card-title">1. Registration</div>
+                        <div class="card-content">User creates account and provides email, password, and <strong>delivery address</strong> (one time only)</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">2. Login</div>
+                        <div class="card-content">User authenticates to access the marketplace</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">3. Browse Books</div>
+                        <div class="card-content">User searches and views available books in catalog</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">4. Place Order</div>
+                        <div class="card-content">User places order - <strong>address automatically taken from profile</strong></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">5. Track Status</div>
+                        <div class="card-content">User monitors order status (pending, confirmed, in-progress, delivered)</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">6. Receive Delivery</div>
+                        <div class="card-content">Seller delivers book to registered address</div>
+                    </div>
+                </div>
+                <div class="highlight-box" style="margin-top: 1.5rem;">
+                    <strong>Key Point:</strong> Address provided only once during registration - automatically reused for all orders
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: Seller Workflow -->
+        <div data-presentation="book" class="slide content-slide" data-section="3">
+            <h2 class="slide-title">Seller Workflow</h2>
+            <div data-presentation="book" class="slide-content">
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+                    <div class="card">
+                        <div class="card-title">1. Open Mobile App</div>
+                        <div class="card-content">Seller logs into mobile application (Android)</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">2. View Orders</div>
+                        <div class="card-content">See list of pending orders with all details</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">3. See Orders on Map</div>
+                        <div class="card-content">All customer locations displayed as markers on interactive map - <strong>addresses already saved</strong></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">4. Select Orders to Deliver</div>
+                        <div class="card-content">Choose which orders to include in today's delivery route</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">5. Calculate Route</div>
+                        <div class="card-content">App finds best route using <strong>TSP algorithm</strong> - automatic optimization</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">6. View Route on Map</div>
+                        <div class="card-content">See optimized route with numbered waypoints, turn-by-turn directions, distance & time</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">7. Navigate</div>
+                        <div class="card-content">Follow in-app directions OR export to Google Maps/Waze</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">8. Deliver & Update</div>
+                        <div class="card-content">Mark orders as delivered as route is completed</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 4: IMPLEMENTATION -->
+
+        <!-- Slide 14: Section Divider -->
+        <div data-presentation="book" class="slide divider-slide" data-hide-navbar="true">
+            <h2 class="divider-title">Implementation</h2>
+        </div>
+
+        <!-- Slide 15: System Architecture -->
+        <div data-presentation="book" class="slide content-slide" data-section="4">
+            <h2 class="slide-title">System Architecture</h2>
+            <div data-presentation="oracle" class="slide-content" style="display: flex; align-items: center; justify-content: center; height: 100%;">
+                <img src="images/Global System Architecture.png" alt="Global System Architecture" style="max-width: 90%; max-height: 80%; object-fit: contain; border-radius: 1rem; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+            </div>
+        </div>
+
+        <!-- Slide 16: Technologies Used -->
+        <div data-presentation="book" class="slide content-slide" data-section="4">
+            <h2 class="slide-title">Technology Stack</h2>
+            <div data-presentation="book" class="slide-content">
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+                    <div class="card">
+                        <div class="card-title">Web Frontend</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>React 19.1.1</li>
+                                <li>React Bootstrap + Bootstrap 5</li>
+                                <li>React Leaflet (maps)</li>
+                                <li>Axios (HTTP)</li>
+                                <li>Vite (build tool)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Mobile App</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>Flutter 3.24.0</li>
+                                <li>flutter_map (OpenStreetMap)</li>
+                                <li>geolocator (GPS)</li>
+                                <li>dio (HTTP)</li>
+                                <li>flutter_secure_storage</li>
+                                <li>Android platform</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Backend</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>Node.js 18.x</li>
+                                <li>Express.js</li>
+                                <li>MongoDB (Atlas)</li>
+                                <li>JWT authentication</li>
+                                <li>Hosted on Vercel</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-grid" style="margin-top: 1.5rem;">
+                    <div class="card">
+                        <div class="card-title">External Services</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li><strong>OpenRouteService:</strong> Route calculation & turn-by-turn directions</li>
+                                <li><strong>OpenStreetMap:</strong> Map tiles for visualization</li>
+                                <li><strong>Google Maps:</strong> External navigation option</li>
+                                <li><strong>Waze:</strong> External navigation option</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Deployment</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li><strong>Backend:</strong> Vercel serverless platform</li>
+                                <li><strong>Database:</strong> MongoDB Atlas (cloud)</li>
+                                <li><strong>Web:</strong> Vercel with CDN caching</li>
+                                <li><strong>Mobile:</strong> Android APK distribution</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 17: Address Data Flow -->
+        <div data-presentation="book" class="slide content-slide" data-section="4">
+            <h2 class="slide-title">How Address Data Flows</h2>
+            <div data-presentation="book" class="slide-content">
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+                    <div class="card" style="border-top-color: #4CAF50;">
+                        <div class="card-title">Step 1: Registration</div>
+                        <div class="card-content">User registers on web platform and provides delivery address → stored in User entity in MongoDB</div>
+                    </div>
+                    <div class="card" style="border-top-color: #0f766e;">
+                        <div class="card-title">Step 2: Order Creation</div>
+                        <div class="card-content">When user places order, system automatically copies their address from User profile to Order entity</div>
+                    </div>
+                    <div class="card" style="border-top-color: #9C27B0;">
+                        <div class="card-title">Step 3: API Retrieval</div>
+                        <div class="card-content">Seller opens mobile app → retrieves orders via API → each order already contains delivery address</div>
+                    </div>
+                    <div class="card" style="border-top-color: #FF9800;">
+                        <div class="card-title">Step 4: Route Planning</div>
+                        <div class="card-content">Seller selects orders → app extracts addresses → feeds into TSP algorithm for optimization</div>
+                    </div>
+                </div>
+                <div class="highlight-box" style="margin-top: 1.5rem; text-align: center; font-size: 1.25rem;">
+                    <strong>No manual address entry required at any step!</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 18: Route Optimization Algorithm -->
+        <div data-presentation="book" class="slide content-slide" data-section="4">
+            <h2 class="slide-title">Route Optimization Algorithm</h2>
+            <div data-presentation="book" class="slide-content">
+                <div class="two-column">
+                    <div>
+                        <h3 style="font-size: 1.5rem; font-weight: 600; color: #14535F; margin-bottom: 1rem;">TSP Nearest-Neighbor</h3>
+                        <div class="card">
+                            <div class="card-title">Problem Type</div>
+                            <div class="card-content">Traveling Salesman Problem (TSP) - finding optimal delivery sequence</div>
+                        </div>
+                        <div class="card" style="margin-top: 1rem;">
+                            <div class="card-title">Algorithm</div>
+                            <div class="card-content">Greedy Nearest-Neighbor Heuristic</div>
+                        </div>
+                        <div class="card" style="margin-top: 1rem;">
+                            <div class="card-title">Complexity</div>
+                            <div class="card-content">O(n²) time where n = number of delivery points</div>
+                        </div>
+                        <div class="card" style="margin-top: 1rem;">
+                            <div class="card-title">Solution Quality</div>
+                            <div class="card-content">Provides good (not perfect) solutions - acceptable for 5-20 delivery points</div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 style="font-size: 1.5rem; font-weight: 600; color: #14535F; margin-bottom: 1rem;">Algorithm Steps</h3>
+                        <div class="code-block">
+1. START at seller's current GPS location
+
+2. WHILE unvisited deliveries remain:
+
+   a. Find nearest unvisited customer
+      (using distance calculation)
+
+   b. Add customer to route
+
+   c. Mark as visited
+
+   d. Move to that location
+
+3. RETURN optimized route sequence
+
+4. Send waypoints to OpenRouteService
+   for turn-by-turn directions
+                        </div>
+                        <div class="highlight-box" style="margin-top: 1rem;">
+                            <strong>Performance:</strong> Fast execution on mobile devices - optimizes 10 points in < 2 seconds
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 19: Navigation Integration -->
+        <div data-presentation="book" class="slide content-slide" data-section="4">
+            <h2 class="slide-title">Navigation Options</h2>
+            <div data-presentation="book" class="slide-content">
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+                    <div class="card" style="border-top-color: #14535F;">
+                        <div class="card-title">Option 1: In-App Navigation</div>
+                        <div class="card-content">
+                            <p style="margin-bottom: 0.5rem;"><strong>Method:</strong> OpenRouteService Directions API</p>
+                            <p style="margin-bottom: 0.5rem;"><strong>Features:</strong></p>
+                            <ul style="margin-left: 1.5rem;">
+                                <li>Turn-by-turn instructions</li>
+                                <li>Route drawn on map</li>
+                                <li>Distance & time estimates</li>
+                                <li>Numbered waypoints</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card" style="border-top-color: #4CAF50;">
+                        <div class="card-title">Option 2: Google Maps</div>
+                        <div class="card-content">
+                            <p style="margin-bottom: 0.5rem;"><strong>Method:</strong> Construct Google Maps URL</p>
+                            <p style="margin-bottom: 0.5rem;"><strong>Action:</strong> Opens Google Maps app with optimized waypoints</p>
+                            <p style="margin-top: 0.5rem;"><strong>Benefit:</strong> Sellers can use their preferred navigation app</p>
+                        </div>
+                    </div>
+                    <div class="card" style="border-top-color: #C74634;">
+                        <div class="card-title">Option 3: Waze</div>
+                        <div class="card-content">
+                            <p style="margin-bottom: 0.5rem;"><strong>Method:</strong> Construct Waze URL</p>
+                            <p style="margin-bottom: 0.5rem;"><strong>Action:</strong> Opens Waze app with optimized waypoints</p>
+                            <p style="margin-top: 0.5rem;"><strong>Benefit:</strong> Real-time traffic and community alerts</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="highlight-box" style="margin-top: 1.5rem;">
+                    <strong>Flexibility:</strong> Sellers use preferred navigation tool while benefiting from optimized route sequence
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 5: RESULTS -->
+
+        <!-- Slide 20: Section Divider -->
+        <div data-presentation="book" class="slide divider-slide" data-hide-navbar="true">
+            <h2 class="divider-title">Results</h2>
+        </div>
+
+        <!-- SECTION 6: CONCLUSION -->
+
+        <!-- Slide 23: Section Divider -->
+        <div data-presentation="book" class="slide divider-slide" data-hide-navbar="true">
+            <h2 class="divider-title">Conclusion</h2>
+        </div>
+
+        <!-- Slide 24: Achievements -->
+        <div data-presentation="book" class="slide content-slide" data-section="6">
+            <h2 class="slide-title">Achievements</h2>
+            <div data-presentation="book" class="slide-content">
+                <div class="card-grid">
+                    <div class="card" style="border-top-color: #4CAF50;">
+                        <div class="card-title">Automated Address Management</div>
+                        <div class="card-content">Customer addresses captured once during registration and automatically flow to orders and route planning - eliminating repetitive manual data entry</div>
+                    </div>
+                    <div class="card" style="border-top-color: #0f766e;">
+                        <div class="card-title">Route Optimization</div>
+                        <div class="card-content">Implementation of TSP algorithm provides sellers with optimized delivery sequences, reducing travel distance and time</div>
+                    </div>
+                    <div class="card" style="border-top-color: #9C27B0;">
+                        <div class="card-title">Flexible Navigation</div>
+                        <div class="card-content">Integration with OpenRouteService, Google Maps, and Waze gives sellers multiple options for following optimized routes</div>
+                    </div>
+                    <div class="card" style="border-top-color: #FF9800;">
+                        <div class="card-title">Production Deployment</div>
+                        <div class="card-content">Complete system deployed and operational on cloud infrastructure (Vercel + MongoDB Atlas)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 25: Benefits -->
+        <div data-presentation="book" class="slide content-slide" data-section="6">
+            <h2 class="slide-title">Benefits</h2>
+            <div data-presentation="oracle" class="slide-content">
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+                    <div class="card">
+                        <div class="card-title">For Sellers</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>Save time - no manual address entry</li>
+                                <li>Reduce fuel costs with optimized routes</li>
+                                <li>Faster deliveries = more capacity</li>
+                                <li>Integrated workflow in one platform</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">For Customers</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>Faster delivery times</li>
+                                <li>Better service reliability</li>
+                                <li>One-time address setup</li>
+                                <li>Easy order tracking</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Technical Excellence</div>
+                        <div class="card-content">
+                            <ul style="margin-left: 1.5rem;">
+                                <li>Production-ready architecture</li>
+                                <li>Cloud-hosted scalability</li>
+                                <li>Modern tech stack (React, Flutter, Node.js)</li>
+                                <li>Real-world deployment</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 27: Future Work -->
+        <div data-presentation="book" class="slide content-slide" data-section="6">
+            <h2 class="slide-title">Future Work</h2>
+            <div data-presentation="book" class="slide-content">
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+                    <div class="card" style="border-top-color: #0f766e;">
+                        <div class="card-title">iOS Support</div>
+                        <div class="card-content">Extend mobile application to iOS devices using Flutter's cross-platform capabilities</div>
+                    </div>
+                    <div class="card" style="border-top-color: #4CAF50;">
+                        <div class="card-title">Manual Route Adjustment</div>
+                        <div class="card-content">Allow sellers to manually reorder waypoints based on local knowledge or real-time constraints</div>
+                    </div>
+                    <div class="card" style="border-top-color: #9C27B0;">
+                        <div class="card-title">Offline Capability</div>
+                        <div class="card-content">Add offline map caching and route calculation for areas with poor connectivity</div>
+                    </div>
+                    <div class="card" style="border-top-color: #FF9800;">
+                        <div class="card-title">Advanced Optimization</div>
+                        <div class="card-content">Implement more sophisticated algorithms (2-opt, genetic algorithms) for better route quality</div>
+                    </div>
+                    <div class="card" style="border-top-color: #C74634;">
+                        <div class="card-title">Real-Time Traffic</div>
+                        <div class="card-content">Integrate live traffic data to adjust routes dynamically</div>
+                    </div>
+                    <div class="card" style="border-top-color: #00BCD4;">
+                        <div class="card-title">Delivery Time Windows</div>
+                        <div class="card-content">Allow customers to specify preferred delivery time slots</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 29: Thank You -->
+        <div data-presentation="book" class="slide title-slide" data-section="6">
+            <h1 class="main-title">Thank You</h1>
+            <p class="subtitle" style="font-size: 2rem; margin-bottom: 3rem;">Questions & Discussion</p>
+            <div class="author-info" style="font-size: 1.5rem;">
+                <strong>Yassine DBAICHI</strong><br>
+                Book Marketplace Platform with Route Optimization<br>
+                Department of MIG - GIS Specialization<br>
+                Supervisor: Prof. Hatim LECHGAR<br>
+                École Hassania des Travaux Publics<br>
+                Academic Year 2024/2025
+            </div>
+            <div style="margin-top: 3rem; display: flex; gap: 3rem; align-items: center; justify-content: center; z-index: 10;">
+                <div style="width: 80px; height: 80px; background: white; border-radius: 1rem; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.5rem; color: #14535F;">EHTP</div>
+                <div style="width: 80px; height: 80px; background: white; border-radius: 1rem; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.25rem; color: #C74634;">GIS</div>
+            </div>
+        </div>
+
+
+
+    </div>
+
+    <script>
+        // Check if loaded in presenter view (iframe) or if user wants presenter mode
+        const urlParams = new URLSearchParams(window.location.search);
+        const isPresenterView = urlParams.get('view') === 'presenter';
+        const initialSlide = parseInt(urlParams.get('slide')) || 0;
+        const requestedMode = urlParams.get('mode');
+
+        // If user requested presenter mode, redirect to presenter.html
+        if (requestedMode === 'presenter' && !isPresenterView) {
+            window.location.href = `presenter.html?slide=${initialSlide}`;
+        }
+
+        let currentSlide = initialSlide;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        const navbar = document.getElementById('navbar');
+        const slideCounter = document.getElementById('slideCounter');
+
+        // Sync channel for communication between projector and presenter windows
+        let syncChannel = null;
+
+        try {
+            syncChannel = new BroadcastChannel('presentation-sync');
+            console.log('✅ BroadcastChannel created successfully');
+
+            // Listen for slide changes from other windows
+            syncChannel.onmessage = (event) => {
+                console.log('📡 Received message:', event.data);
+                if (event.data.type === 'slide-change' && event.data.slide !== currentSlide) {
+                    console.log('🔄 Syncing to slide:', event.data.slide);
+                    currentSlide = event.data.slide;
+                    updateSlide();
+                }
+            };
+        } catch (error) {
+            console.error('❌ BroadcastChannel not supported:', error);
+        }
+
+        // Hide UI elements in presenter iframe view
+        if (isPresenterView) {
+            console.log('Presenter view mode detected - hiding navbar and controls');
+
+            // Force hide navbar with !important
+            if (navbar) {
+                navbar.style.setProperty('display', 'none', 'important');
+                navbar.style.setProperty('visibility', 'hidden', 'important');
+                navbar.style.setProperty('opacity', '0', 'important');
+                navbar.style.setProperty('height', '0', 'important');
+                navbar.style.setProperty('overflow', 'hidden', 'important');
+            }
+
+            if (slideCounter) slideCounter.style.display = 'none';
+            const notesBtn = document.getElementById('notesToggle');
+            if (notesBtn) notesBtn.style.display = 'none';
+            const notesPanel = document.getElementById('notesPanel');
+            if (notesPanel) notesPanel.style.display = 'none';
+
+            // Also hide any other UI elements that might appear
+            document.body.style.paddingTop = '0';
+        }
+
+        // Define sections for each presentation separately
+        // Sections will be selected dynamically based on slide's data-presentation attribute
+
+        const oracleSections = [
+            { start: 0, end: 1, name: '' },      // Intro: Title + Agenda (no button)
+            { start: 2, end: 7, name: 'Company & Team' },          // Divider + slides 3-7
+            { start: 8, end: 15, name: 'Problem & Solution' },     // Divider + slides 9-15
+            { start: 16, end: 21, name: 'Project Management' },    // Divider + slides 17-21
+            { start: 22, end: 33, name: 'Technical Implementation' }, // Divider + slides 23-33
+            { start: 34, end: 39, name: 'Results & Validations' }, // Divider + slides 35-39
+            { start: 40, end: 42, name: 'Future Enhancements' }    // Divider + slides 41-42
+        ];
+
+        const bookSections = [
+            { start: 44, end: 45, name: '' },      // Intro: Title + Agenda (no button)
+            { start: 46, end: 50, name: 'Introduction' },       // Divider + slides 47-50
+            { start: 51, end: 53, name: 'System Conception' },  // Divider + slides 52-53
+            { start: 54, end: 56, name: 'Workflow' },           // Divider + slides 55-56
+            { start: 57, end: 62, name: 'Implementation' },     // Divider + slides 58-62
+            { start: 63, end: 63, name: 'Results' },            // Divider (slide 63)
+            { start: 64, end: 68, name: 'Conclusion' }          // Divider + slides 65-68
+        ];
+
+        // Current active sections (will be set dynamically based on data-presentation attribute)
+        let sections = oracleSections;
+        let currentPresentation = 'oracle'; // Will be auto-detected // 'oracle' or 'book'
+
+        // Notes Management (for presenter view only)
+        const API_BASE_URL = 'http://localhost:3000/api';
+        const PRESENTATION_ID = 'merged-portfolio-2025';
+        let notesData = {}; // Cache of all notes for presenter view
+
+        // Load all notes from MongoDB on startup
+        async function loadAllNotes() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/notes/${PRESENTATION_ID}`);
+                const notes = await response.json();
+
+                // Store in cache
+                notes.forEach(note => {
+                    notesData[note.slideIndex] = note.notes;
+                    // Also set data-notes attribute for presenter view compatibility
+                    if (slides[note.slideIndex]) {
+                        slides[note.slideIndex].dataset.notes = note.notes;
+                    }
+                });
+
+                console.log(`Loaded ${notes.length} notes from MongoDB`);
+            } catch (error) {
+                console.warn('Could not load notes from MongoDB:', error);
+            }
+        }
+
+        // Function to rebuild navbar based on current presentation
+        function rebuildNavbar() {
+            // Determine which presentation we're in by checking the current slide's data attribute
+            const currentSlideElement = slides[currentSlide];
+            const slidePresentation = currentSlideElement?.getAttribute('data-presentation') || 'oracle';
+            
+            console.log(`🔍 Current slide ${currentSlide}: presentation="${slidePresentation}"`);
+            
+            // Only rebuild if presentation changed (or first time)
+            if (slidePresentation !== currentPresentation || navbar.children.length === 0) {
+                console.log(`🔄 Switching from ${currentPresentation} to ${slidePresentation} presentation`);
+                currentPresentation = slidePresentation;
+                sections = currentPresentation === 'oracle' ? oracleSections : bookSections;
+
+                // Clear and rebuild navbar
+                navbar.innerHTML = '';
+
+                // Build navbar buttons
+                sections.forEach((section, index) => {
+                    if (section.name) { // Only create button if section has a name
+                        const button = document.createElement('button');
+                        button.textContent = section.name;
+                        button.onclick = () => goToSection(index);
+                        navbar.appendChild(button);
+                    }
+                });
+
+                console.log(`✅ Navbar rebuilt for ${currentPresentation} presentation with ${navbar.children.length} buttons`);
+            }
+        }
+
+        function updateSlide() {
+            const currentSlideElement = slides[currentSlide];
+            const presentation = currentSlideElement?.getAttribute('data-presentation') || 'unknown';
+            console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+            console.log(`📍 SLIDE ${currentSlide + 1}/${totalSlides}`);
+            console.log(`📊 Presentation: ${presentation}`);
+            console.log(`🎯 Current navbar: ${currentPresentation}`);
+
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active');
+                if (index === currentSlide) {
+                    slide.classList.add('active');
+                }
+            });
+
+            // Update slide counter
+            slideCounter.textContent = `${currentSlide + 1} / ${totalSlides}`;
+
+            // Hide navbar for divider slides
+            if (currentSlideElement.dataset.hideNavbar === 'true') {
+                navbar.style.display = 'none';
+            } else {
+                navbar.style.display = 'flex';
+            }
+
+            // Rebuild navbar if presentation changed
+            rebuildNavbar();
+
+            // Update active section in navbar
+            updateActiveSection();
+
+            // Notify presenter window of slide change
+            if (presenterWindow && !presenterWindow.closed) {
+                presenterWindow.postMessage({
+                    type: 'slide-change',
+                    slide: currentSlide
+                }, '*');
+            }
+        }
+
+        function updateActiveSection() {
+            const navButtons = navbar.querySelectorAll('button');
+            let activeSectionIndex = -1;
+            let buttonIndex = 0;
+
+            // Determine which section we're in
+            for (let i = 0; i < sections.length; i++) {
+                if (currentSlide >= sections[i].start && currentSlide <= sections[i].end) {
+                    activeSectionIndex = i;
+                    break;
+                }
+            }
+
+            // Update button styles - accounting for sections without buttons (intro slides)
+            navButtons.forEach((button, idx) => {
+                button.classList.remove('active-section');
+            });
+
+            // Find which button corresponds to active section
+            let btnIdx = 0;
+            for (let i = 0; i < sections.length; i++) {
+                if (sections[i].name) { // This section has a button
+                    if (i === activeSectionIndex) {
+                        navButtons[btnIdx]?.classList.add('active-section');
+                        break;
+                    }
+                    btnIdx++;
+                }
+            }
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                currentSlide++;
+                updateSlide();
+                // Broadcast to other windows
+                if (syncChannel) {
+                    console.log('📤 Broadcasting next slide:', currentSlide);
+                    syncChannel.postMessage({ type: 'slide-change', slide: currentSlide });
+                }
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSlide();
+                // Broadcast to other windows
+                if (syncChannel) {
+                    console.log('📤 Broadcasting prev slide:', currentSlide);
+                    syncChannel.postMessage({ type: 'slide-change', slide: currentSlide });
+                }
+            }
+        }
+
+        function goToSection(sectionNum) {
+            if (sectionNum >= 0 && sectionNum < sections.length) {
+                currentSlide = sections[sectionNum].start;
+                updateSlide();
+                // Broadcast to other windows
+                syncChannel.postMessage({ type: 'slide-change', slide: currentSlide });
+            }
+        }
+
+        // Presenter view variables
+        let presenterWindow = null;
+        let startTime = null;
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                nextSlide();
+                if (presenterWindow && !presenterWindow.closed) {
+                    presenterWindow.postMessage({type: 'slide-change', slide: currentSlide}, '*');
+                }
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                prevSlide();
+                if (presenterWindow && !presenterWindow.closed) {
+                    presenterWindow.postMessage({type: 'slide-change', slide: currentSlide}, '*');
+                }
+            } else if (e.key === 'Home') {
+                e.preventDefault();
+                currentSlide = 0;
+                updateSlide();
+                if (presenterWindow && !presenterWindow.closed) {
+                    presenterWindow.postMessage({type: 'slide-change', slide: currentSlide}, '*');
+                }
+            } else if (e.key === 'End') {
+                e.preventDefault();
+                currentSlide = totalSlides - 1;
+                updateSlide();
+                if (presenterWindow && !presenterWindow.closed) {
+                    presenterWindow.postMessage({type: 'slide-change', slide: currentSlide}, '*');
+                }
+            } else if (e.key === 'p' || e.key === 'P') {
+                e.preventDefault();
+                openPresenterView();
+            }
+        });
+
+        // Switch current window to presenter mode (for the screen that should show presenter view)
+        function switchToPresenterMode() {
+            // Redirect this window to presenter view mode
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.set('mode', 'presenter');
+            currentUrl.searchParams.set('slide', currentSlide);
+            window.location.href = currentUrl.toString();
+        }
+
+        // Open presenter view in new window (old behavior - still available)
+        async function openPresenterView() {
+            if (presenterWindow && !presenterWindow.closed) {
+                presenterWindow.focus();
+                return;
+            }
+
+            // Make sure notes are loaded first
+            if (Object.keys(notesData).length === 0) {
+                console.log('Loading notes before opening presenter view...');
+                await loadAllNotes();
+            }
+
+            startTime = Date.now();
+            presenterWindow = window.open('presenter.html', 'Presenter View', 'width=1200,height=800');
+
+            // Wait for presenter window to be ready, then send initial state
+            window.presenterMessageHandler = (event) => {
+                if (event.data.type === 'presenter-ready') {
+                    sendPresenterData();
+                } else if (event.data.type === 'navigate') {
+                    if (event.data.direction === 'next') {
+                        nextSlide();
+                    } else if (event.data.direction === 'prev') {
+                        prevSlide();
+                    }
+                } else if (event.data.type === 'reset-timer') {
+                    startTime = Date.now();
+                } else if (event.data.type === 'note-updated') {
+                    // Update note in local cache when edited from presenter view
+                    const slideIndex = event.data.slide;
+                    const notes = event.data.notes;
+                    console.log(`Note updated from presenter for slide ${slideIndex}:`, notes);
+
+                    notesData[slideIndex] = notes;
+                    if (slides[slideIndex]) {
+                        slides[slideIndex].dataset.notes = notes;
+                    }
+                }
+            };
+            window.addEventListener('message', window.presenterMessageHandler);
+
+            // Also send after a delay as backup
+            setTimeout(() => {
+                sendPresenterData();
+            }, 500);
+
+            // Update timer every second
+            if (!window.presenterTimerInterval) {
+                window.presenterTimerInterval = setInterval(() => {
+                    if (presenterWindow && !presenterWindow.closed && startTime) {
+                        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                        presenterWindow.postMessage({type: 'timer', elapsed: elapsed}, '*');
+                    }
+                }, 1000);
+            }
+        }
+
+        function sendPresenterData() {
+            if (presenterWindow && !presenterWindow.closed) {
+                console.log('=== SENDING PRESENTER DATA ===');
+                console.log('notesData object:', notesData);
+                console.log('notesData entries:', Object.keys(notesData).length);
+
+                const slidesWithNotes = Array.from(slides).map((slide, index) => {
+                    const fromCache = notesData[index];
+                    const fromDataset = slide.dataset.notes;
+                    const finalNotes = fromCache || fromDataset || '';
+
+                    if (index < 5) {  // Debug first 5 slides
+                        console.log(`Slide ${index}:`);
+                        console.log('  - fromCache:', fromCache);
+                        console.log('  - fromDataset:', fromDataset);
+                        console.log('  - final:', finalNotes);
+                    }
+
+                    return {
+                        title: slide.querySelector('.slide-title, .main-title, .divider-title')?.textContent || `Slide ${index + 1}`,
+                        notes: finalNotes
+                    };
+                });
+
+                console.log('Sending', slidesWithNotes.length, 'slides to presenter');
+                presenterWindow.postMessage({
+                    type: 'init',
+                    slide: currentSlide,
+                    totalSlides: totalSlides,
+                    slides: slidesWithNotes
+                }, '*');
+            }
+        }
+
+
+        // Initialize
+        updateSlide();
+        loadAllNotes(); // Load notes from MongoDB on startup
+    </script>
+
+</body>
+</html>

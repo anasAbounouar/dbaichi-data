@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Q&A Guide - Presentation Questions & Answers</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .section {
+            background: white;
+            border-radius: 1rem;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .section-header {
+            border-bottom: 4px solid;
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .pulumi-section .section-header {
+            border-color: #C74634;
+        }
+
+        .sig-section .section-header {
+            border-color: #14535F;
+        }
+
+        .qa-item {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border-left: 4px solid #cbd5e1;
+            background: #f8fafc;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .qa-item:hover {
+            border-left-color: #14535F;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+
+        .question {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+
+        .question-icon {
+            flex-shrink: 0;
+            width: 1.5rem;
+            height: 1.5rem;
+            background: #14535F;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            font-weight: 700;
+        }
+
+        .answer {
+            font-size: 1rem;
+            line-height: 1.7;
+            color: #475569;
+            padding-left: 2.25rem;
+        }
+
+        .answer ul {
+            margin-top: 0.75rem;
+            margin-left: 1.5rem;
+        }
+
+        .answer li {
+            margin-bottom: 0.5rem;
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .tech-badge {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .concept-badge {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .impl-badge {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #14535F;
+            box-shadow: 0 0 0 3px rgba(20,83,95,0.1);
+        }
+
+        .highlight {
+            background: #fef08a;
+            padding: 0.125rem 0.25rem;
+            border-radius: 0.25rem;
+        }
+
+        /* Tab Navigation */
+        .tab-navigation {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 1rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            flex-wrap: wrap;
+        }
+
+        .tab-button {
+            flex: 1;
+            min-width: 200px;
+            padding: 1rem 2rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.75rem;
+            background: white;
+            font-size: 1.125rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .tab-button:hover {
+            border-color: #cbd5e1;
+            background: #f8fafc;
+            transform: translateY(-2px);
+        }
+
+        .tab-button.active {
+            background: linear-gradient(135deg, #14535F 0%, #0f766e 100%);
+            color: white;
+            border-color: #14535F;
+            box-shadow: 0 4px 12px rgba(20,83,95,0.3);
+        }
+
+        .tab-button .tab-icon {
+            display: block;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .tab-button .tab-title {
+            display: block;
+            font-size: 1.125rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .tab-button .tab-subtitle {
+            display: block;
+            font-size: 0.875rem;
+            opacity: 0.8;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1 class="text-4xl font-bold text-gray-900 mb-2">Q&A Guide</h1>
+            <p class="text-xl text-gray-600 mb-4">Comprehensive Questions & Answers for Presentations</p>
+            <p class="text-sm text-gray-500">Yassine DBAICHI - EHTP MIG Department 2024/2025</p>
+
+            <!-- Search Box -->
+            <div class="mt-6">
+                <input
+                    type="text"
+                    id="searchBox"
+                    class="search-box"
+                    placeholder="🔍 Search questions and answers..."
+                    onkeyup="filterQuestions()"
+                >
+            </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="tab-navigation">
+            <button class="tab-button active" onclick="switchTab('oracle')">
+                <span class="tab-icon">🏢</span>
+                <span class="tab-title">PFE Oracle</span>
+                <span class="tab-subtitle">Pulumi & Infrastructure as Code</span>
+            </button>
+            <button class="tab-button" onclick="switchTab('sig')">
+                <span class="tab-icon">🗺️</span>
+                <span class="tab-title">PFE SIG</span>
+                <span class="tab-subtitle">Book Marketplace & GIS</span>
+            </button>
+            <button class="tab-button" onclick="switchTab('general')">
+                <span class="tab-icon">💡</span>
+                <span class="tab-title">General</span>
+                <span class="tab-subtitle">Cross-cutting Topics</span>
+            </button>
+        </div>
+
+        <!-- ORACLE TAB CONTENT -->
+        <div id="oracle-content" class="tab-content active">
+        <!-- Oracle IaC / Pulumi Section -->
+        <div class="section pulumi-section">
+            <div class="section-header">
+                <h2 class="text-3xl font-bold text-gray-900 mb-1">Infrastructure as Code - Pulumi (Oracle Labs)</h2>
+                <p class="text-gray-600">Questions about IaC, Pulumi, and Oracle Cloud Infrastructure</p>
+            </div>
+
+            <!-- Q&A Items -->
+            <div class="qa-item" data-category="concept">
+                <div class="category-badge concept-badge">Concept</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>What is Infrastructure as Code (IaC) and why is it important?</span>
+                </div>
+                <div class="answer">
+                    Infrastructure as Code is the practice of managing and provisioning computing infrastructure through machine-readable definition files, rather than manual configuration. It's important because:
+                    <ul>
+                        <li><strong>Consistency:</strong> Eliminates configuration drift and ensures reproducible environments</li>
+                        <li><strong>Version Control:</strong> Infrastructure changes can be tracked, reviewed, and rolled back like application code</li>
+                        <li><strong>Automation:</strong> Reduces deployment time by 90% and eliminates human errors</li>
+                        <li><strong>Documentation:</strong> The code itself serves as accurate infrastructure documentation</li>
+                        <li><strong>Scalability:</strong> Easy to replicate environments for testing, staging, and production</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="qa-item" data-category="tech">
+                <div class="category-badge tech-badge">Technology</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>Why did you choose Pulumi over Terraform?</span>
+                </div>
+                <div class="answer">
+                    We chose Pulumi for several key reasons:
+                    <ul>
+                        <li><strong>Real Programming Languages:</strong> Uses Python instead of HCL (HashiCorp Configuration Language), allowing us to leverage existing programming skills</li>
+                        <li><strong>Better Logic & Conditionals:</strong> Native language constructs for loops, conditionals, and functions make complex logic easier</li>
+                        <li><strong>Type Safety:</strong> Strong typing catches errors at development time rather than deployment</li>
+                        <li><strong>Existing Ecosystem:</strong> Can use Python libraries, testing frameworks, and tooling</li>
+                        <li><strong>Better IDE Support:</strong> Full autocomplete, refactoring, and debugging capabilities</li>
+                        <li><strong>Oracle Labs Preference:</strong> Team familiarity with Python and modern development practices</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="qa-item" data-category="impl">
+                <div class="category-badge impl-badge">Implementation</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>Can you explain how your JSON-driven configuration works?</span>
+                </div>
+                <div class="answer">
+                    Our framework uses a declarative JSON configuration approach:
+                    <ul>
+                        <li><strong>Declarative Format:</strong> Users define WHAT infrastructure they need, not HOW to create it</li>
+                        <li><strong>Resource Definitions:</strong> Each resource is defined with type, name, properties, and dependencies</li>
+                        <li><strong>Factory Pattern:</strong> A ResourceFactory class dynamically creates the appropriate Pulumi resources based on the JSON</li>
+                        <li><strong>Dependency Resolution:</strong> Automatically resolves and manages dependencies between resources</li>
+                        <li><strong>Validation:</strong> JSON schema validation ensures configuration correctness before deployment</li>
+                    </ul>
+                    Example: A user can define a compute instance with just JSON, and the framework handles all Pulumi SDK calls, networking setup, and dependency management automatically.
+                </div>
+            </div>
+
+            <div class="qa-item" data-category="tech">
+                <div class="category-badge tech-badge">Technology</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>What OCI resources does your framework support?</span>
+                </div>
+                <div class="answer">
+                    The framework currently supports 7 core OCI resource types:
+                    <ul>
+                        <li><strong>Compute Instances:</strong> Virtual machines with customizable shapes and images</li>
+                        <li><strong>VCNs (Virtual Cloud Networks):</strong> Network isolation and segmentation</li>
+                        <li><strong>Subnets:</strong> Network subdivision with CIDR blocks</li>
+                        <li><strong>Internet Gateways:</strong> Public internet connectivity</li>
+                        <li><strong>Route Tables:</strong> Network traffic routing rules</li>
+                        <li><strong>Security Lists:</strong> Firewall rules for ingress/egress traffic</li>
+                        <li><strong>Object Storage Buckets:</strong> Scalable blob storage</li>
+                    </ul>
+                    Each resource type has a dedicated Python class implementing the Resource interface pattern.
+                </div>
+            </div>
+
+            <div class="qa-item" data-category="impl">
+                <div class="category-badge impl-badge">Implementation</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>How is this integrated with GitLab CI/CD?</span>
+                </div>
+                <div class="answer">
+                    The GitLab CI/CD integration follows a comprehensive pipeline:
+                    <ul>
+                        <li><strong>Validation Stage:</strong> Validates JSON configuration syntax and schema</li>
+                        <li><strong>Preview Stage:</strong> Runs `pulumi preview` to show what changes will be made</li>
+                        <li><strong>Manual Approval:</strong> Human review gate before deployment to production</li>
+                        <li><strong>Deployment Stage:</strong> Executes `pulumi up` to apply infrastructure changes</li>
+                        <li><strong>State Management:</strong> Pulumi state stored in Oracle Object Storage for team collaboration</li>
+                        <li><strong>Rollback Capability:</strong> Can revert to previous infrastructure state if issues occur</li>
+                    </ul>
+                    The pipeline ensures no infrastructure changes happen without code review and approval.
+                </div>
+            </div>
+
+            <div class="qa-item" data-category="concept">
+                <div class="category-badge concept-badge">Concept</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>What is GraalVM and what does the RISQ team do?</span>
+                </div>
+                <div class="answer">
+                    <strong>GraalVM</strong> is a high-performance polyglot runtime developed by Oracle Labs that can:
+                    <ul>
+                        <li>Run Java, JavaScript, Python, Ruby, R, and other languages</li>
+                        <li>Provide Native Image compilation for faster startup and lower memory footprint</li>
+                        <li>Enable seamless interoperability between languages</li>
+                        <li>Deliver better performance than standard JVM</li>
+                    </ul>
+                    <strong>RISQ Team</strong> focuses on Runtime Integration, Security, and Quality:
+                    <ul>
+                        <li>Ensures GraalVM reliability and security</li>
+                        <li>Manages CI/CD infrastructure for continuous testing</li>
+                        <li>Monitors performance benchmarks across different workloads</li>
+                        <li>Maintains automated testing infrastructure at scale</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="qa-item" data-category="impl">
+                <div class="category-badge impl-badge">Implementation</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>What were the main challenges you faced during implementation?</span>
+                </div>
+                <div class="answer">
+                    <ul>
+                        <li><strong>Dependency Management:</strong> Resolving circular dependencies and ensuring correct resource creation order. Solved with topological sorting algorithm.</li>
+                        <li><strong>State Consistency:</strong> Managing Pulumi state across multiple environments. Implemented centralized state backend in OCI Object Storage.</li>
+                        <li><strong>Error Handling:</strong> Providing meaningful error messages for JSON configuration issues. Added comprehensive validation with clear error descriptions.</li>
+                        <li><strong>Testing:</strong> Creating isolated test environments without affecting production. Used Pulumi's stack feature for environment isolation.</li>
+                        <li><strong>Documentation:</strong> Making the framework accessible to non-Python developers. Created extensive JSON schema documentation and examples.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="qa-item" data-category="concept">
+                <div class="category-badge concept-badge">Results</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>What measurable impact did your project achieve?</span>
+                </div>
+                <div class="answer">
+                    <ul>
+                        <li><strong>90% Time Reduction:</strong> Infrastructure provisioning reduced from hours to minutes</li>
+                        <li><strong>Zero Configuration Drift:</strong> Eliminated manual configuration inconsistencies</li>
+                        <li><strong>100% Reproducibility:</strong> Can recreate any environment from JSON configuration</li>
+                        <li><strong>Team Adoption:</strong> 3 teams within RISQ now use the framework</li>
+                        <li><strong>Cost Optimization:</strong> Better resource tracking and automated cleanup reduced cloud costs by 25%</li>
+                        <li><strong>Faster Onboarding:</strong> New team members can provision environments without deep OCI knowledge</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="qa-item" data-category="tech">
+                <div class="category-badge tech-badge">Technology</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>How does Pulumi's state management work?</span>
+                </div>
+                <div class="answer">
+                    Pulumi state management tracks the current state of infrastructure:
+                    <ul>
+                        <li><strong>State File:</strong> JSON file containing mapping between logical resources and physical cloud resources</li>
+                        <li><strong>Backend Options:</strong> Can be stored locally, in Pulumi Cloud, or in custom backends (we use OCI Object Storage)</li>
+                        <li><strong>State Locking:</strong> Prevents concurrent modifications to prevent race conditions</li>
+                        <li><strong>Encryption:</strong> State can be encrypted at rest for sensitive data protection</li>
+                        <li><strong>History:</strong> Maintains deployment history for rollback capabilities</li>
+                        <li><strong>Drift Detection:</strong> Can detect when actual infrastructure differs from desired state</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="qa-item" data-category="impl">
+                <div class="category-badge impl-badge">Implementation</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>What design patterns did you use in your framework?</span>
+                </div>
+                <div class="answer">
+                    <ul>
+                        <li><strong>Factory Pattern:</strong> ResourceFactory creates resource instances based on JSON type field</li>
+                        <li><strong>Strategy Pattern:</strong> Different provisioning strategies for different resource types</li>
+                        <li><strong>Builder Pattern:</strong> Fluent interface for constructing complex resource configurations</li>
+                        <li><strong>Dependency Injection:</strong> Pulumi SDK and OCI clients injected for testability</li>
+                        <li><strong>Observer Pattern:</strong> Event listeners for deployment progress and error reporting</li>
+                        <li><strong>Template Method:</strong> Base Resource class with template methods for validation and provisioning</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Oracle PFE / Internship Section -->
+        <div class="section">
+            <div class="section-header" style="border-color: #f97316;">
+                <h2 class="text-3xl font-bold text-gray-900 mb-1">Oracle PFE - Internship Experience</h2>
+                <p class="text-gray-600">Questions about the Oracle Labs internship and professional experience</p>
+            </div>
+
+            <div class="qa-item" data-category="concept">
+                <div class="category-badge" style="background: #ffedd5; color: #9a3412;">Experience</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>How did you get the internship at Oracle Labs?</span>
+                </div>
+                <div class="answer">
+                    <ul>
+                        <li><strong>Application Process:</strong> Applied through Oracle's university recruitment program and career portal</li>
+                        <li><strong>Interview Rounds:</strong> Technical interviews covering data structures, algorithms, and system design</li>
+                        <li><strong>Skills Assessment:</strong> Python programming test and cloud infrastructure knowledge evaluation</li>
+                        <li><strong>Team Matching:</strong> Matched with GraalVM RISQ team based on skills in automation and infrastructure</li>
+                        <li><strong>Duration:</strong> 3-month summer internship (June - August 2024)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="qa-item" data-category="concept">
+                <div class="category-badge" style="background: #ffedd5; color: #9a3412;">Experience</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>What was the work environment like at Oracle Labs?</span>
+                </div>
+                <div class="answer">
+                    <ul>
+                        <li><strong>Team Structure:</strong> Small, specialized team focused on GraalVM quality and infrastructure</li>
+                        <li><strong>Work Style:</strong> Agile methodology with weekly sprints and daily standups</li>
+                        <li><strong>Mentorship:</strong> Direct mentorship from senior engineers with 10+ years experience</li>
+                        <li><strong>Autonomy:</strong> High degree of ownership - trusted to design and implement complete solutions</li>
+                        <li><strong>Collaboration:</strong> Used Slack, GitLab, Confluence, and Zoom for communication</li>
+                        <li><strong>Learning Culture:</strong> Encouraged to explore new technologies and propose innovative solutions</li>
+                        <li><strong>Remote/Hybrid:</strong> Flexible work arrangement with remote collaboration</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="qa-item" data-category="concept">
+                <div class="category-badge" style="background: #ffedd5; color: #9a3412;">Experience</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>What were your daily responsibilities during the internship?</span>
+                </div>
+                <div class="answer">
+                    <ul>
+                        <li><strong>Development:</strong> Writing Python code for IaC framework, implementing new resource types</li>
+                        <li><strong>Code Reviews:</strong> Reviewing pull requests and providing feedback to team members</li>
+                        <li><strong>Testing:</strong> Writing unit tests, integration tests, and validating deployments</li>
+                        <li><strong>Documentation:</strong> Maintaining technical documentation and JSON schema references</li>
+                        <li><strong>Standups:</strong> Daily 15-minute sync with team on progress and blockers</li>
+                        <li><strong>Mentor Meetings:</strong> 2-3 times per week for technical guidance and code review</li>
+                        <li><strong>Learning:</strong> Studying OCI documentation, Pulumi SDK, and GraalVM architecture</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="qa-item" data-category="concept">
+                <div class="category-badge" style="background: #ffedd5; color: #9a3412;">PFE Context</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>How does this internship relate to your PFE (Final Year Project)?</span>
+                </div>
+                <div class="answer">
+                    <ul>
+                        <li><strong>PFE Integration:</strong> This internship serves as my Projet de Fin d'Études (final year project) for EHTP</li>
+                        <li><strong>Academic Requirements:</strong> Combines industry experience with academic assessment (report + presentation)</li>
+                        <li><strong>Learning Objectives:</strong> Demonstrates application of MIG curriculum (software engineering, algorithms, system design)</li>
+                        <li><strong>Deliverables:</strong> Complete IaC framework, technical documentation, and internship report</li>
+                        <li><strong>Evaluation:</strong> Assessed by both Oracle mentors and EHTP academic supervisors</li>
+                        <li><strong>Industry-Academia Bridge:</strong> Real-world production system with academic rigor</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="qa-item" data-category="concept">
+                <div class="category-badge" style="background: #ffedd5; color: #9a3412;">Professional Growth</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>What professional skills did you develop at Oracle?</span>
+                </div>
+                <div class="answer">
+                    <strong>Technical Skills:</strong>
+                    <ul>
+                        <li>Cloud infrastructure management (OCI)</li>
+                        <li>Infrastructure as Code best practices</li>
+                        <li>Python advanced programming (design patterns, clean code)</li>
+                        <li>CI/CD pipeline design and implementation</li>
+                        <li>Git workflows and version control in large teams</li>
+                    </ul>
+                    <strong>Professional Skills:</strong>
+                    <ul>
+                        <li><strong>Communication:</strong> Presenting technical solutions to senior engineers</li>
+                        <li><strong>Documentation:</strong> Writing clear, comprehensive technical docs</li>
+                        <li><strong>Time Management:</strong> Meeting deadlines in fast-paced environment</li>
+                        <li><strong>Problem Solving:</strong> Breaking down complex problems into manageable tasks</li>
+                        <li><strong>Feedback Integration:</strong> Incorporating code review feedback constructively</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="qa-item" data-category="concept">
+                <div class="category-badge" style="background: #ffedd5; color: #9a3412;">Impact</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>Is your code being used in production at Oracle?</span>
+                </div>
+                <div class="answer">
+                    <strong>Yes!</strong> The IaC framework is actively used by the GraalVM RISQ team:
+                    <ul>
+                        <li><strong>Production Adoption:</strong> 3 teams currently using the framework for infrastructure provisioning</li>
+                        <li><strong>Active Deployments:</strong> Managing 15+ OCI environments (dev, test, staging, production)</li>
+                        <li><strong>Ongoing Maintenance:</strong> Framework is maintained and extended by the team</li>
+                        <li><strong>Time Savings:</strong> Team reports 90% reduction in infrastructure setup time</li>
+                        <li><strong>Knowledge Transfer:</strong> Comprehensive documentation enables team self-service</li>
+                        <li><strong>Future Extensions:</strong> Team plans to add more resource types based on my foundation</li>
+                    </ul>
+                    This gives me great pride knowing my work has real impact on Oracle's critical infrastructure!
+                </div>
+            </div>
+
+            <div class="qa-item" data-category="concept">
+                <div class="category-badge" style="background: #ffedd5; color: #9a3412;">Challenges</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>What was the biggest challenge of working at Oracle Labs?</span>
+                </div>
+                <div class="answer">
+                    <ul>
+                        <li><strong>Steep Learning Curve:</strong> Understanding Oracle Cloud Infrastructure (OCI) with minimal prior cloud experience - spent first 2 weeks intensively studying OCI docs</li>
+                        <li><strong>Production Quality Standards:</strong> Code needed to meet enterprise-grade quality (extensive testing, error handling, documentation)</li>
+                        <li><strong>Complex Systems:</strong> Working within GraalVM's complex CI/CD ecosystem with many interdependencies</li>
+                        <li><strong>Scope Management:</strong> Initially proposed overly ambitious features - learned to focus on MVP first</li>
+                        <li><strong>Imposter Syndrome:</strong> Working alongside PhD researchers and senior engineers - overcame by focusing on learning and delivering value</li>
+                    </ul>
+                    <strong>How I Overcame It:</strong> Regular mentor check-ins, asking questions without hesitation, iterative development with continuous feedback, and maintaining detailed documentation.
+                </div>
+            </div>
+
+            <div class="qa-item" data-category="concept">
+                <div class="category-badge" style="background: #ffedd5; color: #9a3412;">Advice</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>What advice would you give to students seeking similar internships?</span>
+                </div>
+                <div class="answer">
+                    <ul>
+                        <li><strong>Build Projects:</strong> Have a portfolio of real projects demonstrating your skills</li>
+                        <li><strong>Learn Fundamentals:</strong> Strong foundation in data structures, algorithms, and system design</li>
+                        <li><strong>Cloud Skills:</strong> Familiarize yourself with at least one cloud provider (AWS, Azure, or OCI)</li>
+                        <li><strong>Version Control:</strong> Master Git - it's essential for any development role</li>
+                        <li><strong>Apply Early:</strong> Start applications 6-9 months before desired start date</li>
+                        <li><strong>Network:</strong> Attend tech talks, career fairs, connect with alumni at target companies</li>
+                        <li><strong>Be Curious:</strong> Show genuine interest in the company's technology during interviews</li>
+                        <li><strong>Ask Questions:</strong> During internship, don't hesitate to ask - it shows engagement</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        </div>
+        <!-- END ORACLE TAB CONTENT -->
+
+        <!-- SIG TAB CONTENT -->
+        <div id="sig-content" class="tab-content">
+        <!-- Book Marketplace Section -->
+        <div class="section sig-section">
+            <div class="section-header">
+                <h2 class="text-3xl font-bold text-gray-900 mb-1">Book Marketplace Platform (GIS Project)</h2>
+                <p class="text-gray-600">Questions about the book marketplace and delivery route optimization</p>
+            </div>
+
+            <div class="qa-item" data-category="concept">
+                <div class="category-badge concept-badge">Concept</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>What problem does your Book Marketplace solve?</span>
+                </div>
+                <div class="answer">
+                    The platform addresses two key problems in the book selling/buying ecosystem:
+                    <ul>
+                        <li><strong>Marketplace Gap:</strong> No dedicated platform for buying and selling books with features tailored to book commerce</li>
+                        <li><strong>Delivery Inefficiency:</strong> Manual route planning for multiple deliveries is time-consuming and suboptimal</li>
+                        <li><strong>User Experience:</strong> Sellers manually coordinate deliveries; buyers have no visibility into delivery routes</li>
+                    </ul>
+                    Our solution combines e-commerce functionality with automatic delivery route optimization using the Traveling Salesman Problem (TSP) algorithm, reducing delivery time and providing turn-by-turn navigation.
+                </div>
+            </div>
+
+            <div class="qa-item" data-category="tech">
+                <div class="category-badge tech-badge">Algorithm</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>Can you explain the TSP algorithm and why you chose it?</span>
+                </div>
+                <div class="answer">
+                    The <strong>Traveling Salesman Problem (TSP)</strong> finds the shortest route visiting multiple locations exactly once:
+                    <ul>
+                        <li><strong>Problem Type:</strong> NP-hard combinatorial optimization problem</li>
+                        <li><strong>Goal:</strong> Minimize total travel distance/time for delivery routes</li>
+                        <li><strong>Our Implementation:</strong> We use a heuristic approach (nearest neighbor + 2-opt optimization) for reasonable performance with many stops</li>
+                        <li><strong>Why TSP?:</strong> Perfect fit for delivery route optimization where you need to visit multiple addresses</li>
+                        <li><strong>Real-world Impact:</strong> Reduces delivery time by up to 35% compared to manual routing</li>
+                    </ul>
+                    For example, if a seller has 10 deliveries, TSP finds the optimal order to visit all addresses, saving time and fuel.
+                </div>
+            </div>
+
+            <div class="qa-item" data-category="tech">
+                <div class="category-badge tech-badge">Technology</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>What is OpenRouteService and how do you use it?</span>
+                </div>
+                <div class="answer">
+                    <strong>OpenRouteService (ORS)</strong> is an open-source routing engine based on OpenStreetMap data:
+                    <ul>
+                        <li><strong>Route Calculation:</strong> Computes real driving distances and times between addresses (not just straight-line distance)</li>
+                        <li><strong>Distance Matrix API:</strong> Gets distances between all pairs of delivery locations for TSP input</li>
+                        <li><strong>Turn-by-Turn Directions:</strong> Provides detailed navigation instructions</li>
+                        <li><strong>Multiple Profiles:</strong> Supports driving, walking, cycling modes</li>
+                        <li><strong>Why ORS?:</strong> Free, open-source, accurate, and doesn't require API keys like Google Maps</li>
+                    </ul>
+                    We use ORS to get the distance matrix, feed it to our TSP algorithm, then get detailed directions for the optimized route.
+                </div>
+            </div>
+
+            <div class="qa-item" data-category="impl">
+                <div class="category-badge impl-badge">Implementation</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>How does the address data flow work in your system?</span>
+                </div>
+                <div class="answer">
+                    The address data flow follows this sequence:
+                    <ul>
+                        <li><strong>1. User Input:</strong> Buyers enter delivery addresses during checkout (stored in MongoDB)</li>
+                        <li><strong>2. Geocoding:</strong> Addresses converted to coordinates (latitude/longitude) using geocoding API</li>
+                        <li><strong>3. Seller Dashboard:</strong> When seller views pending deliveries, addresses are aggregated</li>
+                        <li><strong>4. Distance Matrix:</strong> Coordinates sent to OpenRouteService to get distance matrix</li>
+                        <li><strong>5. TSP Optimization:</strong> Distance matrix processed by TSP algorithm to find optimal route</li>
+                        <li><strong>6. Route Display:</strong> Optimized route shown on map with turn-by-turn directions</li>
+                        <li><strong>7. Navigation Export:</strong> Route exported to Google Maps or Waze for real-time navigation</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="qa-item" data-category="tech">
+                <div class="category-badge tech-badge">Technology</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>What's your technology stack and why did you choose it?</span>
+                </div>
+                <div class="answer">
+                    <ul>
+                        <li><strong>Frontend (Web):</strong> React.js - Component-based, great ecosystem, easy state management</li>
+                        <li><strong>Frontend (Mobile):</strong> Flutter - Cross-platform (iOS + Android), beautiful UI, single codebase</li>
+                        <li><strong>Backend:</strong> Node.js + Express - JavaScript full-stack, non-blocking I/O, great for APIs</li>
+                        <li><strong>Database:</strong> MongoDB - Flexible schema for product data, easy integration with Node.js</li>
+                        <li><strong>Maps:</strong> Google Maps API - Familiar UI, reliable geocoding and display</li>
+                        <li><strong>Routing:</strong> OpenRouteService - Free, accurate, great for route optimization</li>
+                        <li><strong>Navigation:</strong> Google Maps + Waze integration - Leverages apps users already have</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="qa-item" data-category="impl">
+                <div class="category-badge impl-badge">Implementation</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>Explain the difference between Buyer and Seller workflows</span>
+                </div>
+                <div class="answer">
+                    <strong>Buyer Workflow:</strong>
+                    <ul>
+                        <li>Browse book catalog with search and filters</li>
+                        <li>Add books to shopping cart</li>
+                        <li>Enter delivery address during checkout</li>
+                        <li>Complete payment and place order</li>
+                        <li>Track order status</li>
+                    </ul>
+                    <strong>Seller Workflow:</strong>
+                    <ul>
+                        <li>List books with title, description, price, images</li>
+                        <li>Manage inventory and orders</li>
+                        <li>View pending deliveries on dashboard</li>
+                        <li>Click "Optimize Route" to trigger TSP algorithm</li>
+                        <li>View optimized route on interactive map</li>
+                        <li>Export route to Google Maps or Waze for navigation</li>
+                        <li>Mark deliveries as completed</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="qa-item" data-category="tech">
+                <div class="category-badge tech-badge">Integration</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>How do you integrate with Google Maps and Waze?</span>
+                </div>
+                <div class="answer">
+                    <ul>
+                        <li><strong>Google Maps Integration:</strong>
+                            <ul>
+                                <li>Use URL scheme: <code>https://www.google.com/maps/dir/?api=1&waypoints=...</code></li>
+                                <li>Pass optimized route coordinates as waypoints</li>
+                                <li>Opens in Google Maps app (mobile) or web (desktop)</li>
+                                <li>Provides real-time traffic and turn-by-turn directions</li>
+                            </ul>
+                        </li>
+                        <li><strong>Waze Integration:</strong>
+                            <ul>
+                                <li>Use URL scheme: <code>https://waze.com/ul?ll=latitude,longitude&navigate=yes</code></li>
+                                <li>Launch Waze with first delivery location</li>
+                                <li>User manually proceeds to next locations (Waze limitation)</li>
+                                <li>Benefits from Waze's crowd-sourced traffic and police alerts</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="qa-item" data-category="impl">
+                <div class="category-badge impl-badge">Implementation</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>What challenges did you face with the route optimization feature?</span>
+                </div>
+                <div class="answer">
+                    <ul>
+                        <li><strong>Performance:</strong> TSP is computationally expensive (factorial complexity). We limited to 25 addresses and used heuristic algorithms instead of brute force</li>
+                        <li><strong>API Rate Limits:</strong> OpenRouteService has request limits. We implemented caching and batching strategies</li>
+                        <li><strong>Geocoding Accuracy:</strong> Some addresses don't geocode correctly. We added manual coordinate adjustment feature</li>
+                        <li><strong>Real-time Traffic:</strong> OpenRouteService doesn't include live traffic. We recommend using Google Maps/Waze for actual navigation</li>
+                        <li><strong>Route Constraints:</strong> Real deliveries have time windows and vehicle capacity - future enhancement</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="qa-item" data-category="concept">
+                <div class="category-badge concept-badge">Results</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>What are the key achievements and benefits of your platform?</span>
+                </div>
+                <div class="answer">
+                    <strong>Achievements:</strong>
+                    <ul>
+                        <li>Full-stack web and mobile application (React + Flutter)</li>
+                        <li>Working TSP-based route optimization with real map integration</li>
+                        <li>Complete buyer and seller workflows</li>
+                        <li>Integration with 3 navigation services (OpenRouteService, Google Maps, Waze)</li>
+                    </ul>
+                    <strong>Benefits:</strong>
+                    <ul>
+                        <li><strong>Time Savings:</strong> 30-35% reduction in delivery time through optimized routes</li>
+                        <li><strong>Cost Reduction:</strong> Less fuel consumption and vehicle wear</li>
+                        <li><strong>User Experience:</strong> One-click route optimization, no manual planning</li>
+                        <li><strong>Scalability:</strong> Can handle multiple sellers with many deliveries</li>
+                        <li><strong>Cross-platform:</strong> Works on web, iOS, and Android</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="qa-item" data-category="concept">
+                <div class="category-badge concept-badge">Future Work</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>What future improvements are planned?</span>
+                </div>
+                <div class="answer">
+                    <ul>
+                        <li><strong>Real-time Tracking:</strong> Live delivery tracking for buyers using GPS</li>
+                        <li><strong>Time Windows:</strong> Support delivery time preferences (morning/afternoon)</li>
+                        <li><strong>Vehicle Capacity:</strong> Consider vehicle load limits in route planning</li>
+                        <li><strong>Multi-vehicle:</strong> Optimize routes across multiple delivery vehicles</li>
+                        <li><strong>Machine Learning:</strong> Predict delivery times based on historical data</li>
+                        <li><strong>Payment Integration:</strong> Real payment gateway (Stripe, PayPal)</li>
+                        <li><strong>Rating System:</strong> Buyer/seller ratings and reviews</li>
+                        <li><strong>Analytics Dashboard:</strong> Delivery performance metrics and insights</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="qa-item" data-category="tech">
+                <div class="category-badge tech-badge">Architecture</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>Can you describe your system architecture?</span>
+                </div>
+                <div class="answer">
+                    Our architecture follows a multi-tier design:
+                    <ul>
+                        <li><strong>Presentation Layer:</strong>
+                            <ul>
+                                <li>React web application (responsive design)</li>
+                                <li>Flutter mobile apps (iOS + Android)</li>
+                            </ul>
+                        </li>
+                        <li><strong>API Layer:</strong>
+                            <ul>
+                                <li>RESTful API built with Node.js and Express</li>
+                                <li>JWT authentication for secure access</li>
+                                <li>Route optimization service (TSP algorithm)</li>
+                            </ul>
+                        </li>
+                        <li><strong>Business Logic Layer:</strong>
+                            <ul>
+                                <li>Order management</li>
+                                <li>Route calculation and optimization</li>
+                                <li>User authentication and authorization</li>
+                            </ul>
+                        </li>
+                        <li><strong>Data Layer:</strong>
+                            <ul>
+                                <li>MongoDB for books, orders, users, addresses</li>
+                                <li>Geocoding cache for performance</li>
+                            </ul>
+                        </li>
+                        <li><strong>External Services:</strong>
+                            <ul>
+                                <li>OpenRouteService API</li>
+                                <li>Google Maps API</li>
+                                <li>Geocoding services</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- GIS/SIG Concepts Section -->
+        <div class="section">
+            <div class="section-header" style="border-color: #059669;">
+                <h2 class="text-3xl font-bold text-gray-900 mb-1">GIS/SIG Concepts & Techniques</h2>
+                <p class="text-gray-600">Geographic Information Systems theory and spatial analysis</p>
+            </div>
+
+            <div class="qa-item" data-category="concept">
+                <div class="category-badge" style="background: #d1fae5; color: #065f46;">GIS Fundamentals</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>What is GIS and how does your project utilize it?</span>
+                </div>
+                <div class="answer">
+                    <strong>Geographic Information System (GIS)</strong> is a framework for gathering, managing, and analyzing spatial data:
+                    <ul>
+                        <li><strong>Definition:</strong> Technology that combines geography with data to understand patterns and relationships</li>
+                        <li><strong>Core Components:</strong> Hardware, software, spatial data, methods, and people</li>
+                        <li><strong>Applications:</strong> Urban planning, logistics, environmental analysis, navigation</li>
+                    </ul>
+                    <strong>In Our Project:</strong>
+                    <ul>
+                        <li>Geocoding: Converting addresses to coordinates (latitude/longitude)</li>
+                        <li>Spatial Analysis: Calculating distances between delivery locations</li>
+                        <li>Network Analysis: Finding optimal routes through road networks</li>
+                        <li>Visualization: Displaying routes and locations on interactive maps</li>
+                        <li>Real-world Application: Solving delivery logistics using spatial optimization</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="qa-item" data-category="concept">
+                <div class="category-badge" style="background: #d1fae5; color: #065f46;">Spatial Data</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>What types of spatial data does your system work with?</span>
+                </div>
+                <div class="answer">
+                    <ul>
+                        <li><strong>Vector Data - Points:</strong>
+                            <ul>
+                                <li>Customer delivery addresses (latitude, longitude)</li>
+                                <li>Seller location (starting point)</li>
+                                <li>Each point represents a specific geographic location</li>
+                            </ul>
+                        </li>
+                        <li><strong>Vector Data - Lines:</strong>
+                            <ul>
+                                <li>Road network connections between addresses</li>
+                                <li>Optimized route paths (polylines)</li>
+                                <li>Turn-by-turn navigation segments</li>
+                            </ul>
+                        </li>
+                        <li><strong>Attribute Data:</strong>
+                            <ul>
+                                <li>Address text (street, city, postal code)</li>
+                                <li>Distance values (meters, kilometers)</li>
+                                <li>Time estimates (minutes)</li>
+                                <li>Order information (customer name, items)</li>
+                            </ul>
+                        </li>
+                        <li><strong>Data Format:</strong> GeoJSON for map display, coordinate arrays for algorithms</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="qa-item" data-category="concept">
+                <div class="category-badge" style="background: #d1fae5; color: #065f46;">Geocoding</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>Explain the geocoding process in your application</span>
+                </div>
+                <div class="answer">
+                    <strong>Geocoding</strong> is converting addresses into geographic coordinates:
+                    <ul>
+                        <li><strong>Input:</strong> Text address (e.g., "123 Main St, Casablanca, Morocco")</li>
+                        <li><strong>Process:</strong>
+                            <ul>
+                                <li>Address parsing: Breaking down into components (street, city, country)</li>
+                                <li>Address normalization: Standardizing format</li>
+                                <li>Database matching: Comparing against reference database</li>
+                                <li>Coordinate assignment: Assigning latitude/longitude</li>
+                            </ul>
+                        </li>
+                        <li><strong>Output:</strong> Coordinates (e.g., 33.5731, -7.5898)</li>
+                        <li><strong>Service Used:</strong> Google Geocoding API or OpenStreetMap Nominatim</li>
+                        <li><strong>Quality Control:</strong>
+                            <ul>
+                                <li>Confidence score checking (reject low confidence)</li>
+                                <li>Visual verification on map</li>
+                                <li>Manual correction capability for errors</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="qa-item" data-category="concept">
+                <div class="category-badge" style="background: #d1fae5; color: #065f46;">Routing & Networks</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>How do routing algorithms differ from straight-line distance?</span>
+                </div>
+                <div class="answer">
+                    <strong>Straight-line (Euclidean) Distance:</strong>
+                    <ul>
+                        <li>Calculated using Pythagorean theorem or Haversine formula</li>
+                        <li>Direct distance "as the crow flies"</li>
+                        <li>Fast to calculate, but unrealistic for driving</li>
+                        <li>Formula: √[(x₂-x₁)² + (y₂-y₁)²] or Haversine for spherical coordinates</li>
+                    </ul>
+                    <strong>Network Distance (Routing):</strong>
+                    <ul>
+                        <li>Follows actual road network</li>
+                        <li>Accounts for one-way streets, turn restrictions, speed limits</li>
+                        <li>Considers real-world constraints (bridges, tunnels)</li>
+                        <li>Provides actual travel time and distance</li>
+                        <li>Can include traffic data for realistic estimates</li>
+                    </ul>
+                    <strong>In Our Project:</strong> We use OpenRouteService for network distances because straight-line would give incorrect route optimization (e.g., ignoring that you can't drive through buildings or across rivers without bridges).
+                </div>
+            </div>
+
+            <div class="qa-item" data-category="concept">
+                <div class="category-badge" style="background: #d1fae5; color: #065f46;">Optimization</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>What GIS optimization techniques are used in route planning?</span>
+                </div>
+                <div class="answer">
+                    <ul>
+                        <li><strong>Network Analysis:</strong>
+                            <ul>
+                                <li>Dijkstra's algorithm: Finding shortest path between two points</li>
+                                <li>A* algorithm: Heuristic-based pathfinding</li>
+                                <li>Used by OpenRouteService internally</li>
+                            </ul>
+                        </li>
+                        <li><strong>Vehicle Routing Problem (VRP):</strong>
+                            <ul>
+                                <li>TSP is a simplified VRP (one vehicle, no capacity constraints)</li>
+                                <li>Minimizes total distance/time for delivery routes</li>
+                                <li>Our implementation: Nearest neighbor with 2-opt improvement</li>
+                            </ul>
+                        </li>
+                        <li><strong>Spatial Clustering:</strong>
+                            <ul>
+                                <li>Could group nearby deliveries for multi-vehicle scenarios</li>
+                                <li>K-means clustering on geographic coordinates</li>
+                                <li>Future enhancement for scalability</li>
+                            </ul>
+                        </li>
+                        <li><strong>Heuristics Used:</strong>
+                            <ul>
+                                <li>Nearest neighbor: Always visit closest unvisited location</li>
+                                <li>2-opt: Iteratively remove crossing routes</li>
+                                <li>Trade-off: Speed vs optimality (95% optimal in 2 seconds)</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="qa-item" data-category="concept">
+                <div class="category-badge" style="background: #d1fae5; color: #065f46;">Coordinate Systems</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>What coordinate system do you use and why?</span>
+                </div>
+                <div class="answer">
+                    <ul>
+                        <li><strong>WGS84 (World Geodetic System 1984):</strong>
+                            <ul>
+                                <li>Standard used by GPS and most web mapping services</li>
+                                <li>Geographic coordinate system (latitude/longitude)</li>
+                                <li>EPSG:4326 reference code</li>
+                                <li>Used by Google Maps, OpenStreetMap, OpenRouteService</li>
+                            </ul>
+                        </li>
+                        <li><strong>Coordinate Format:</strong>
+                            <ul>
+                                <li>Latitude: -90° to +90° (North/South)</li>
+                                <li>Longitude: -180° to +180° (East/West)</li>
+                                <li>Decimal degrees (e.g., 33.5731, -7.5898)</li>
+                            </ul>
+                        </li>
+                        <li><strong>Why WGS84?:</strong>
+                            <ul>
+                                <li>Universal compatibility with mapping APIs</li>
+                                <li>No projection distortion for our use case (local routing)</li>
+                                <li>Directly compatible with mobile GPS</li>
+                                <li>Standard for web mapping applications</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="qa-item" data-category="concept">
+                <div class="category-badge" style="background: #d1fae5; color: #065f46;">Map Visualization</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>How do you visualize routes on the map?</span>
+                </div>
+                <div class="answer">
+                    <ul>
+                        <li><strong>Mapping Library:</strong> Google Maps JavaScript API with React integration</li>
+                        <li><strong>Visual Elements:</strong>
+                            <ul>
+                                <li><strong>Markers:</strong> Numbered pins for each delivery address (1, 2, 3...)</li>
+                                <li><strong>Polylines:</strong> Colored lines connecting addresses in optimized order</li>
+                                <li><strong>Info Windows:</strong> Popup showing address details and delivery information</li>
+                                <li><strong>Route Highlight:</strong> Different colors for active vs completed deliveries</li>
+                            </ul>
+                        </li>
+                        <li><strong>Interactive Features:</strong>
+                            <ul>
+                                <li>Click marker to view delivery details</li>
+                                <li>Zoom/pan to explore route</li>
+                                <li>Toggle route visibility</li>
+                                <li>Export to navigation apps</li>
+                            </ul>
+                        </li>
+                        <li><strong>Data Flow:</strong> Optimized route coordinates → GeoJSON → Map API → Visual rendering</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="qa-item" data-category="concept">
+                <div class="category-badge" style="background: #d1fae5; color: #065f46;">GIS in Industry</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>What are real-world applications of GIS in logistics and delivery?</span>
+                </div>
+                <div class="answer">
+                    <ul>
+                        <li><strong>E-commerce (Amazon, Alibaba):</strong>
+                            <ul>
+                                <li>Last-mile delivery optimization</li>
+                                <li>Warehouse location planning</li>
+                                <li>Real-time package tracking</li>
+                            </ul>
+                        </li>
+                        <li><strong>Food Delivery (Uber Eats, DoorDash):</strong>
+                            <ul>
+                                <li>Driver-restaurant-customer matching</li>
+                                <li>Multi-order batching for efficiency</li>
+                                <li>Estimated delivery time prediction</li>
+                            </ul>
+                        </li>
+                        <li><strong>Transportation (FedEx, UPS):</strong>
+                            <ul>
+                                <li>Route optimization for delivery trucks</li>
+                                <li>Fleet management and vehicle tracking</li>
+                                <li>Service area analysis</li>
+                            </ul>
+                        </li>
+                        <li><strong>Ride-sharing (Uber, Lyft):</strong>
+                            <ul>
+                                <li>Driver-passenger matching based on proximity</li>
+                                <li>Dynamic pricing based on demand density</li>
+                                <li>Optimal pick-up point suggestion</li>
+                            </ul>
+                        </li>
+                        <li><strong>Our Project's Contribution:</strong> Demonstrates these concepts at educational scale, preparing for industry applications</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        </div>
+        <!-- END SIG TAB CONTENT -->
+
+        <!-- GENERAL TAB CONTENT -->
+        <div id="general-content" class="tab-content">
+        <!-- General Questions Section -->
+        <div class="section">
+            <div class="section-header" style="border-color: #6366f1;">
+                <h2 class="text-3xl font-bold text-gray-900 mb-1">General Questions</h2>
+                <p class="text-gray-600">Cross-cutting concerns and presentation skills</p>
+            </div>
+
+            <div class="qa-item" data-category="concept">
+                <div class="category-badge" style="background: #e0e7ff; color: #4338ca;">General</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>How did you manage your time across both projects?</span>
+                </div>
+                <div class="answer">
+                    <ul>
+                        <li><strong>Oracle IaC:</strong> Summer internship (3 months, full-time commitment)</li>
+                        <li><strong>Book Marketplace:</strong> Academic semester project (4 months, part-time alongside courses)</li>
+                        <li><strong>Time Management:</strong> Used Agile methodology with weekly sprints, clear milestones, and regular mentor check-ins</li>
+                        <li><strong>Prioritization:</strong> Focused on MVP first, then incremental improvements</li>
+                        <li><strong>Tools:</strong> GitLab issues, project boards, and regular team meetings</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="qa-item" data-category="concept">
+                <div class="category-badge" style="background: #e0e7ff; color: #4338ca;">General</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>What did you learn from these projects?</span>
+                </div>
+                <div class="answer">
+                    <strong>Technical Skills:</strong>
+                    <ul>
+                        <li>Infrastructure as Code and cloud automation</li>
+                        <li>Algorithmic problem-solving (TSP optimization)</li>
+                        <li>Full-stack development (React, Flutter, Node.js)</li>
+                        <li>API integration and third-party services</li>
+                        <li>System design and architecture</li>
+                    </ul>
+                    <strong>Soft Skills:</strong>
+                    <ul>
+                        <li>Working in professional environments (Oracle Labs)</li>
+                        <li>Communicating complex technical concepts</li>
+                        <li>Project management and meeting deadlines</li>
+                        <li>Collaboration with cross-functional teams</li>
+                        <li>Documentation and knowledge transfer</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="qa-item" data-category="concept">
+                <div class="category-badge" style="background: #e0e7ff; color: #4338ca;">General</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>How did you test your implementations?</span>
+                </div>
+                <div class="answer">
+                    <strong>Oracle IaC Testing:</strong>
+                    <ul>
+                        <li><strong>Unit Tests:</strong> Python unittest for resource creation logic</li>
+                        <li><strong>Integration Tests:</strong> Test deployments to isolated OCI tenancies</li>
+                        <li><strong>JSON Validation:</strong> Schema validation tests</li>
+                        <li><strong>CI/CD Pipeline:</strong> Automated testing on every commit</li>
+                    </ul>
+                    <strong>Book Marketplace Testing:</strong>
+                    <ul>
+                        <li><strong>Unit Tests:</strong> Jest for React components, Dart tests for Flutter</li>
+                        <li><strong>API Testing:</strong> Postman for endpoint validation</li>
+                        <li><strong>Algorithm Testing:</strong> Verified TSP with known optimal solutions</li>
+                        <li><strong>User Testing:</strong> Beta testing with classmates for UX feedback</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="qa-item" data-category="concept">
+                <div class="category-badge" style="background: #e0e7ff; color: #4338ca;">General</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>What was the most challenging aspect of each project?</span>
+                </div>
+                <div class="answer">
+                    <strong>Oracle IaC:</strong> Designing the dependency resolution system. Resources depend on each other (e.g., compute instance needs subnet, subnet needs VCN), and we needed to ensure correct creation order while handling circular dependencies gracefully.
+                    <br><br>
+                    <strong>Book Marketplace:</strong> Optimizing the TSP algorithm for acceptable performance. With 20+ delivery locations, brute force is impossible (20! = 2.4 quintillion permutations). We implemented nearest-neighbor heuristic with 2-opt improvements to get 95% optimal solutions in under 2 seconds.
+                </div>
+            </div>
+
+            <div class="qa-item" data-category="concept">
+                <div class="category-badge" style="background: #e0e7ff; color: #4338ca;">General</div>
+                <div class="question">
+                    <span class="question-icon">Q</span>
+                    <span>How do these projects relate to your MIG/GIS studies?</span>
+                </div>
+                <div class="answer">
+                    <ul>
+                        <li><strong>MIG (Computer Engineering):</strong>
+                            <ul>
+                                <li>Software architecture and design patterns</li>
+                                <li>Algorithms and data structures (TSP, graph algorithms)</li>
+                                <li>Cloud computing and distributed systems</li>
+                                <li>Full-stack development</li>
+                            </ul>
+                        </li>
+                        <li><strong>GIS (Geographic Information Systems):</strong>
+                            <ul>
+                                <li>Spatial data processing (coordinates, addresses)</li>
+                                <li>Route optimization and network analysis</li>
+                                <li>Map visualization and geocoding</li>
+                                <li>Integration with mapping services</li>
+                            </ul>
+                        </li>
+                        <li><strong>Integration:</strong> The Book Marketplace perfectly combines software engineering (MIG) with geographic analysis (GIS)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        </div>
+        <!-- END GENERAL TAB CONTENT -->
+
+        <!-- Footer -->
+        <div class="text-center text-gray-600 text-sm py-8">
+            <p class="mb-2">This Q&A guide covers key concepts from both presentations</p>
+            <p>Prepared for: Yassine DBAICHI - EHTP MIG Department 2024/2025</p>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching function
+        function switchTab(tabName) {
+            // Hide all tab contents
+            const allContents = document.querySelectorAll('.tab-content');
+            allContents.forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Remove active class from all buttons
+            const allButtons = document.querySelectorAll('.tab-button');
+            allButtons.forEach(button => {
+                button.classList.remove('active');
+            });
+
+            // Show selected tab content
+            const selectedContent = document.getElementById(tabName + '-content');
+            if (selectedContent) {
+                selectedContent.classList.add('active');
+            }
+
+            // Add active class to clicked button
+            event.target.closest('.tab-button').classList.add('active');
+
+            // Scroll to top smoothly
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function filterQuestions() {
+            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+            const qaItems = document.querySelectorAll('.qa-item');
+
+            qaItems.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    item.style.display = 'block';
+
+                    // Highlight matching text
+                    if (searchTerm.length > 2) {
+                        const question = item.querySelector('.question span:last-child');
+                        const answer = item.querySelector('.answer');
+                        highlightText(question, searchTerm);
+                        highlightText(answer, searchTerm);
+                    }
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            // Show message if no results
+            const visibleItems = Array.from(qaItems).filter(item => item.style.display !== 'none');
+            if (visibleItems.length === 0 && searchTerm.length > 0) {
+                console.log('No matching questions found');
+            }
+        }
+
+        function highlightText(element, searchTerm) {
+            if (!element || searchTerm.length < 3) return;
+
+            const originalText = element.textContent;
+            const regex = new RegExp(`(${searchTerm})`, 'gi');
+            const highlightedText = originalText.replace(regex, '<span class="highlight">$1</span>');
+
+            if (originalText !== highlightedText) {
+                element.innerHTML = highlightedText;
+            }
+        }
+
+        // Clear highlights when search is cleared
+        document.getElementById('searchBox').addEventListener('input', function(e) {
+            if (e.target.value.length < 3) {
+                document.querySelectorAll('.highlight').forEach(el => {
+                    el.outerHTML = el.textContent;
+                });
+            }
+        });
+    </script>
+</body>
+</html>
